@@ -22,6 +22,6 @@ var storage = multer.diskStorage({
         callback(null, filename);
     }
 });
-uploadPDF = multer({ storage: storage, fileFilter: filter });
+uploadImageAndPDF = multer({ storage: storage, fileFilter: filter });
 
-module.exports = uploadPDF;
+module.exports = uploadImageAndPDF;

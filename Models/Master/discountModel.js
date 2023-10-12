@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const CourseDiscount = sequelize.define("courseDiscount", {
+    const Discount = sequelize.define("discounts", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -8,12 +8,18 @@ module.exports = (sequelize, DataTypes) => {
         discountTitle: {
             type: DataTypes.STRING
         },
-        discountNumber:{
-            type:DataTypes.TEXT
+        discountNumber: {
+            type: DataTypes.TEXT
         },
-        discountInPercent:{
-            type:DataTypes.STRING
+        discountInPercent: {
+            type: DataTypes.STRING
         }
+    }, {
+        paranoid: true
     })
-    return CourseDiscount;
+    return Discount;
 }
+
+// ForiegnKey
+// courseId
+// createdBy

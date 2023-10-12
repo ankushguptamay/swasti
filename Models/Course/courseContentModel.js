@@ -1,22 +1,45 @@
 module.exports = (sequelize, DataTypes) => {
-    const AdminCourseContent = sequelize.define("adminCourseContent", {
+    const CourseContent = sequelize.define("courseContents", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        videoTitle: {
+        titleOrOriginalName: {
             type: DataTypes.STRING
         },
-        videoLink:{
-            type:DataTypes.TEXT
+        linkOrPath: {
+            type: DataTypes.STRING(1234)
         },
-        videoType:{
-            type:DataTypes.STRING
+        mimeType: {
+            type: DataTypes.STRING
         },
-        subject:{
-            type:DataTypes.JSON
+        fileName: {
+            type: DataTypes.STRING(1234)
+        },
+        fieldName: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['TeacherImage', 'CourseImage', 'CourseContent']]
+            },
+            defaultValue: 'ContentFile'
+        },
+        approvalStatusByAdmin: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Pending', 'Approved', 'Rejected']]
+            },
+            defaultValue: 'Pending'
+        },
+        createrId: {
+            type: DataTypes.STRING
         }
+    }, {
+        paranoid: true
     })
-    return AdminCourseContent;
+    return CourseContent;
 }
+
+// ForiegnKey
+// courseId
+// createrId

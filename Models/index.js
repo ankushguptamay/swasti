@@ -19,8 +19,14 @@ db.sequelize = sequelize;
 
 // Admin
 db.admin = require('./Admin/adminModel.js')(sequelize, Sequelize);
-db.courseContent = require('./Admin/courseContentModel.js')(sequelize, Sequelize);
-db.course = require('./Admin/courseModel.js')(sequelize, Sequelize);
+
+// Course
+db.course_Discount_Junction = require('./Course/Course_Discount_JunctionModel.js')(sequelize, Sequelize);
+db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequelize);
+db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
+
+// Master
+db.discount = require('./Master/discountModel.js')(sequelize, Sequelize);
 
 // Employee
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
@@ -28,9 +34,16 @@ db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Seque
 // Student
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
 
-// Association of course
-db.course.hasMany(db.courseContent, { foreignKey: 'courseId', as: 'content' });
+// Course's Association with course content
+db.course.hasMany(db.courseContent, { foreignKey: 'courseId', as: 'contents' });
 db.courseContent.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
+
+// Course's Association with discount
+db.course.hasMany(db.course_Discount_Junction, { foreignKey: 'courseId', as: 'course_Discount_Junction' });
+db.course_Discount_Junction.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
+
+db.discount.hasMany(db.course_Discount_Junction, { foreignKey: 'discountId', as: 'course_Discount_Junction' });
+db.course_Discount_Junction.belongsTo(db.discount, { foreignKey: 'discountId', as: 'discount' });
 
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(

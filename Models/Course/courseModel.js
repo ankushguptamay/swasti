@@ -5,58 +5,51 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        // category: {
-        //     type: DataTypes.STRING
-        // },
-        // coursePrice: {
-        //     type: DataTypes.STRING
-        // },
-        // heading:{
-        //     type: DataTypes.STRING
-        // },
-        // description:{
-        //     type: DataTypes.STRING
-        // },
-        // level:{
-        //     type: DataTypes.STRING
-        // },
-        // language:{
-        //     type: DataTypes.STRING
-        // },
-        // courseName:{
-        //     type: DataTypes.STRING
-        // },
-        // courseImage:{
-        //     type: DataTypes.TEXT
-        // },
-        // duration:{
-        //     type: DataTypes.STRING
-        // },
-        // topic:{
-        //     type: DataTypes.JSON 
-        // },
-        // teacherName:{
-        //     type: DataTypes.STRING
-        // },
-        // teacherImage:{
-        //     type: DataTypes.TEXT
-        // },
-        // coupen:{
-        //     type: DataTypes.STRING
-        // },
-        // introVideoLink:{
-        //     type: DataTypes.STRING
-        // },
+        category: {
+            type: DataTypes.STRING
+        },
+        coursePrice: {
+            type: DataTypes.STRING
+        },
+        heading: {
+            type: DataTypes.STRING
+        },
+        description: {
+            type: DataTypes.STRING
+        },
+        level: {
+            type: DataTypes.STRING
+        },
+        language: {
+            type: DataTypes.STRING
+        },
+        courseName: {
+            type: DataTypes.STRING
+        },
+        duration: {
+            type: DataTypes.STRING
+        },
+        teacherName: {
+            type: DataTypes.STRING
+        },
+        introVideoLink: {
+            type: DataTypes.STRING(1234)
+        },
         createrId: {
             type: DataTypes.STRING
         },
-        approvalStatus: {
+        approvalStatusByAdmin: {
             type: DataTypes.STRING,
             validate: {
-                isIn: [['Panding', 'Approved', 'Rejected']]
+                isIn: [['Pending', 'Approved', 'Rejected']]
             },
-            defaultValue: 'Panding'
+            defaultValue: 'Pending'
         }
+    }, {
+        paranoid: true
     })
     return Course;
 }
+
+// ForiegnKey
+// createrId

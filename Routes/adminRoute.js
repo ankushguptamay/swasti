@@ -2,13 +2,15 @@ const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, verifyInstructor } = require('../Controller/User/Instructor/instructorController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, verifyStudent } = require('../Controller/User/Student/studentController');
+const { addCourse } = require('../Controller/Course/createCourseAndContent');
+const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
 const admin = express.Router();
 
 // middleware
 const { verifyAdminJWT } = require('../Middleware/verifyJWTToken');
 const { isAdminPresent } = require('../Middleware/isPresent');
-const uploadImage = require('../Middleware/uploadFile/singleImage');
-const uploadMultiPDF = require('../Middleware/uploadFile/multiPDF');
+const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
+const uploadImage = require('../Middleware/uploadFile/image');
 
 // Admin
 admin.post("/register", register);
@@ -31,5 +33,12 @@ admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
 admin.put("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent);
 admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
+
+// Course
+admin.post("/addCourse", verifyAdminJWT, isAdminPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
+admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // Approved
+admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);
+admin.get("/pendingCourses", verifyAdminJWT, isAdminPresent, getAllPendingCourse); // Pending
+admin.get("/rejectedCourses", verifyAdminJWT, isAdminPresent, getAllRejectedCourse); // Rejected
 
 module.exports = admin;
