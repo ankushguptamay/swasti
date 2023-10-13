@@ -1,10 +1,12 @@
 const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
-const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, verifyInstructor } = require('../Controller/User/Instructor/instructorController');
-const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, verifyStudent } = require('../Controller/User/Student/studentController');
+const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor,
+    verifyInstructor, getAllDeletdInstructor } = require('../Controller/User/Instructor/instructorController');
+const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
+    verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { addCourse } = require('../Controller/Course/createCourseAndContent');
-const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse, 
-    getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId} = require('../Controller/Course/getCourseAndContent');
+const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse,
+    getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse } = require('../Controller/Course/deleteCourseAndContent');
 const admin = express.Router();
 
@@ -23,18 +25,20 @@ admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
 // Instructor
 admin.get("/instructor", verifyAdminJWT, isAdminPresent, getAllInstructor);
 admin.get("/instructor/:id", verifyAdminJWT, isAdminPresent, getInstructorForAdmin);
+admin.get("/deletedInstructors", verifyAdminJWT, isAdminPresent, getAllDeletdInstructor);
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
-admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
 admin.put("/verifyInstructor/:id", verifyAdminJWT, isAdminPresent, verifyInstructor);
+admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
 
 // Student
 admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);
 admin.get("/student/:id", verifyAdminJWT, isAdminPresent, getStudentForAdmin);
+admin.get("/deletedStudents", verifyAdminJWT, isAdminPresent, getAllDeletedStudent);
 admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
-admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent);
 admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
+admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 
 // Course
 admin.post("/addCourse", verifyAdminJWT, isAdminPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);

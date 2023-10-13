@@ -233,18 +233,37 @@ exports.getStudent = async (req, res) => {
 
 exports.getAllStudent = async (req, res) => {
     try {
+        const { page, search } = req.query;
+        // Pagination
         const limit = req.query.limit || 10;
-        const { page } = req.query;
         let offSet = 0;
         let currentPage = 1;
         if (page) {
             offSet = (parseInt(page) - 1) * limit;
             currentPage = parseInt(page);
         }
-        const count = await Student.count();
+        // Search 
+        const condition = [];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { name: { [Op.substring]: search } },
+                    { eamil: { [Op.substring]: search } },
+                    { studentCode: { [Op.substring]: search } }
+                ]
+            })
+        }
+        const count = await Student.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
         const student = await Student.findAll({
             limit: limit,
             offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
             attributes: { exclude: ['password'] }
         });
         // Send final success response
@@ -269,7 +288,8 @@ exports.getStudentForAdmin = async (req, res) => {
             where: {
                 id: req.params.id
             },
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'] },
+            paranoid: false
         });
         if (!student) {
             return res.status(400).send({
@@ -400,7 +420,8 @@ exports.restoreStudent = async (req, res) => {
         const student = await Student.findOne({
             paranoid: false,
             where: {
-                id: req.params.id
+                id: req.params.id,
+                deletedAt: { [Op.ne]: null }
             }
         });
         if (!student) {
@@ -447,6 +468,61 @@ exports.verifyStudent = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Student Profile [${student.studentCode}] verified successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.getAllDeletedStudent = async (req, res) => {
+    try {
+        const { page, search } = req.query;
+        // Pagination
+        const limit = req.query.limit || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * limit;
+            currentPage = parseInt(page);
+        }
+        // Search 
+        const condition = [
+            { deletedAt: { [Op.ne]: null } }
+        ];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { name: { [Op.substring]: search } },
+                    { eamil: { [Op.substring]: search } },
+                    { studentCode: { [Op.substring]: search } }
+                ]
+            })
+        }
+        const count = await Student.count({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        const student = await Student.findAll({
+            limit: limit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false,
+            attributes: { exclude: ['password'] }
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: "Deleted Student's Profile Fetched successfully!",
+            totalPage: Math.ceil(count / limit),
+            currentPage: currentPage,
+            data: student
         });
     } catch (err) {
         res.status(500).send({

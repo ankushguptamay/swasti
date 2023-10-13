@@ -82,7 +82,7 @@ exports.register = async (req, res) => {
             {
                 id: instructor.id,
                 email: req.body.email,
-                instructorType:req.body.instructorType
+                instructorType: req.body.instructorType
             },
             INSTRUCTOR_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -146,7 +146,7 @@ exports.login = async (req, res) => {
             {
                 id: instructor.id,
                 email: req.body.email,
-                instructorType:instructor.instructorType
+                instructorType: instructor.instructorType
             },
             INSTRUCTOR_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -201,7 +201,7 @@ exports.changePassword = async (req, res) => {
             {
                 id: instructor.id,
                 email: req.body.email,
-                instructorType:instructor.instructorType
+                instructorType: instructor.instructorType
             },
             INSTRUCTOR_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -246,18 +246,39 @@ exports.getInstructor = async (req, res) => {
 
 exports.getAllInstructor = async (req, res) => {
     try {
+        const { page, search } = req.query;
+        // Pagination
         const limit = req.query.limit || 10;
-        const { page } = req.query;
         let offSet = 0;
         let currentPage = 1;
         if (page) {
             offSet = (parseInt(page) - 1) * limit;
             currentPage = parseInt(page);
         }
-        const count = await Instructor.count();
+        // Search 
+        const condition = [{
+            deletedAt: { [Op.ne]: null }
+        }];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { name: { [Op.substring]: search } },
+                    { eamil: { [Op.substring]: search } },
+                    { instructorCode: { [Op.substring]: search } }
+                ]
+            })
+        }
+        const count = await Instructor.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
         const instructor = await Instructor.findAll({
             limit: limit,
             offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
             attributes: { exclude: ['password'] }
         });
         // Send final success response
@@ -282,7 +303,8 @@ exports.getInstructorForAdmin = async (req, res) => {
             where: {
                 id: req.params.id
             },
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'] },
+            paranoid: false
         });
         if (!instructor) {
             return res.status(400).send({
@@ -415,7 +437,8 @@ exports.restoreInstructor = async (req, res) => {
         const instructor = await Instructor.findOne({
             paranoid: false,
             where: {
-                id: req.params.id
+                id: req.params.id,
+                deletedAt: { [Op.ne]: null }
             }
         });
         if (!instructor) {
@@ -462,6 +485,61 @@ exports.verifyInstructor = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Instructor Profile [${instructor.instructorCode}] restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.getAllDeletdInstructor = async (req, res) => {
+    try {
+        const { page, search } = req.query;
+        // Pagination
+        const limit = req.query.limit || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * limit;
+            currentPage = parseInt(page);
+        }
+        // Search 
+        const condition = [{
+            deletedAt: { [Op.ne]: null }
+        }];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { name: { [Op.substring]: search } },
+                    { eamil: { [Op.substring]: search } },
+                    { instructorCode: { [Op.substring]: search } }
+                ]
+            })
+        }
+        const count = await Instructor.count({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        const instructor = await Instructor.findAll({
+            limit: limit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false,
+            attributes: { exclude: ['password'] }
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: "Deleted Instructor's Profile Fetched successfully!",
+            totalPage: Math.ceil(count / limit),
+            currentPage: currentPage,
+            data: instructor
         });
     } catch (err) {
         res.status(500).send({
