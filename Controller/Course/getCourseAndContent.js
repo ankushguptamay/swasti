@@ -72,7 +72,6 @@ exports.getAllApprovedCourse = async (req, res) => {
     }
 };
 
-
 // For Admin
 exports.getAllPendingCourse = async (req, res) => {
     try {
@@ -220,8 +219,10 @@ exports.getCourseByIdForAdmin = async (req, res) => {
             },
             include: [{
                 model: CourseContent,
-                as: 'contents'
-            }]
+                as: 'contents',
+                paranoid: false
+            }],
+            paranoid: false
         });
         if (!course) {
             res.status(400).send({
@@ -253,8 +254,10 @@ exports.getCourseByIdForInstructor = async (req, res) => {
             },
             include: [{
                 model: CourseContent,
-                as: 'contents'
-            }]
+                as: 'contents',
+                paranoid: false
+            }],
+            paranoid: false
         });
         if (!course) {
             res.status(400).send({
@@ -352,7 +355,9 @@ exports.getCourseByIdForStudent = async (req, res) => {
             include: [{
                 model: CourseContent,
                 as: 'contents',
-                approvalStatusByAdmin: "Approved"
+                where: {
+                    approvalStatusByAdmin: "Approved"
+                }
             }]
         });
         if (!course) {
