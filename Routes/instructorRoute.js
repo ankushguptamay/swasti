@@ -1,6 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, changePassword } = require('../Controller/User/Instructor/instructorController');
-const { addCourse } = require('../Controller/Course/createCourseAndContent');
+const { addCourse, addCourseImage, addTeacherImage } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const instructor = express.Router();
@@ -18,6 +18,8 @@ instructor.put("/changePassword", verifyInstructorJWT, isInstructorPresent, chan
 
 // Course
 instructor.post("/addCourse", verifyInstructorJWT, isInstructorPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
+instructor.post("/addCourseImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("CourseImage"), addCourseImage);
+instructor.post("/addTeacherImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("TeacherImage"), addTeacherImage);
 instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllApprovedCourse); // Approved
 instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
 instructor.get("/pendingCourse", verifyInstructorJWT, isInstructorPresent, getAllPendingCourse); // Pending

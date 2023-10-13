@@ -4,7 +4,7 @@ const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteI
     verifyInstructor, getAllDeletdInstructor } = require('../Controller/User/Instructor/instructorController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
-const { addCourse } = require('../Controller/Course/createCourseAndContent');
+const { addCourse, addCourseImage, addTeacherImage } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse } = require('../Controller/Course/deleteCourseAndContent');
@@ -42,6 +42,8 @@ admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDelet
 
 // Course
 admin.post("/addCourse", verifyAdminJWT, isAdminPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
+admin.post("/addCourseImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("CourseImage"), addCourseImage); // CourseId
+admin.post("/addTeacherImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("TeacherImage"), addTeacherImage); // CourseId
 admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // Approved
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);
 admin.get("/pendingCourses", verifyAdminJWT, isAdminPresent, getAllPendingCourse); // Pending

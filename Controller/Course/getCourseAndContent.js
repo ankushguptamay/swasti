@@ -72,7 +72,7 @@ exports.getAllApprovedCourse = async (req, res) => {
     }
 };
 
-// For Admin
+// For Admin and instructor
 exports.getAllPendingCourse = async (req, res) => {
     try {
         const { page, limit, search } = req.query;
@@ -141,7 +141,7 @@ exports.getAllPendingCourse = async (req, res) => {
     }
 };
 
-// For Admin
+// For Admin and instructor
 exports.getAllRejectedCourse = async (req, res) => {
     try {
         const { page, limit, search } = req.query;
