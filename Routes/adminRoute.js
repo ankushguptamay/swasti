@@ -3,7 +3,9 @@ const { register, login, getAdmin, changePassword } = require('../Controller/Adm
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, verifyInstructor } = require('../Controller/User/Instructor/instructorController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, verifyStudent } = require('../Controller/User/Student/studentController');
 const { addCourse } = require('../Controller/Course/createCourseAndContent');
-const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
+const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse, 
+    getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId} = require('../Controller/Course/getCourseAndContent');
+const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse } = require('../Controller/Course/deleteCourseAndContent');
 const admin = express.Router();
 
 // middleware
@@ -22,7 +24,7 @@ admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
 admin.get("/instructor", verifyAdminJWT, isAdminPresent, getAllInstructor);
 admin.get("/instructor/:id", verifyAdminJWT, isAdminPresent, getInstructorForAdmin);
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
-admin.put("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
+admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
 admin.put("/verifyInstructor/:id", verifyAdminJWT, isAdminPresent, verifyInstructor);
 
@@ -30,7 +32,7 @@ admin.put("/verifyInstructor/:id", verifyAdminJWT, isAdminPresent, verifyInstruc
 admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);
 admin.get("/student/:id", verifyAdminJWT, isAdminPresent, getStudentForAdmin);
 admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
-admin.put("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
+admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent);
 admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
 
@@ -40,5 +42,11 @@ admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // 
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);
 admin.get("/pendingCourses", verifyAdminJWT, isAdminPresent, getAllPendingCourse); // Pending
 admin.get("/rejectedCourses", verifyAdminJWT, isAdminPresent, getAllRejectedCourse); // Rejected
+admin.get("/softDeletedCourse/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedCourse); // Soft Deleted Course
+admin.get("/softDeletedContent/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedContentByCourseId); // Soft Deleted Content
+admin.delete("/softDeleteCourse/:id", verifyAdminJWT, isAdminPresent, softDeleteCourseForAdmin);
+admin.delete("/softDeleteContent/:id", verifyAdminJWT, isAdminPresent, softDeleteContentForAdmin);
+admin.delete("/hardDeleteContent/:id", verifyAdminJWT, isAdminPresent, hardDeleteContent);
+admin.delete("/hardDeleteCourse/:id", verifyAdminJWT, isAdminPresent, hardDeleteCourse);
 
 module.exports = admin;

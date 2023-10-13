@@ -374,3 +374,108 @@ exports.getCourseByIdForStudent = async (req, res) => {
         });
     }
 };
+
+// For Admin
+exports.getAllSoftDeletedCourse = async (req, res) => {
+    try {
+        const { page, limit, search } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        // Search 
+        const condition = [{ deletedAt: { [Op.ne]: null } }];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { courseName: { [Op.substring]: search } },
+                    { heading: { [Op.substring]: search } },
+                    { category: { [Op.substring]: search } }
+                ]
+            })
+        }
+        // For Instructor
+        if (req.instructor) {
+            condition.push({ createrId: req.instructor.id });
+        }
+        // Count All Course
+        const totalCourse = await Course.count({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        // Get All Course
+        const course = await Course.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ],
+            include: [{
+                model: CourseContent,
+                as: 'contents',
+                where: {
+                    fieldName: ['TeacherImage', 'CourseImage'],
+                    deletedAt: { [Op.ne]: null }
+                },
+                paranoid: false
+            }],
+            paranoid: false
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "All Soft Deleted Course fetched successfully!",
+            totalPage: Math.ceil(totalCourse / recordLimit),
+            currentPage: currentPage,
+            data: course
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin
+exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
+    try {
+        const { search } = req.query;
+        // Search 
+        let condition;
+        if (search) {
+            condition.push({
+                titleOrOriginalName: { [Op.substring]: search },
+                deletedAt: { [Op.ne]: null }
+            })
+        }
+        // Get All Course Content
+        const courseContent = await CourseContent.findAll({
+            where: condition,
+            order: [
+                ['createdAt', 'ASC']
+            ],
+            paranoid: false
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "All Soft Deleted Course Content fetched successfully!",
+            data: courseContent
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
