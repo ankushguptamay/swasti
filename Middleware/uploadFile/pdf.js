@@ -2,12 +2,10 @@ const path = require("path");
 const multer = require("multer");
 
 const filter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image")) {
-        cb(null, true);
-    } else if (file.mimetype.startsWith("application/pdf")) {
+    if (file.mimetype.startsWith("application/pdf")) {
         cb(null, true);
     } else {
-        cb("Please upload only Image and PDF.", false);
+        cb("Please upload only PDF.", false);
     }
 };
 
