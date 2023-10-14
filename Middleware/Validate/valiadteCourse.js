@@ -16,3 +16,18 @@ exports.courseValidation = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.contentValidation = (data) => {
+    const schema = joi.object().keys({
+        title: joi.string().required()
+    });
+    return schema.validate(data);
+}
+
+exports.contentVideoValidation = (data) => {
+    const schema = joi.object().keys({
+        titleOrOriginalName: joi.string().required(),
+        linkOrPath: joi.string().required()
+    });
+    return schema.validate(data);
+}

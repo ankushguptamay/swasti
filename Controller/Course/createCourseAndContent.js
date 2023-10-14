@@ -1,9 +1,10 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
-const { courseValidation } = require("../../Middleware/Validate/valiadteCourse");
+const { courseValidation, contentValidation, contentVideoValidation } = require("../../Middleware/Validate/valiadteCourse");
 const { deleteSingleFile } = require("../../Util/deleteFile")
 const Course = db.course;
 const CourseContent = db.courseContent;
+const CourseAndContentFile = db.courseAndContentFile;
 
 // For Admin And Instructor
 exports.addCourse = async (req, res) => {
@@ -69,7 +70,7 @@ exports.addCourse = async (req, res) => {
             approvalStatusByAdmin: approvalStatusByAdmin
         });
         if (courseImage) {
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: courseImage.originalname,
                 linkOrPath: courseImage.path,
                 mimeType: courseImage.mimetype,
@@ -81,7 +82,7 @@ exports.addCourse = async (req, res) => {
             });
         }
         if (teacherImage) {
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: teacherImage.originalname,
                 linkOrPath: teacherImage.path,
                 mimeType: teacherImage.mimetype,
@@ -116,7 +117,7 @@ exports.addCourseImage = async (req, res) => {
         }
         // Find in database
         if (req.instructor) {
-            const courseImage = await CourseContent.findAll({
+            const courseImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
                     createrId: req.instructor.id,
@@ -129,7 +130,7 @@ exports.addCourseImage = async (req, res) => {
                     await courseImage[i].destroy();
                 }
             }
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: req.file.originalname,
                 linkOrPath: req.file.path,
                 mimeType: req.file.mimetype,
@@ -142,10 +143,10 @@ exports.addCourseImage = async (req, res) => {
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Course Image updated successfully!"
+                message: "Course Image added successfully! Wait For Admin Approval!"
             });
         } else if (req.admin) {
-            const courseImage = await CourseContent.findAll({
+            const courseImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
                     fieldName: "CourseImage",
@@ -157,7 +158,7 @@ exports.addCourseImage = async (req, res) => {
                     await courseImage[i].destroy();
                 }
             }
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: req.file.originalname,
                 linkOrPath: req.file.path,
                 mimeType: req.file.mimetype,
@@ -170,13 +171,13 @@ exports.addCourseImage = async (req, res) => {
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Course Image updated successfully!"
+                message: "Course Image added successfully!"
             });
         } else {
             // Final response
             res.status(400).send({
                 success: false,
-                message: "You can not update course image!"
+                message: "You can not add course image!"
             });
         }
     } catch (err) {
@@ -198,7 +199,7 @@ exports.addTeacherImage = async (req, res) => {
         }
         // Find in database
         if (req.instructor) {
-            const teacherImage = await CourseContent.findAll({
+            const teacherImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
                     createrId: req.instructor.id,
@@ -211,7 +212,7 @@ exports.addTeacherImage = async (req, res) => {
                     await teacherImage[i].destroy();
                 }
             }
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: req.file.originalname,
                 linkOrPath: req.file.path,
                 mimeType: req.file.mimetype,
@@ -224,10 +225,10 @@ exports.addTeacherImage = async (req, res) => {
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Teacher Image updated successfully!"
+                message: "Teacher Image added successfully! Wait For Admin Approval!"
             });
         } else if (req.admin) {
-            const teacherImage = await CourseContent.findAll({
+            const teacherImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
                     fieldName: "TeacherImage",
@@ -239,7 +240,7 @@ exports.addTeacherImage = async (req, res) => {
                     await teacherImage[i].destroy();
                 }
             }
-            await CourseContent.create({
+            await CourseAndContentFile.create({
                 titleOrOriginalName: req.file.originalname,
                 linkOrPath: req.file.path,
                 mimeType: req.file.mimetype,
@@ -252,13 +253,200 @@ exports.addTeacherImage = async (req, res) => {
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Teacher Image updated successfully!"
+                message: "Teacher Image added successfully!"
             });
         } else {
             // Final response
             res.status(400).send({
                 success: false,
-                message: "You can not update teacher image!"
+                message: "You can not add teacher image!"
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin And Instructor
+exports.addContent = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = contentValidation(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { title } = req.body;
+        if (req.instructor) {
+            await CourseContent.create({
+                title: title,
+                createrId: req.instructor.id,
+                courseId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "Content created successfully!"
+            });
+        } else if (req.admin) {
+            await CourseContent.create({
+                title: title,
+                createrId: req.amdin.id,
+                courseId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "Content created successfully!"
+            });
+        } else {
+            // Final response
+            res.status(400).send({
+                success: false,
+                message: "You can not add content!"
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin And Instructor
+exports.addContentVideo = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = contentVideoValidation(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { titleOrOriginalName, linkOrPath } = req.body;
+        const mimeType = 'video';
+        const fieldName = 'ContentFile';
+        const fileContent = await CourseContent.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!fileContent) {
+            // Final response
+            return res.status(400).send({
+                success: false,
+                message: "Content is not present!"
+            });
+        }
+        if (req.instructor) {
+            await CourseAndContentFile.create({
+                titleOrOriginalName: titleOrOriginalName,
+                linkOrPath: linkOrPath,
+                mimeType: mimeType,
+                createrId: req.instructor.id,
+                fieldName: fieldName,
+                courseId: fileContent.courseId,
+                approvalStatusByAdmin: "Pending",
+                contentId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "Video added successfully!"
+            });
+        } else if (req.admin) {
+            await CourseAndContentFile.create({
+                titleOrOriginalName: titleOrOriginalName,
+                linkOrPath: linkOrPath,
+                mimeType: mimeType,
+                createrId: req.admin.id,
+                fieldName: fieldName,
+                courseId: fileContent.courseId,
+                approvalStatusByAdmin: "Approved",
+                contentId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "Video added successfully!"
+            });
+        } else {
+            // Final response
+            res.status(400).send({
+                success: false,
+                message: "You can not add video!"
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin And Instructor
+exports.addContentFile = async (req, res) => {
+    try {
+        // File should be exist
+        if (!req.file) {
+            return res.status(400).send({
+                success: false,
+                message: "Please..Upload Content file!"
+            });
+        }
+        const fileContent = await CourseContent.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!fileContent) {
+            // Final response
+            return res.status(400).send({
+                success: false,
+                message: "Content is not present!"
+            });
+        }
+        if (req.instructor) {
+            await CourseAndContentFile.create({
+                titleOrOriginalName: req.file.originalname,
+                linkOrPath: req.file.path,
+                mimeType: req.file.mimetype,
+                fileName: req.file.filename,
+                fieldName: req.file.fieldname,
+                createrId: req.instructor.id,
+                courseId: fileContent.courseId,
+                approvalStatusByAdmin: "Pending",
+                contentId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "File added successfully!"
+            });
+        } else if (req.admin) {
+            await CourseAndContentFile.create({
+                titleOrOriginalName: req.file.originalname,
+                linkOrPath: req.file.path,
+                mimeType: req.file.mimetype,
+                fileName: req.file.filename,
+                fieldName: req.file.fieldname,
+                createrId: req.admin.id,
+                courseId: fileContent.courseId,
+                approvalStatusByAdmin: "Approved",
+                contentId: req.params.id
+            });
+            // Final response
+            res.status(200).send({
+                success: true,
+                message: "File added successfully!"
+            });
+        } else {
+            // Final response
+            res.status(400).send({
+                success: false,
+                message: "You can not add file!"
             });
         }
     } catch (err) {

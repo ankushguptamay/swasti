@@ -11,7 +11,7 @@ const filter = (req, file, cb) => {
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        if (file.fieldname === "CourseContent") {
+        if (file.fieldname === "ContentFile") {
             cb(null, path.join(`${__dirname}/../../Resource/Course`));
         }
     },

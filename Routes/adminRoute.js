@@ -4,7 +4,7 @@ const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteI
     verifyInstructor, getAllDeletdInstructor } = require('../Controller/User/Instructor/instructorController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
-const { addCourse, addCourseImage, addTeacherImage } = require('../Controller/Course/createCourseAndContent');
+const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { approveContent, approveCourse, rejectContent, rejectCourse } = require('../Controller/Course/approvalCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
@@ -16,6 +16,7 @@ const { verifyAdminJWT } = require('../Middleware/verifyJWTToken');
 const { isAdminPresent } = require('../Middleware/isPresent');
 const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
 const uploadImage = require('../Middleware/uploadFile/image');
+const uploadPDF = require('../Middleware/uploadFile/pdf');
 
 // Admin
 admin.post("/register", register);
@@ -41,10 +42,13 @@ admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent)
 admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
 admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 
-// Course
+// Course And Content
 admin.post("/addCourse", verifyAdminJWT, isAdminPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
-admin.post("/addCourseImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("CourseImage"), addCourseImage); // CourseId
-admin.post("/addTeacherImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("TeacherImage"), addTeacherImage); // CourseId
+admin.post("/addCourseImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("CourseImage"), addCourseImage); // courseId
+admin.post("/addTeacherImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
+admin.post("/addContent", verifyAdminJWT, isAdminPresent, addContent); // courseId
+admin.post("/addContentFile/:id", verifyAdminJWT, isAdminPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
+admin.post("/addContentVideo/:id", verifyAdminJWT, isAdminPresent, addContentVideo);
 admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // Approved
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);
 admin.get("/pendingCourses", verifyAdminJWT, isAdminPresent, getAllPendingCourse); // Pending
