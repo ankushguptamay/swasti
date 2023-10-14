@@ -2,7 +2,7 @@ const express = require('express');
 const { register, login, getInstructor, changePassword } = require('../Controller/User/Instructor/instructorController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
-const { softDeleteContentForInstructor, softDeleteCourseForInstructor } = require('../Controller/Course/deleteCourseAndContent');
+const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const instructor = express.Router();
 
 // middleware
@@ -30,5 +30,6 @@ instructor.get("/pendingCourse", verifyInstructorJWT, isInstructorPresent, getAl
 instructor.get("/rejectedCourse", verifyInstructorJWT, isInstructorPresent, getAllRejectedCourse); // Rejected
 instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourseForInstructor);
 instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContentForInstructor);
+instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
 
 module.exports = instructor;
