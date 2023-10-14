@@ -2,6 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
+const CourseAndContentFile = db.courseAndContentFile;
 
 exports.restoreCourse = async (req, res) => {
     try {
@@ -16,19 +17,39 @@ exports.restoreCourse = async (req, res) => {
         if (!course) {
             return res.status(400).send({
                 success: false,
-                message: "This Course is not present in deleted section!"
+                message: "This Course is not present in delete section!"
             });
         }
-        // Restore Content
+        // Restore Content, This will content whose delete time is greater and equal to course delete time
         const content = await CourseContent.findAll({
             where: {
-                courseId: req.params.id
+                courseId: req.params.id,
+                deletedAt: { [Op.gte]: course.deletedAt }
             },
+            order: [
+                ['createdAt', 'DESC']
+            ],
             paranoid: false
         });
         if (content.length > 0) {
             for (let i = 0; i < content.length; i++) {
                 await content[i].restore();
+            }
+        }
+        // Restore File, This will restore file whose delete time is greater and equal to course delete time
+        const file = await CourseAndContentFile.findAll({
+            where: {
+                courseId: req.params.id,
+                deletedAt: { [Op.gte]: course.deletedAt }
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ],
+            paranoid: false
+        });
+        if (file.length > 0) {
+            for (let i = 0; i < file.length; i++) {
+                await file[i].restore();
             }
         }
         // Restore Course
@@ -62,12 +83,60 @@ exports.restoreContent = async (req, res) => {
                 message: "Data is not present!"
             });
         }
+        // Restore File, This will restore file whose delete time is greater and equal to content delete time
+        const file = await CourseAndContentFile.findAll({
+            where: {
+                contentId: req.params.id,
+                deletedAt: { [Op.gte]: courseContent.deletedAt },
+                fieldName: "ContentFile"
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ],
+            paranoid: false
+        });
+        if (file.length > 0) {
+            for (let i = 0; i < file.length; i++) {
+                await file[i].restore();
+            }
+        }
         // Restore Content
         await courseContent.restore();
         // Final Response
         res.status(200).send({
             success: true,
-            message: `${courseContent.fieldName} restored successfully!`
+            message: `Content restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreFile = async (req, res) => {
+    try {
+        // Find Content In Database
+        const file = await CourseAndContentFile.findOne({
+            where: {
+                id: req.params.id,
+                deletedAt: { [Op.ne]: null }
+            },
+            paranoid: false
+        });
+        if (!file) {
+            return res.status(400).send({
+                success: false,
+                message: "Data is not present!"
+            });
+        }
+        // Restore File
+        await file.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Content restored successfully!`
         });
     } catch (err) {
         res.status(500).send({

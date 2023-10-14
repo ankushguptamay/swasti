@@ -18,16 +18,19 @@ instructor.get("/instructor", verifyInstructorJWT, isInstructorPresent, getInstr
 instructor.put("/changePassword", verifyInstructorJWT, isInstructorPresent, changePassword);
 
 // Course And Content
+// 1. Add
 instructor.post("/addCourse", verifyInstructorJWT, isInstructorPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
 instructor.post("/addCourseImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("CourseImage"), addCourseImage); // courseId
 instructor.post("/addTeacherImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
 instructor.post("/addContent", verifyInstructorJWT, isInstructorPresent, addContent); // courseId
 instructor.post("/addContentFile/:id", verifyInstructorJWT, isInstructorPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
 instructor.post("/addContentVideo/:id", verifyInstructorJWT, isInstructorPresent, addContentVideo); // contentId
+// 2. Get
 instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllApprovedCourse); // Approved
 instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
 instructor.get("/pendingCourse", verifyInstructorJWT, isInstructorPresent, getAllPendingCourse); // Pending
 instructor.get("/rejectedCourse", verifyInstructorJWT, isInstructorPresent, getAllRejectedCourse); // Rejected
+// 3. Delete
 instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourseForInstructor);
 instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContentForInstructor);
 instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
