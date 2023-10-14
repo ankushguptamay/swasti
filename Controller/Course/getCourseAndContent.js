@@ -2,6 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
+const CourseAndContentFile = db.courseAndContentFile;
 
 // For Admin and Instructor
 exports.getAllApprovedCourse = async (req, res) => {
@@ -46,8 +47,8 @@ exports.getAllApprovedCourse = async (req, res) => {
                 [Op.and]: condition
             },
             include: [{
-                model: CourseContent,
-                as: 'contents',
+                model: CourseAndContentFile,
+                as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
@@ -115,8 +116,8 @@ exports.getAllPendingCourse = async (req, res) => {
                 [Op.and]: condition
             },
             include: [{
-                model: CourseContent,
-                as: 'contents',
+                model: CourseAndContentFile,
+                as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
@@ -187,8 +188,8 @@ exports.getAllRejectedCourse = async (req, res) => {
                 ['createdAt', 'ASC']
             ],
             include: [{
-                model: CourseContent,
-                as: 'contents',
+                model: CourseAndContentFile,
+                as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
@@ -220,6 +221,21 @@ exports.getCourseByIdForAdmin = async (req, res) => {
             include: [{
                 model: CourseContent,
                 as: 'contents',
+                paranoid: false,
+                include: [{
+                    model: CourseAndContentFile,
+                    as: 'files',
+                    where: {
+                        fieldName: 'ContentFile'
+                    },
+                    paranoid: false
+                }]
+            }, {
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: ['TeacherImage', 'CourseImage']
+                },
                 paranoid: false
             }],
             paranoid: false
@@ -255,6 +271,21 @@ exports.getCourseByIdForInstructor = async (req, res) => {
             include: [{
                 model: CourseContent,
                 as: 'contents',
+                paranoid: false,
+                include: [{
+                    model: CourseAndContentFile,
+                    as: 'files',
+                    where: {
+                        fieldName: 'ContentFile'
+                    },
+                    paranoid: false
+                }]
+            }, {
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: ['TeacherImage', 'CourseImage']
+                },
                 paranoid: false
             }],
             paranoid: false
@@ -317,8 +348,8 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
                 [Op.and]: condition
             },
             include: [{
-                model: CourseContent,
-                as: 'contents',
+                model: CourseAndContentFile,
+                as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
@@ -356,6 +387,21 @@ exports.getCourseByIdForStudent = async (req, res) => {
                 model: CourseContent,
                 as: 'contents',
                 where: {
+                    approvalStatusByAdmin: "Approved"
+                },
+                include: [{
+                    model: CourseAndContentFile,
+                    as: 'files',
+                    where: {
+                        fieldName: 'ContentFile',
+                        approvalStatusByAdmin: "Approved"
+                    }
+                }]
+            }, {
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
                 }
             }]
@@ -425,8 +471,8 @@ exports.getAllSoftDeletedCourse = async (req, res) => {
                 ['createdAt', 'ASC']
             ],
             include: [{
-                model: CourseContent,
-                as: 'contents',
+                model: CourseAndContentFile,
+                as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     deletedAt: { [Op.ne]: null }
@@ -456,25 +502,69 @@ exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
     try {
         const { search } = req.query;
         // Search 
-        let condition;
+        const condition = [{ deletedAt: { [Op.ne]: null } }];
         if (search) {
             condition.push({
-                titleOrOriginalName: { [Op.substring]: search },
-                deletedAt: { [Op.ne]: null }
+                titleOrOriginalName: { [Op.substring]: search }
             })
         }
         // Get All Course Content
         const courseContent = await CourseContent.findAll({
-            where: condition,
+            where: {
+                [Op.and]: condition
+            },
             order: [
                 ['createdAt', 'ASC']
             ],
+            include: [{
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: 'ContentFile',
+                    approvalStatusByAdmin: "Approved",
+                    deletedAt: { [Op.ne]: null }
+                },
+                paranoid: false
+            }],
             paranoid: false
         });
         // Final response
         res.status(200).send({
             success: true,
             message: "All Soft Deleted Course Content fetched successfully!",
+            data: courseContent
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin
+exports.getSoftDeletdContentByContentId = async (req, res) => {
+    try {
+        // Get All Course Content
+        const courseContent = await CourseContent.findOne({
+            where: {
+                id: req.params.id
+            },
+            include: [{
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: 'ContentFile',
+                    deletedAt: { [Op.ne]: null }
+                },
+                paranoid: false
+            }],
+            paranoid: false
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "All Soft Deleted Files fetched successfully!",
             data: courseContent
         });
     } catch (err) {
