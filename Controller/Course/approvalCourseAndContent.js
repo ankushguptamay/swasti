@@ -2,6 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
+const CourseAndContentFile = db.courseAndContentFile;
 
 exports.approveCourse = async (req, res) => {
     try {
@@ -122,6 +123,70 @@ exports.rejectContent = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Content rejected successfully!"
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.approveCourseFile = async (req, res) => {
+    try {
+        // Find Course In Database
+        const file = await CourseAndContentFile.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!file) {
+            return res.status(400).send({
+                success: false,
+                message: "This file is not present!"
+            });
+        }
+        // Update File
+        await file.update({
+            ...file,
+            approvalStatusByAdmin: "Approved"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `${file.fieldName} approved successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.rejectCourseFile = async (req, res) => {
+    try {
+        // Find Course In Database
+        const file = await CourseAndContentFile.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!file) {
+            return res.status(400).send({
+                success: false,
+                message: "This file is not present!"
+            });
+        }
+        // Update Course
+        await file.update({
+            ...file,
+            approvalStatusByAdmin: "Rejected"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `${file.fieldName} rejected successfully!`
         });
     } catch (err) {
         res.status(500).send({

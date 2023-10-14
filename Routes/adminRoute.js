@@ -5,7 +5,7 @@ const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteI
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { approveContent, approveCourse, rejectContent, rejectCourse } = require('../Controller/Course/approvalCourseAndContent');
+const { approveContent, approveCourse, rejectContent, rejectCourse, approveCourseFile, rejectCourseFile } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse, getSoftDeletdContentByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
@@ -64,6 +64,8 @@ admin.put("/approveCourse/:id", verifyAdminJWT, isAdminPresent, approveCourse); 
 admin.put("/approveContent/:id", verifyAdminJWT, isAdminPresent, approveContent); // contentId
 admin.put("/rejectCourse/:id", verifyAdminJWT, isAdminPresent, rejectCourse); // courseId
 admin.put("/rejectContent/:id", verifyAdminJWT, isAdminPresent, rejectContent); // contentId
+admin.put("/approveCourseFile/:id", verifyAdminJWT, isAdminPresent, approveCourseFile); // fileId
+admin.put("/rejectCourseFile/:id", verifyAdminJWT, isAdminPresent, rejectCourseFile); // fileId
 // 4.Delete
 admin.delete("/softDeleteCourse/:id", verifyAdminJWT, isAdminPresent, softDeleteCourseForAdmin); // courseId
 admin.delete("/softDeleteContent/:id", verifyAdminJWT, isAdminPresent, softDeleteContentForAdmin); // contentId
