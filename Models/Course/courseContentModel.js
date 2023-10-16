@@ -10,6 +10,13 @@ module.exports = (sequelize, DataTypes) => {
         },
         createrId: {
             type: DataTypes.STRING
+        },
+        approvalStatusByAdmin: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Pending', 'Approved', 'Rejected']]
+            },
+            defaultValue: 'Pending'
         }
     }, {
         paranoid: true

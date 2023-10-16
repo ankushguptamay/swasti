@@ -1,5 +1,6 @@
 const db = require('../../../Models');
 const Instructor = db.instructor;
+const InstructorProfile = db.instructorProfile;
 const { loginInstructor, registerInstructor, changePassword } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY } = process.env;
 const jwt = require("jsonwebtoken");
@@ -228,6 +229,13 @@ exports.getInstructor = async (req, res) => {
                     { id: req.instructor.id }, { email: req.instructor.email }
                 ]
             },
+            include: [{
+                model: InstructorProfile,
+                as: 'profile',
+                where: {
+                    approvalStatusByAdmin: "Approved"
+                }
+            }],
             attributes: { exclude: ['password'] }
         });
         // Send final success response

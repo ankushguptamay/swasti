@@ -1,5 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, changePassword } = require('../Controller/User/Instructor/instructorController');
+const { addInstructorProfile, deleteProfile } = require('../Controller/User/Instructor/instructorProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
@@ -16,6 +17,9 @@ instructor.post("/register", register);
 instructor.post("/login", login);
 instructor.get("/instructor", verifyInstructorJWT, isInstructorPresent, getInstructor);
 instructor.put("/changePassword", verifyInstructorJWT, isInstructorPresent, changePassword);
+
+instructor.post("/addProfile", verifyInstructorJWT, isInstructorPresent, uploadImage.single("InstructorProfile"), addInstructorProfile);
+instructor.delete("/deleteProfile/:id", verifyInstructorJWT, isInstructorPresent, deleteProfile);
 
 // Course And Content
 // 1. Add

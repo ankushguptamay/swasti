@@ -21,7 +21,7 @@ db.sequelize = sequelize;
 db.admin = require('./Admin/adminModel.js')(sequelize, Sequelize);
 
 // Course
-db.course_Discount_Junction = require('./Course/Course_Discount_JunctionModel.js')(sequelize, Sequelize);
+db.course_Discount_Junction = require('./Course/JunctionTable/Course_Discount_JunctionModel.js')(sequelize, Sequelize);
 db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequelize);
 db.courseAndContentFile = require('./Course/courseAndContentFileModel.js')(sequelize, Sequelize);
 db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
@@ -31,9 +31,18 @@ db.discount = require('./Master/discountModel.js')(sequelize, Sequelize);
 
 // Employee
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
+db.instructorProfile = require('./User/Instructor/insturctorProfileModel.js')(sequelize, Sequelize);
 
 // Student
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
+db.studentProfile = require('./User/Student/studentProfileModel.js')(sequelize, Sequelize);
+
+// Association
+// Student's Association with profile
+db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' });
+
+// Instructor's Association with profile
+db.instructor.hasOne(db.instructorProfile, { foreignKey: 'instructorId', as: 'profile' });
 
 // Course's Association with course content
 db.course.hasMany(db.courseContent, { foreignKey: 'courseId', as: 'contents' });

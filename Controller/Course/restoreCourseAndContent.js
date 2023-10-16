@@ -20,11 +20,11 @@ exports.restoreCourse = async (req, res) => {
                 message: "This Course is not present in delete section!"
             });
         }
-        // Restore Content, This will content whose delete time is greater and equal to course delete time
+        // Restore Content, This will restore content whose delete time is greater and equal to course delete time
         const content = await CourseContent.findAll({
             where: {
                 courseId: req.params.id,
-                deletedAt: { [Op.gte]: course.deletedAt }
+                deletedAt: { [Op.lte]: course.deletedAt }
             },
             order: [
                 ['createdAt', 'DESC']
@@ -40,7 +40,7 @@ exports.restoreCourse = async (req, res) => {
         const file = await CourseAndContentFile.findAll({
             where: {
                 courseId: req.params.id,
-                deletedAt: { [Op.gte]: course.deletedAt }
+                deletedAt: { [Op.lte]: course.deletedAt }
             },
             order: [
                 ['createdAt', 'DESC']
@@ -87,7 +87,7 @@ exports.restoreContent = async (req, res) => {
         const file = await CourseAndContentFile.findAll({
             where: {
                 contentId: req.params.id,
-                deletedAt: { [Op.gte]: courseContent.deletedAt },
+                deletedAt: { [Op.lte]: courseContent.deletedAt },
                 fieldName: "ContentFile"
             },
             order: [

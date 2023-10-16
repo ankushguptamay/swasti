@@ -1,21 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    const Discount = sequelize.define("discounts", {
+    const StudentProfile = sequelize.define("studentProfiles", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        discountTitle: {
+        originalName: {
             type: DataTypes.STRING
         },
-        discountNumber: {
-            type: DataTypes.TEXT
+        path: {
+            type: DataTypes.STRING(1234)
         },
-        discountInPercent: {
-            type: DataTypes.STRING
-        },
-        createrId: {
-            type: DataTypes.STRING
+        fileName: {
+            type: DataTypes.STRING(1234)
         },
         approvalStatusByAdmin: {
             type: DataTypes.STRING,
@@ -27,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         paranoid: true
     })
-    return Discount;
+    return StudentProfile;
 }
 
 // ForiegnKey
-// createrId
+// studentId
