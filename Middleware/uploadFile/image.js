@@ -15,8 +15,10 @@ var storage = multer.diskStorage({
             cb(null, path.join(`${__dirname}/../../Resource/Course`));
         } else if (file.fieldname === "TeacherImage") {
             cb(null, path.join(`${__dirname}/../../Resource/Course`));
-        }else if (file.fieldname === "InstructorProfile") {
-            cb(null, path.join(`${__dirname}/../../Resource/InstructorProfile`));
+        } else if (file.fieldname === "InstructorProfile") {
+            cb(null, path.join(`${__dirname}/../../Resource/StudentProfile`));
+        } else if (file.fieldname === "InstructorProfile") {
+            cb(null, path.join(`${__dirname}/../../Resource/StudentProfile`));
         }
     },
     filename: (req, file, callback) => {

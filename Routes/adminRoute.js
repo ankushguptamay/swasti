@@ -5,6 +5,7 @@ const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteI
 const { getAllDeletedInstructorProfileById, getAllInstructorProfiles, approveInstructorProfile, rejectInstructorProfile } = require('../Controller/User/Instructor/instructorProfileController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
+const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { approveContent, approveCourse, rejectContent, rejectCourse, approveCourseFile, rejectCourseFile } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
@@ -48,6 +49,11 @@ admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
 admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent);
 admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
 admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
+
+admin.get("/allDeletedStudentProfile/:id", verifyAdminJWT, isAdminPresent, getAllDeletedStudentProfileById);
+admin.get("/allStudentProfiles", verifyAdminJWT, isAdminPresent, getAllStudentProfiles);
+admin.put("/approveStudentProfile/:id", verifyAdminJWT, isAdminPresent, approveStudentProfile);
+admin.put("/rejectStudentProfile/:id", verifyAdminJWT, isAdminPresent, rejectStudentProfile);
 
 // Course And Content
 // 1.Add

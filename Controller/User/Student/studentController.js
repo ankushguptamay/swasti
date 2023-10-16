@@ -1,5 +1,6 @@
 const db = require('../../../Models');
 const Student = db.student;
+const StudentProfile = db.studentProfile;
 const { loginStudent, registerStudent, changePassword } = require("../../../Middleware/Validate/validateStudent");
 const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY } = process.env;
 const jwt = require("jsonwebtoken");
@@ -215,6 +216,13 @@ exports.getStudent = async (req, res) => {
                     { id: req.student.id }, { email: req.student.email }
                 ]
             },
+            include: [{
+                model: StudentProfile,
+                as: "profile",
+                where: {
+                    approvalStatusByAdmin: "Approved"
+                }
+            }],
             attributes: { exclude: ['password'] }
         });
         // Send final success response

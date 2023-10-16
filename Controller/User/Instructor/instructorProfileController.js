@@ -24,7 +24,7 @@ exports.addInstructorProfile = async (req, res) => {
         // Final response
         res.status(200).send({
             success: true,
-            message: "Teacher Image added successfully! Wait For Admin Approval!"
+            message: "Profile image added successfully! Wait For Admin Approval!"
         });
     } catch (err) {
         res.status(500).send({
@@ -47,6 +47,7 @@ exports.getAllDeletedInstructorProfileById = async (req, res) => {
         }
         const totalProfile = await InstructorProfile.count({
             where: {
+                id: req.params.id,
                 deletedAt: { [Op.ne]: null }
             },
             paranoid: false
@@ -54,6 +55,7 @@ exports.getAllDeletedInstructorProfileById = async (req, res) => {
         // Find in database
         const deleteProfile = await InstructorProfile.findAll({
             where: {
+                id: req.params.id,
                 deletedAt: { [Op.ne]: null }
             },
             paranoid: false
@@ -190,7 +192,7 @@ exports.rejectInstructorProfile = async (req, res) => {
     }
 };
 
-exports.deleteProfile = async (req, res) => {
+exports.deleteInstructorProfile = async (req, res) => {
     try {
         const profile = await InstructorProfile.findOne({
             where: {
