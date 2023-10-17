@@ -13,6 +13,8 @@ const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAll
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
+const { createDiscount, getAllDiscountForApproval, softDeleteDiscount, hardDeleteDiscount, restoreDiscount, rejectDiscount,
+    approveDiscount, getAllDeletedDiscount, getDiscountById } = require('../Controller/Master/discountController');
 const admin = express.Router();
 
 // middleware
@@ -96,5 +98,14 @@ admin.put("/restoreFile/:id", verifyAdminJWT, isAdminPresent, restoreFile); // f
 admin.post("/createCourseCategory", verifyAdminJWT, isAdminPresent, createCourseCategory);
 admin.get("/courseCategories", verifyAdminJWT, isAdminPresent, getAllCourseCategory);
 admin.delete("/deleteCourseCategory/:id", verifyAdminJWT, isAdminPresent, deleteCourseCategory);
-
+// 2. Discount
+admin.post("/createDiscount", verifyAdminJWT, isAdminPresent, createDiscount);
+admin.get("/discountForApproval", verifyAdminJWT, isAdminPresent, getAllDiscountForApproval);
+admin.get("/deletedDiscounts", verifyAdminJWT, isAdminPresent, getAllDeletedDiscount);
+admin.get("/discount/:id", verifyAdminJWT, isAdminPresent, getDiscountById);
+admin.delete("/softDeleteDiscount/:id", verifyAdminJWT, isAdminPresent, softDeleteDiscount);
+admin.delete("/hardDeleteDiscount/:id", verifyAdminJWT, isAdminPresent, hardDeleteDiscount);
+admin.put("/restoreDiscount/:id", verifyAdminJWT, isAdminPresent, restoreDiscount);
+admin.put("/rejectDiscount/:id", verifyAdminJWT, isAdminPresent, rejectDiscount);
+admin.put("/approveDiscount/:id", verifyAdminJWT, isAdminPresent, approveDiscount);
 module.exports = admin;

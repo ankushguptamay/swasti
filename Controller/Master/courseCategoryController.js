@@ -81,10 +81,10 @@ exports.deleteCourseCategory = async (req, res) => {
                 id: req.params.id
             }
         });
-        if (isPresent) {
+        if (!isPresent) {
             return res.status(400).send({
                 success: false,
-                message: 'This course category present!'
+                message: 'This course category is not present!'
             });
         }
         // delete Course category
