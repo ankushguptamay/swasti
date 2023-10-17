@@ -12,6 +12,7 @@ const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Co
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse, getSoftDeletdContentByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
+const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
 const admin = express.Router();
 
 // middleware
@@ -86,8 +87,14 @@ admin.delete("/hardDeleteContent/:id", verifyAdminJWT, isAdminPresent, hardDelet
 admin.delete("/hardDeleteCourse/:id", verifyAdminJWT, isAdminPresent, hardDeleteCourse); // courseId
 admin.delete("/hardDeleteFile/:id", verifyAdminJWT, isAdminPresent, hardDeleteFile); // fileId
 // 5.Restore
-admin.put("/restoreCourse/:id", verifyAdminJWT, isAdminPresent, restoreCourse);  // courseId
+admin.put("/restoreCourse/:id", verifyAdminJWT, isAdminPresent, restoreCourse); // courseId
 admin.put("/restoreContent/:id", verifyAdminJWT, isAdminPresent, restoreContent); // contentId
 admin.put("/restoreFile/:id", verifyAdminJWT, isAdminPresent, restoreFile); // fileId
+
+// Master
+// 1. CourseCategory
+admin.post("/createCourseCategory", verifyAdminJWT, isAdminPresent, createCourseCategory);
+admin.get("/courseCategories", verifyAdminJWT, isAdminPresent, getAllCourseCategory);
+admin.delete("/deleteCourseCategory/:id", verifyAdminJWT, isAdminPresent, deleteCourseCategory);
 
 module.exports = admin;

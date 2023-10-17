@@ -1,7 +1,7 @@
 const db = require('../../../Models');
 const { Op } = require("sequelize");
-const { } = require("../../Middleware/Validate/valiadteCourse");
-const { deleteSingleFile } = require("../../Util/deleteFile")
+const { } = require("../../../Middleware/Validate/validateStudent");
+const { deleteSingleFile } = require("../../../Util/deleteFile")
 const StudentProfile = db.studentProfile;
 
 exports.addStudentProfile = async (req, res) => {

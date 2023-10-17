@@ -5,10 +5,10 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        category: {
+        categoryName: {
             type: DataTypes.STRING
         },
-        categoryNumber: {
+        courseCategoryNumber: {
             type: DataTypes.TEXT
         }
     })

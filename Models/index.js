@@ -28,6 +28,7 @@ db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
 
 // Master
 db.discount = require('./Master/discountModel.js')(sequelize, Sequelize);
+db.courseCategory = require('./Master/courseCategoryModel.js')(sequelize, Sequelize);
 
 // Employee
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);

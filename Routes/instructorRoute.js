@@ -4,6 +4,7 @@ const { addInstructorProfile, deleteInstructorProfile } = require('../Controller
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
+const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const instructor = express.Router();
 
 // middleware
@@ -38,5 +39,9 @@ instructor.get("/rejectedCourse", verifyInstructorJWT, isInstructorPresent, getA
 instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourseForInstructor);
 instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContentForInstructor);
 instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
+
+// Master
+// Coursecategory
+instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, getAllCourseCategory);
 
 module.exports = instructor;
