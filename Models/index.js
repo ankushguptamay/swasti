@@ -21,6 +21,7 @@ db.sequelize = sequelize;
 db.admin = require('./Admin/adminModel.js')(sequelize, Sequelize);
 
 // Course
+db.course_Student_Junction = require('./Course/JunctionTable/course_Student_JunctionModel.js')(sequelize, Sequelize);
 db.course_Discount_Junction = require('./Course/JunctionTable/Course_Discount_JunctionModel.js')(sequelize, Sequelize);
 db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequelize);
 db.courseAndContentFile = require('./Course/courseAndContentFileModel.js')(sequelize, Sequelize);
@@ -61,6 +62,13 @@ db.course.hasMany(db.courseAndContentFile, { foreignKey: 'courseId', as: 'files'
 
 // Content's Association with file
 db.courseContent.hasMany(db.courseAndContentFile, { foreignKey: 'contentId', as: 'files' });
+
+// Course's Association with student
+db.course.hasMany(db.course_Student_Junction, { foreignKey: 'courseId', as: 'course_Student_Junction' });
+db.course_Student_Junction.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
+
+db.student.hasMany(db.course_Student_Junction, { foreignKey: 'studentId', as: 'course_Student_Junction' });
+db.course_Student_Junction.belongsTo(db.student, { foreignKey: 'studentId', as: 'student' });
 
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(

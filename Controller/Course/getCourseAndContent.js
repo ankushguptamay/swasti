@@ -4,6 +4,7 @@ const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
 const Course_Discount_Junctions = db.course_Discount_Junction;
+const Course_Student_Junctions = db.course_Student_Junction;
 const Discount = db.discount;
 
 // For Admin and Instructor
@@ -386,7 +387,20 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
 
 exports.getCourseByIdForStudent = async (req, res) => {
     try {
-        // Find in database
+        // Check is student has this course
+        const isCourseHas = await Course_Student_Junctions.findOne({
+            where: {
+                courseId: req.params.id,
+                studentId: req.student.id
+            }
+        });
+        if (!isCourseHas) {
+            return res.status(400).send({
+                success: false,
+                message: "Purchase this!"
+            });
+        }
+        // Find course in database
         const course = await Course.findOne({
             where: {
                 id: req.params.id,
@@ -413,17 +427,10 @@ exports.getCourseByIdForStudent = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
                 }
-            }, {
-                model: Course_Discount_Junctions,
-                as: 'course_Discount_Junction',
-                include: [{
-                    model: Discount,
-                    as: 'discount'
-                }]
             }]
         });
         if (!course) {
-            res.status(400).send({
+            return res.status(400).send({
                 success: false,
                 message: "Course is not present!"
             });

@@ -2,6 +2,7 @@ const express = require('express');
 const { register, login, getStudent, changePassword } = require('../Controller/User/Student/studentController');
 const { addStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
+const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
 const student = express.Router();
 
 // middleware
@@ -19,6 +20,7 @@ student.post("/addProfile", verifyStudentJWT, isStudentPresent, uploadImage.sing
 student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
 
 student.get("/courses", verifyStudentJWT, isStudentPresent, getAllApprovedCourseForStudent);
-// student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdForStudent);
+student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);
+student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdForStudent);
 
 module.exports = student;

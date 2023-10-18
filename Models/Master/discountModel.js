@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             },
             defaultValue: 'Pending'
+        },
+        validTill: {
+            type: DataTypes.STRING
         }
     }, {
         paranoid: true

@@ -1,12 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-    const Course_Discount_Junctions = sequelize.define("Course_Discount_Junctions", {
+    const Course_Student_Junctions = sequelize.define("Course_Student_Junctions", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
-        },
-        createrId: {
-            type: DataTypes.STRING
         },
         validTill: {
             type: DataTypes.STRING
@@ -14,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         paranoid: true
     })
-    return Course_Discount_Junctions;
+    return Course_Student_Junctions;
 }
 
 // Foriegnkey
 // courseId
-// discountId
+// studentId
