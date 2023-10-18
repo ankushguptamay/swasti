@@ -5,13 +5,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        discountTitle: {
-            type: DataTypes.STRING
-        },
-        discountNumber: {
-            type: DataTypes.TEXT
-        },
-        discountInPercent: {
+        createrId: {
             type: DataTypes.STRING
         }
     })

@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Course_Discount_Junctions = db.course_Discount_Junction;
+const Discount = db.discount;
 
 // For Admin and Instructor
 exports.getAllApprovedCourse = async (req, res) => {
@@ -354,6 +356,13 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
                 }
+            }, {
+                model: Course_Discount_Junctions,
+                as: 'course_Discount_Junction',
+                include: [{
+                    model: Discount,
+                    as: 'discount'
+                }]
             }],
             order: [
                 ['createdAt', 'ASC']
@@ -404,6 +413,13 @@ exports.getCourseByIdForStudent = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
                 }
+            }, {
+                model: Course_Discount_Junctions,
+                as: 'course_Discount_Junction',
+                include: [{
+                    model: Discount,
+                    as: 'discount'
+                }]
             }]
         });
         if (!course) {

@@ -1,9 +1,10 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
-const { courseValidation } = require("../../Middleware/Validate/valiadteCourse");
+const { } = require("../../Middleware/Validate/valiadteCourse");
 const { deleteSingleFile } = require("../../Util/deleteFile")
 const Course = db.course;
-const CourseContent = db.courseContent;
+const Course_Discount_Junctions = db.course_Discount_Junction;
+const Discount = db.discount;
 
 // exports.updateCourse = async (req, res) => {
 //     try {
@@ -51,3 +52,63 @@ const CourseContent = db.courseContent;
 //         });
 //     }
 // };
+
+exports.addDiscountToCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const discountId = req.body.id;
+        // find discount
+        const discount = await Discount.findOne({
+            where: {
+                id: discountId,
+                approvalStatusByAdmin: "Approved"
+            }
+        });
+        if (!discount) {
+            return res.status(400).send({
+                success: false,
+                message: "Either discount is not present or not approved!"
+            });
+        }
+        // find course
+        const course = await Course.findOne({
+            where: {
+                id: courseId
+            }
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "Course is not present!"
+            });
+        }
+        // Entry in junction table
+        if (req.instructor) {
+            await Course_Discount_Junctions.create({
+                createrId: req.instructor.id,
+                discountId: discountId,
+                courseId: courseId
+            });
+        } else if (req.admin) {
+            await Course_Discount_Junctions.create({
+                createrId: req.admin.id,
+                discountId: discountId,
+                courseId: courseId
+            });
+        } else {
+            return res.status(400).send({
+                success: true,
+                message: "You can not add discount to course!"
+            });
+        }
+        res.status(200).send({
+            success: true,
+            message: "Discount added to course successfully!"
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
