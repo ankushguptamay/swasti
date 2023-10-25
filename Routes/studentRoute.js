@@ -2,7 +2,8 @@ const express = require('express');
 const { register, login, getStudent, changePassword } = require('../Controller/User/Student/studentController');
 const { addStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
-const { giveInstructorReview, deleteReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
+const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
+const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
 const student = express.Router();
 
@@ -27,6 +28,11 @@ student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdFor
 student.post("/giveInstructorReview/:id", verifyStudentJWT, isStudentPresent, giveInstructorReview); //id = instructorId
 student.get("/getInstructorAverageRating/:id", verifyStudentJWT, isStudentPresent, getInstructorAverageRating); //id = instructorId
 student.get("/getInstructorReview/:id", verifyStudentJWT, isStudentPresent, getInstructorReview); //id = instructorId
-student.delete("/deleteReview/:id", verifyStudentJWT, isStudentPresent, deleteReview); //id = review Id
+student.delete("/deleteInstructorReview/:id", verifyStudentJWT, isStudentPresent, deleteInstructorReview); //id = review Id
+
+student.post("/giveCourseReview/:id", verifyStudentJWT, isStudentPresent, giveCourseReview); //id = courseId
+student.get("/getCourseReview/:id", verifyStudentJWT, isStudentPresent, getCourseReview); //id = courseId
+student.get("/getCourseAverageRating/:id", verifyStudentJWT, isStudentPresent, getCourseAverageRating); //id = courseId
+student.delete("/deleteCourseReview/:id", verifyStudentJWT, isStudentPresent, deleteCourseReview); //id = review Id
 
 module.exports = student;

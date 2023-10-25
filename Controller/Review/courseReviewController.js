@@ -1,9 +1,11 @@
 const { Op } = require("sequelize");
 const db = require('../../Models');
-const InstructorReview = db.instructorReview;
+const CourseReview = db.courseReview;
+const Course_Student_Junctions = db.course_Student_Junction;
+const Course = db.course;
 const { reviewValidation } = require("../../Middleware/Validate/validateReview");
 
-exports.giveInstructorReview = async (req, res) => {
+exports.giveCourseReview = async (req, res) => {
     try {
         // Validate Body
         const { error } = reviewValidation(req.body);
@@ -11,12 +13,25 @@ exports.giveInstructorReview = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         const { reviewerName, reviewMessage, reviewStar } = req.body;
+        // Check is student has this course
+        const isCourseHas = await Course_Student_Junctions.findOne({
+            where: {
+                courseId: req.params.id,
+                studentId: req.student.id
+            }
+        });
+        if (!isCourseHas) {
+            return res.status(400).send({
+                success: false,
+                message: "Purchase this course!"
+            });
+        }
         // store in database
-        await InstructorReview.create({
+        await CourseReview.create({
             reviewMessage: reviewMessage,
             reviewStar: parseInt(reviewStar),
             reviewerName: reviewerName,
-            instructorId: req.params.id,
+            courseId: req.params.id,
             reviewerId: req.student.id
         });
         // Final response
@@ -32,22 +47,11 @@ exports.giveInstructorReview = async (req, res) => {
     }
 };
 
-exports.getInstructorAverageRating = async (req, res) => {
+exports.getCourseAverageRating = async (req, res) => {
     try {
-        let condition;
-        // Instructor
-        if (req.instructor) {
-            condition = { instructorId: req.instructor.id };
-        } else if (req.params.id) {
-            condition = { instructorId: req.params.id };
-        } else {
-            return res.status(400).send({
-                success: false
-            });
-        }
         // find in database
-        const rating = await InstructorReview.findAll({
-            where: condition,
+        const rating = await reviewValidation.findAll({
+            where: { courseId: req.params.id },
             attributes: [[db.sequelize.fn('AVG', db.sequelize.col('reviewStar')), 'averageRating']],
             raw: true
         });
@@ -65,7 +69,7 @@ exports.getInstructorAverageRating = async (req, res) => {
     }
 };
 
-exports.getInstructorReview = async (req, res) => {
+exports.getCourseReview = async (req, res) => {
     try {
         const { page, limit, search } = req.query;
         // Pagination
@@ -77,7 +81,7 @@ exports.getInstructorReview = async (req, res) => {
             currentPage = parseInt(page);
         }
         // Search 
-        const condition = [];
+        const condition = [{ courseId: req.params.id }];
         if (search) {
             condition.push({
                 [Op.or]: [
@@ -85,28 +89,14 @@ exports.getInstructorReview = async (req, res) => {
                 ]
             })
         }
-        // Instructor
-        if (req.instructor) {
-            condition.push({
-                instructorId: req.instructor.id
-            });
-        } else if (req.params.id) {
-            condition.push({
-                instructorId: req.params.id
-            });
-        } else {
-            return res.status(400).send({
-                success: false
-            });
-        }
         // Count All Review
-        const totalReview = await InstructorReview.count({
+        const totalReview = await CourseReview.count({
             where: {
                 [Op.and]: condition
             }
         });
         // Get All Review
-        const review = await InstructorReview.findAll({
+        const review = await CourseReview.findAll({
             limit: recordLimit,
             offset: offSet,
             where: {
@@ -132,10 +122,10 @@ exports.getInstructorReview = async (req, res) => {
     }
 };
 
-exports.deleteInstructorReview = async (req, res) => {
+exports.deleteCourseReview = async (req, res) => {
     try {
         // find in database
-        const review = await InstructorReview.findOne({
+        const review = await CourseReview.findOne({
             where: { id: req.params.id }
         });
         if (!review) {
@@ -145,7 +135,11 @@ exports.deleteInstructorReview = async (req, res) => {
             });
         }
         if (req.instructor) {
-            if (review.instructorId === req.instructor.id) {
+            const isInstructorCourse = await Course.findOne({
+                createrId: req.instructor.id,
+                id: review.courseId
+            });
+            if (isInstructorCourse) {
                 await review.destroy();
             } else {
                 return res.status(400).send({

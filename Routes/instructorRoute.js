@@ -1,13 +1,14 @@
 const express = require('express');
 const { register, login, getInstructor, changePassword } = require('../Controller/User/Instructor/instructorController');
 const { addInstructorProfile, deleteInstructorProfile } = require('../Controller/User/Instructor/instructorProfileController');
-const { deleteReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
+const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { addDiscountToCourse } = require('../Controller/Course/updateCourseAndContent');
 const { createDiscount, softDeleteDiscount, getAllInstructorDiscount } = require('../Controller/Master/discountController');
+const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const instructor = express.Router();
 
 // middleware
@@ -57,5 +58,10 @@ instructor.get("/instructorDiscount", verifyInstructorJWT, isInstructorPresent, 
 // 1. Instructor Review
 instructor.get("/getInstructorAverageRating", verifyInstructorJWT, isInstructorPresent, getInstructorAverageRating);
 instructor.get("/getInstructorReview", verifyInstructorJWT, isInstructorPresent, getInstructorReview);
-instructor.delete("/deleteReview/:id", verifyInstructorJWT, isInstructorPresent, deleteReview); //id = review Id
+instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstructorPresent, deleteInstructorReview); //id = review Id
+// 2. Course Review
+instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorPresent, getCourseReview); // id = courseId
+instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorPresent, getCourseAverageRating); // id = courseId
+instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorPresent, deleteCourseReview); //id = review Id
+
 module.exports = instructor;
