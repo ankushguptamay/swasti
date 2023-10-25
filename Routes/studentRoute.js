@@ -2,6 +2,7 @@ const express = require('express');
 const { register, login, getStudent, changePassword } = require('../Controller/User/Student/studentController');
 const { addStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
+const { giveInstructorReview, deleteReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
 const student = express.Router();
 
@@ -22,5 +23,10 @@ student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteS
 student.get("/courses", verifyStudentJWT, isStudentPresent, getAllApprovedCourseForStudent);
 student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);
 student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdForStudent);
+
+student.post("/giveInstructorReview/:id", verifyStudentJWT, isStudentPresent, giveInstructorReview); //id = instructorId
+student.get("/getInstructorAverageRating/:id", verifyStudentJWT, isStudentPresent, getInstructorAverageRating); //id = instructorId
+student.get("/getInstructorReview/:id", verifyStudentJWT, isStudentPresent, getInstructorReview); //id = instructorId
+student.delete("/deleteReview/:id", verifyStudentJWT, isStudentPresent, deleteReview); //id = review Id
 
 module.exports = student;

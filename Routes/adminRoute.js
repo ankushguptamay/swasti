@@ -12,6 +12,7 @@ const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Co
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingCourse, getAllRejectedCourse, getSoftDeletdContentByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { addDiscountToCourse } = require('../Controller/Course/updateCourseAndContent');
+const { deleteReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { createDiscount, getAllDiscountForApproval, softDeleteDiscount, hardDeleteDiscount, restoreDiscount, rejectDiscount,
@@ -110,4 +111,10 @@ admin.delete("/hardDeleteDiscount/:id", verifyAdminJWT, isAdminPresent, hardDele
 admin.put("/restoreDiscount/:id", verifyAdminJWT, isAdminPresent, restoreDiscount);
 admin.put("/rejectDiscount/:id", verifyAdminJWT, isAdminPresent, rejectDiscount);
 admin.put("/approveDiscount/:id", verifyAdminJWT, isAdminPresent, approveDiscount);
+
+// Review
+// 1. Instructor Review
+admin.get("/getInstructorReview/:id", verifyAdminJWT, isAdminPresent, getInstructorReview); //id = instructorId
+admin.get("/getInstructorAverageRating/:id", verifyAdminJWT, isAdminPresent, getInstructorAverageRating);  //id = instructorId
+admin.delete("/deleteReview/:id", verifyAdminJWT, isAdminPresent, deleteReview); //id = review Id
 module.exports = admin;
