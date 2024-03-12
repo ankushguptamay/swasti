@@ -264,9 +264,7 @@ exports.getAllInstructor = async (req, res) => {
             currentPage = parseInt(page);
         }
         // Search 
-        const condition = [{
-            deletedAt: { [Op.ne]: null }
-        }];
+        const condition = [];
         if (search) {
             condition.push({
                 [Op.or]: [
