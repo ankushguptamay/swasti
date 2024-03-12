@@ -19,6 +19,7 @@ db.sequelize = sequelize;
 
 // Admin
 db.admin = require('./Admin/adminModel.js')(sequelize, Sequelize);
+db.emailCredential = require('./Admin/bravoEmailCredentialModel.js')(sequelize, Sequelize);
 
 // Course
 db.course_Student_Junction = require('./Course/JunctionTable/course_Student_JunctionModel.js')(sequelize, Sequelize);
@@ -35,9 +36,10 @@ db.courseCategory = require('./Master/courseCategoryModel.js')(sequelize, Sequel
 db.instructorReview = require('./Review/instructorReviewModel.js')(sequelize, Sequelize);
 db.courseReview = require('./Review/courseReviewModel.js')(sequelize, Sequelize);
 
-// Employee
+// Instructor
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
 db.instructorProfile = require('./User/Instructor/insturctorProfileModel.js')(sequelize, Sequelize);
+db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 
 // Student
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
@@ -104,5 +106,19 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     as: "leads"
 // }
 // );
+// db.emailCredential.findOne({
+//     where: {
+//         email: ""
+//     }
+// }).then((res) => {
+//     console.log(res);
+//     if (!res) {
+//         db.emailCredential.create({
+//             email: "",
+//             plateForm: "BREVO",
+//             EMAIL_API_KEY: ""
+//         });
+//     }
+// }).catch((err) => { console.log(err) });
 
 module.exports = db;

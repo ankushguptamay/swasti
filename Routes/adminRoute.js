@@ -122,4 +122,5 @@ admin.delete("/deleteInstructorReview/:id", verifyAdminJWT, isAdminPresent, dele
 admin.get("/getCourseReview/:id", verifyAdminJWT, isAdminPresent, getCourseReview); //id = courseId
 admin.get("/getCourseAverageRating/:id", verifyAdminJWT, isAdminPresent, getCourseAverageRating);  //id = courseId
 admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCourseReview); //id = review Id
+
 module.exports = admin;

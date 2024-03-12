@@ -54,6 +54,8 @@ exports.getAllDeletedInstructorProfileById = async (req, res) => {
         });
         // Find in database
         const deleteProfile = await InstructorProfile.findAll({
+            limit: limit,
+            offset: offSet,
             where: {
                 id: req.params.id,
                 deletedAt: { [Op.ne]: null }
@@ -101,6 +103,8 @@ exports.getAllInstructorProfiles = async (req, res) => {
         });
         // Find in database
         const profile = await InstructorProfile.findAll({
+            limit: limit,
+            offset: offSet,
             where: {
                 [Op.and]: condition
             }

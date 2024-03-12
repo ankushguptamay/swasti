@@ -192,29 +192,29 @@ exports.rejectStudentProfile = async (req, res) => {
     }
 };
 
-exports.deleteStudentProfile = async (req, res) => {
-    try {
-        const profile = await StudentProfile.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!profile) {
-            return res.status(400).send({
-                success: true,
-                message: "Profile photo is not present!",
-            });
-        }
-        await profile.destroy();
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Profile photo deleted successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
+// exports.deleteStudentProfile = async (req, res) => {
+//     try {
+//         const profile = await StudentProfile.findOne({
+//             where: {
+//                 id: req.params.id
+//             }
+//         });
+//         if (!profile) {
+//             return res.status(400).send({
+//                 success: true,
+//                 message: "Profile photo is not present!",
+//             });
+//         }
+//         await profile.destroy();
+//         // Final response
+//         res.status(200).send({
+//             success: true,
+//             message: "Profile photo deleted successfully!"
+//         });
+//     } catch (err) {
+//         res.status(500).send({
+//             success: false,
+//             message: err.message
+//         });
+//     }
+// };

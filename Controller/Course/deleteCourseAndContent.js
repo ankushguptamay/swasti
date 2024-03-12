@@ -21,33 +21,19 @@ exports.softDeleteCourseForInstructor = async (req, res) => {
             });
         }
         // Soft Delete Files
-        const file = await CourseAndContentFile.findAll({
+        await CourseAndContentFile.destroy({
             where: {
                 courseId: req.params.id
-            },
-            order: [
-                ['createdAt', 'DESC']
-            ]
-        });
-        if (file.length > 0) {
-            for (let i = 0; i < file.length; i++) {
-                await file[i].destroy();
             }
-        }
+        });
+
         // Soft Delete Content
-        const content = await CourseContent.findAll({
+        await CourseContent.destroy({
             where: {
                 courseId: req.params.id
-            },
-            order: [
-                ['createdAt', 'DESC']
-            ]
-        });
-        if (content.length > 0) {
-            for (let i = 0; i < content.length; i++) {
-                await content[i].destroy();
             }
-        }
+        });
+
         // Soft Delete
         await course.destroy();
         // Final Response
@@ -78,30 +64,18 @@ exports.softDeleteCourseForAdmin = async (req, res) => {
             });
         }
         // Soft Delete Files
-        const file = await CourseAndContentFile.findAll({
+        await CourseAndContentFile.destroy({
             where: {
                 courseId: req.params.id
-            },
-            order: [
-                ['createdAt', 'DESC']
-            ]
-        });
-        if (file.length > 0) {
-            for (let i = 0; i < file.length; i++) {
-                await file[i].destroy();
             }
-        }
+        });
+
         // Soft Delete Content
-        const content = await CourseContent.findAll({
+        await CourseContent.destroy({
             where: {
                 courseId: req.params.id
             }
         });
-        if (content.length > 0) {
-            for (let i = 0; i < content.length; i++) {
-                await content[i].destroy();
-            }
-        }
         // If this course is not created by admin then some notification should go to admin
         // Soft Delete
         await course.destroy();
@@ -304,17 +278,13 @@ exports.hardDeleteCourse = async (req, res) => {
             }
         }
         // Hard Delete Content
-        const content = await CourseContent.findAll({
+        await CourseContent.destroy({
             where: {
                 courseId: req.params.id
             },
-            paranoid: false
+            paranoid: false,
+            force: true
         });
-        if (content.length > 0) {
-            for (let i = 0; i < content.length; i++) {
-                await content[i].destroy({ force: true });
-            }
-        }
         // Hard Delete Course
         await course.destroy({ force: true });
         // Final Response

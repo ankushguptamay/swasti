@@ -114,35 +114,35 @@ exports.addDiscountToCourse = async (req, res) => {
     }
 };
 
-exports.studentToCourse = async (req, res) => {
-    try {
-        const courseId = req.params.id;
-        const studentId = req.student.id;
-        // find course
-        const course = await Course.findOne({
-            where: {
-                id: courseId
-            }
-        });
-        if (!course) {
-            return res.status(400).send({
-                success: false,
-                message: "Course is not present!"
-            });
-        }
-        // Entry in junction table
-        await Course_Student_Junctions.create({
-            studentId: studentId,
-            courseId: courseId
-        });
-        res.status(200).send({
-            success: true,
-            message: "Course added to Student successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
+// exports.studentToCourse = async (req, res) => {
+//     try {
+//         const courseId = req.params.id;
+//         const studentId = req.student.id;
+//         // find course
+//         const course = await Course.findOne({
+//             where: {
+//                 id: courseId
+//             }
+//         });
+//         if (!course) {
+//             return res.status(400).send({
+//                 success: false,
+//                 message: "Course is not present!"
+//             });
+//         }
+//         // Entry in junction table
+//         await Course_Student_Junctions.create({
+//             studentId: studentId,
+//             courseId: courseId
+//         });
+//         res.status(200).send({
+//             success: true,
+//             message: "Course added to Student successfully!"
+//         });
+//     } catch (err) {
+//         res.status(500).send({
+//             success: false,
+//             message: err.message
+//         });
+//     }
+// };

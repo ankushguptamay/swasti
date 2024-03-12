@@ -256,7 +256,7 @@ exports.getAllStudent = async (req, res) => {
             condition.push({
                 [Op.or]: [
                     { name: { [Op.substring]: search } },
-                    { eamil: { [Op.substring]: search } },
+                    { email: { [Op.substring]: search } },
                     { studentCode: { [Op.substring]: search } }
                 ]
             })

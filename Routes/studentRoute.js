@@ -19,10 +19,10 @@ student.get("/student", verifyStudentJWT, isStudentPresent, getStudent);
 student.put("/changePassword", verifyStudentJWT, isStudentPresent, changePassword);
 
 student.post("/addProfile", verifyStudentJWT, isStudentPresent, uploadImage.single("StudentProfile"), addStudentProfile);
-student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
+// student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
 
 student.get("/courses", verifyStudentJWT, isStudentPresent, getAllApprovedCourseForStudent);
-student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);
+// student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);
 student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdForStudent);
 
 student.post("/giveInstructorReview/:id", verifyStudentJWT, isStudentPresent, giveInstructorReview); //id = instructorId

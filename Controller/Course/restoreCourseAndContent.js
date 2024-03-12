@@ -21,37 +21,21 @@ exports.restoreCourse = async (req, res) => {
             });
         }
         // Restore Content, This will restore content whose delete time is greater and equal to course delete time
-        const content = await CourseContent.findAll({
+        await CourseContent.restore({
             where: {
                 courseId: req.params.id,
                 deletedAt: { [Op.lte]: course.deletedAt }
             },
-            order: [
-                ['createdAt', 'DESC']
-            ],
             paranoid: false
         });
-        if (content.length > 0) {
-            for (let i = 0; i < content.length; i++) {
-                await content[i].restore();
-            }
-        }
         // Restore File, This will restore file whose delete time is greater and equal to course delete time
-        const file = await CourseAndContentFile.findAll({
+        await CourseAndContentFile.restore({
             where: {
                 courseId: req.params.id,
                 deletedAt: { [Op.lte]: course.deletedAt }
             },
-            order: [
-                ['createdAt', 'DESC']
-            ],
             paranoid: false
         });
-        if (file.length > 0) {
-            for (let i = 0; i < file.length; i++) {
-                await file[i].restore();
-            }
-        }
         // Restore Course
         await course.restore();
         // Final Response
@@ -84,22 +68,15 @@ exports.restoreContent = async (req, res) => {
             });
         }
         // Restore File, This will restore file whose delete time is greater and equal to content delete time
-        const file = await CourseAndContentFile.findAll({
+        const file = await CourseAndContentFile.restore({
             where: {
                 contentId: req.params.id,
                 deletedAt: { [Op.lte]: courseContent.deletedAt },
                 fieldName: "ContentFile"
             },
-            order: [
-                ['createdAt', 'DESC']
-            ],
             paranoid: false
         });
-        if (file.length > 0) {
-            for (let i = 0; i < file.length; i++) {
-                await file[i].restore();
-            }
-        }
+
         // Restore Content
         await courseContent.restore();
         // Final Response
