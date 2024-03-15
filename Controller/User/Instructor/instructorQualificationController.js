@@ -129,6 +129,12 @@ exports.restoreQualificationAdmin = async (req, res) => {
                 message: "This qualification is not present!",
             });
         }
+        if (qualification.deletedThrough === "Instructor" || qualification.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: true,
+                message: "Warning! This qualification is not deleted by Vedam!",
+            });
+        }
         // Restore
         await qualification.restore();
         // Final response
