@@ -135,6 +135,7 @@ exports.restoreQualificationAdmin = async (req, res) => {
                 message: "Warning! This qualification is not deleted by Vedam!",
             });
         }
+        await qualification.update({ ...qualification, deletedThrough: null });
         // Restore
         await qualification.restore();
         // Final response
