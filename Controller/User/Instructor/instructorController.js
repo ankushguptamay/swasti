@@ -522,7 +522,6 @@ exports.getInstructorForAdmin = async (req, res) => {
     }
 }
 
-
 exports.registerInstructor = async (req, res) => {
     try {
         // Validate Body
@@ -537,12 +536,6 @@ exports.registerInstructor = async (req, res) => {
                 email: req.body.email
             }
         });
-        if (isInstructor.deletedAt !== null) {
-            return res.status(400).send({
-                success: false,
-                message: "Instructor is blocked by Vedam!"
-            });
-        }
         if (isInstructor) {
             return res.status(400).send({
                 success: false,
