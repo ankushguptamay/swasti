@@ -1,6 +1,6 @@
 const db = require('../../../Models');
 const { Op } = require("sequelize");
-const { addQualification} = require("../../../Middleware/Validate/validateInstructor");
+const { addQualification, changeQualificationStatus } = require("../../../Middleware/Validate/validateInstructor");
 const { deleteSingleFile } = require("../../../Util/deleteFile")
 const InstructorQualification = db.insturctorQualification;
 const Instructor = db.instructor;
@@ -11,7 +11,7 @@ exports.addQualification = async (req, res) => {
         if (!req.file) {
             return res.status(400).send({
                 success: false,
-                message: "Please..upload a file!"
+                message: "Please upload a file!"
             });
         }
         // Validate Body
@@ -49,112 +49,34 @@ exports.addQualification = async (req, res) => {
     }
 };
 
-exports.getAllDeletedInstructorProfileById = async (req, res) => {
+exports.changeQualificationStatus = async (req, res) => {
     try {
-        const { page, limit } = req.query;
-        // Pagination
-        const recordLimit = parseInt(limit) || 10;
-        let offSet = 0;
-        let currentPage = 1;
-        if (page) {
-            offSet = (parseInt(page) - 1) * recordLimit;
-            currentPage = parseInt(page);
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
         }
-        const totalProfile = await InstructorProfile.count({
-            where: {
-                id: req.params.id,
-                deletedAt: { [Op.ne]: null }
-            },
-            paranoid: false
-        });
-        // Find in database
-        const deleteProfile = await InstructorProfile.findAll({
-            limit: limit,
-            offset: offSet,
-            where: {
-                id: req.params.id,
-                deletedAt: { [Op.ne]: null }
-            },
-            paranoid: false
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Delted Profile fetched successfully!",
-            totalPage: Math.ceil(totalProfile / recordLimit),
-            currentPage: currentPage,
-            data: deleteProfile
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.approveInstructorProfile = async (req, res) => {
-    try {
-        const profile = await InstructorProfile.findOne({
+        const { approvalStatusByAdmin } = req.body;
+        const qualification = await InstructorQualification.findOne({
             where: {
                 id: req.params.id
             }
         });
-        if (!profile) {
+        if (!qualification) {
             return res.status(400).send({
                 success: true,
-                message: "Profile photo is not present!",
+                message: "This qualification is not present!",
             });
         }
-        const previousProfile = await InstructorProfile.findAll({
-            where: {
-                id: req.params.id,
-                createdAt: { [Op.lt]: profile.createdAt }
-            }
-        });
-        if (previousProfile.length > 0) {
-            for (let i = 0; i < previousProfile.length; i++) {
-                await previousProfile[i].destroy();
-            }
-        }
-        await profile.update({
-            ...profile,
-            approvalStatusByAdmin: "Approved"
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Profile photo approved successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
 
-exports.rejectInstructorProfile = async (req, res) => {
-    try {
-        const profile = await InstructorProfile.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!profile) {
-            return res.status(400).send({
-                success: true,
-                message: "Profile photo is not present!",
-            });
-        }
-        await profile.update({
+        await qualification.update({
             ...profile,
-            approvalStatusByAdmin: "Rejected"
+            approvalStatusByAdmin: approvalStatusByAdmin
         });
         // Final response
         res.status(200).send({
             success: true,
-            message: "Profile photo rejected successfully!"
+            message: `Qualification status '${approvalStatusByAdmin}' changed successfully`
         });
     } catch (err) {
         res.status(500).send({
@@ -177,11 +99,133 @@ exports.softDeleteQualificationAdmin = async (req, res) => {
                 message: "This qualification is not present!",
             });
         }
+        await qualification.update({ ...qualification, deletedThrough: "Admin" });
         await qualification.destroy();
         // Final response
         res.status(200).send({
             success: true,
             message: "Qualification soft deleted successfully!"
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreQualificationAdmin = async (req, res) => {
+    try {
+        const qualification = await InstructorQualification.findOne({
+            paranoid: false,
+            where: {
+                id: req.params.id,
+                deletedAt: { [Op.ne]: null }
+            }
+        });
+        if (!qualification) {
+            return res.status(400).send({
+                success: true,
+                message: "This qualification is not present!",
+            });
+        }
+        // Restore
+        await qualification.restore();
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Qualification restored successfully!"
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.updateQualification = async (req, res) => {
+    try {
+        // File should be exist
+        if (!req.file) {
+            return res.status(400).send({
+                success: false,
+                message: "Please..upload a file!"
+            });
+        }
+        // Validate Body
+        const { error } = addQualification(req.body);
+        if (error) {
+            deleteSingleFile(req.file.path);
+            return res.status(400).send(error.details[0].message);
+        }
+        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber } = req.body;
+        // Find in database
+        const qualification = await InstructorQualification.findOne({
+            where: {
+                id: req.params.id,
+                instructorId: req.instructor.id
+            }
+        });
+        if (!qualification) {
+            deleteSingleFile(req.file.path);
+            return res.status(400).send({
+                success: true,
+                message: "This qualification is not present!",
+            });
+        }
+        await InstructorQualification.create({
+            courseType: courseType,
+            course: course,
+            university_institute_name: university_institute_name,
+            year: year,
+            marksType: marksType,
+            marks: marks,
+            certificationNumber: certificationNumber,
+            documentOriginalName: req.file.originalname,
+            documentPath: req.file.path,
+            documentFileName: req.file.filename,
+            instructorId: req.instructor.id,
+            approvalStatusByAdmin: "Pending"
+        });
+
+        await qualification.update({ ...qualification, deletedThrough: "ByUpdation" });
+        // soft delete 
+        await qualification.destroy();
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Qualification updated successfully!"
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// Soft Delete
+exports.deleteQualificationInstructor = async (req, res) => {
+    try {
+        const qualification = await InstructorQualification.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!qualification) {
+            return res.status(400).send({
+                success: true,
+                message: "This qualification is not present!",
+            });
+        }
+        await qualification.update({ ...qualification, deletedThrough: "Instructor" });
+        // Soft Delete
+        await qualification.destroy();
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Qualification deleted successfully!"
         });
     } catch (err) {
         res.status(500).send({

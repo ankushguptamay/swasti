@@ -127,4 +127,10 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
+// queryInterface.addColumn("instructorQualifications", "deletedThrough", {
+//     type: DataTypes.STRING, validate: {
+//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//     }
+// }).then((res) => { console.log(res) }).catch((err) => { console.log(err) });
+
 module.exports = db;

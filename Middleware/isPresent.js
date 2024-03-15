@@ -44,6 +44,33 @@ exports.isInstructorPresent = async (req, res, next) => {
     }
 }
 
+exports.isInstructorProfileComplete = async (req, res, next) => {
+    try {
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.send({
+                message: "Instructor is not present! Are you register?.. "
+            })
+        }
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.instructorType && instructor.imageFileName && instructor.socialMediaLink && instructor.bio && instructor.location) {
+            next();
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Please complete your profile!"
+            });
+        }
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}
+
 exports.isStudentPresent = async (req, res, next) => {
     try {
         const student = await Student.findOne({

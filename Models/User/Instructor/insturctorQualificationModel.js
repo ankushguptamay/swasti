@@ -41,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             },
             defaultValue: 'Pending'
+        },
+        deletedThrough: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor', 'ByUpdation']]
+            }
         }
     }, {
         paranoid: true

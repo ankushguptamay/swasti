@@ -498,7 +498,8 @@ exports.getInstructorForAdmin = async (req, res) => {
             },
             include: [{
                 model: InstructorQualification,
-                as: 'qualifications'
+                as: 'qualifications',
+                paranoid: false
             }],
             paranoid: false
         });

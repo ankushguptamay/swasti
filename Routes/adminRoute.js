@@ -1,7 +1,7 @@
 const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
-const { } = require('../Controller/User/Instructor/instructorQualificationController');
+const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin } = require('../Controller/User/Instructor/instructorQualificationController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
@@ -32,13 +32,18 @@ admin.post("/login", login);
 admin.get("/admin", verifyAdminJWT, isAdminPresent, getAdmin);
 admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
 
-// Instructor
+// Instructor Bio
 admin.get("/instructor", verifyAdminJWT, isAdminPresent, getAllInstructor);
 admin.get("/instructor/:id", verifyAdminJWT, isAdminPresent, getInstructorForAdmin);
 admin.get("/softDeletedInstructors", verifyAdminJWT, isAdminPresent, getAllSoftDeletedInstructor);
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
 admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
+
+// Instructor Qualification
+admin.put("/changeQualificationStatus/:id", verifyAdminJWT, isAdminPresent, changeQualificationStatus);
+admin.delete("/softDeleteQualification/:id", verifyAdminJWT, isAdminPresent, softDeleteQualificationAdmin);
+admin.put("/restoreQualification/:id", verifyAdminJWT, isAdminPresent, restoreQualificationAdmin);
 
 // Student
 admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);

@@ -1,6 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, verifyOTP, updateInstructor } = require('../Controller/User/Instructor/instructorController');
-const { } = require('../Controller/User/Instructor/instructorQualificationController');
+const { addQualification, updateQualification, deleteQualificationInstructor } = require('../Controller/User/Instructor/instructorQualificationController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
@@ -13,16 +13,22 @@ const instructor = express.Router();
 
 // middleware
 const { verifyInstructorJWT } = require('../Middleware/verifyJWTToken');
-const { isInstructorPresent } = require('../Middleware/isPresent');
+const { isInstructorPresent, isInstructorProfileComplete } = require('../Middleware/isPresent');
 const uploadImage = require('../Middleware/uploadFile/image');
 const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
 const uploadPDF = require('../Middleware/uploadFile/pdf');
 
+// BIO
 instructor.post("/register", register);
 instructor.post("/login", login);
 instructor.post("/verifyOTP", verifyOTP);
 instructor.get("/instructor", verifyInstructorJWT, getInstructor);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
+
+// Qualification
+instructor.post("/addQualification", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), addQualification);
+instructor.put("/updateQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), updateQualification);
+instructor.delete("/deleteQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, deleteQualificationInstructor);
 
 // Course And Content
 // 1. Add

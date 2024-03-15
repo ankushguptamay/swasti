@@ -48,3 +48,10 @@ exports.verifyOTP = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.changeQualificationStatus = (data) => {
+    const schema = joi.object().keys({
+        approvalStatusByAdmin: joi.string().valid('Pending', 'Approved', 'Rejected').required()
+    });
+    return schema.validate(data);
+}
