@@ -1,8 +1,7 @@
 const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
-const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor,
-    verifyInstructor, getAllDeletdInstructor } = require('../Controller/User/Instructor/instructorController');
-const { getAllDeletedInstructorProfileById, getAllInstructorProfiles, approveInstructorProfile, rejectInstructorProfile } = require('../Controller/User/Instructor/instructorProfileController');
+const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
+const { } = require('../Controller/User/Instructor/instructorQualificationController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
@@ -36,16 +35,10 @@ admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
 // Instructor
 admin.get("/instructor", verifyAdminJWT, isAdminPresent, getAllInstructor);
 admin.get("/instructor/:id", verifyAdminJWT, isAdminPresent, getInstructorForAdmin);
-admin.get("/deletedInstructors", verifyAdminJWT, isAdminPresent, getAllDeletdInstructor);
+admin.get("/softDeletedInstructors", verifyAdminJWT, isAdminPresent, getAllSoftDeletedInstructor);
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
-admin.put("/verifyInstructor/:id", verifyAdminJWT, isAdminPresent, verifyInstructor);
 admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
-
-admin.get("/allDeletedInstructorProfile/:id", verifyAdminJWT, isAdminPresent, getAllDeletedInstructorProfileById);
-admin.get("/allInstructorProfiles", verifyAdminJWT, isAdminPresent, getAllInstructorProfiles);
-admin.put("/approveInstructorProfile/:id", verifyAdminJWT, isAdminPresent, approveInstructorProfile);
-admin.put("/rejectInstructorProfile/:id", verifyAdminJWT, isAdminPresent, rejectInstructorProfile);
 
 // Student
 admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);

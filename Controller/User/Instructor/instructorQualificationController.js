@@ -1,30 +1,45 @@
 const db = require('../../../Models');
 const { Op } = require("sequelize");
-const { } = require("../../../Middleware/Validate/validateInstructor");
+const { addQualification} = require("../../../Middleware/Validate/validateInstructor");
 const { deleteSingleFile } = require("../../../Util/deleteFile")
-const InstructorProfile = db.instructorProfile;
+const InstructorQualification = db.insturctorQualification;
+const Instructor = db.instructor;
 
-exports.addInstructorProfile = async (req, res) => {
+exports.addQualification = async (req, res) => {
     try {
         // File should be exist
         if (!req.file) {
             return res.status(400).send({
                 success: false,
-                message: "Please..upload profile photo!"
+                message: "Please..upload a file!"
             });
         }
+        // Validate Body
+        const { error } = addQualification(req.body);
+        if (error) {
+            deleteSingleFile(req.file.path);
+            return res.status(400).send(error.details[0].message);
+        }
+        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber } = req.body;
         // Find in database
-        await InstructorProfile.create({
-            originalName: req.file.originalname,
-            path: req.file.path,
-            fileName: req.file.filename,
+        await InstructorQualification.create({
+            courseType: courseType,
+            course: course,
+            university_institute_name: university_institute_name,
+            year: year,
+            marksType: marksType,
+            marks: marks,
+            certificationNumber: certificationNumber,
+            documentOriginalName: req.file.originalname,
+            documentPath: req.file.path,
+            documentFileName: req.file.filename,
             instructorId: req.instructor.id,
             approvalStatusByAdmin: "Pending"
         });
         // Final response
         res.status(200).send({
             success: true,
-            message: "Profile image added successfully! Wait For Admin Approval!"
+            message: "Qualification added successfully!"
         });
     } catch (err) {
         res.status(500).send({
@@ -69,53 +84,6 @@ exports.getAllDeletedInstructorProfileById = async (req, res) => {
             totalPage: Math.ceil(totalProfile / recordLimit),
             currentPage: currentPage,
             data: deleteProfile
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.getAllInstructorProfiles = async (req, res) => {
-    try {
-        const { page, limit, search } = req.query;
-        // Pagination
-        const recordLimit = parseInt(limit) || 10;
-        let offSet = 0;
-        let currentPage = 1;
-        if (page) {
-            offSet = (parseInt(page) - 1) * recordLimit;
-            currentPage = parseInt(page);
-        }
-        // Search 
-        const condition = [];
-        if (search) {
-            condition.push({
-                approvalStatusByAdmin: search
-            })
-        }
-        const totalProfile = await InstructorProfile.count({
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Find in database
-        const profile = await InstructorProfile.findAll({
-            limit: limit,
-            offset: offSet,
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Profile for approval fetched successfully!",
-            totalPage: Math.ceil(totalProfile / recordLimit),
-            currentPage: currentPage,
-            data: profile
         });
     } catch (err) {
         res.status(500).send({
@@ -196,24 +164,24 @@ exports.rejectInstructorProfile = async (req, res) => {
     }
 };
 
-exports.deleteInstructorProfile = async (req, res) => {
+exports.softDeleteQualificationAdmin = async (req, res) => {
     try {
-        const profile = await InstructorProfile.findOne({
+        const qualification = await InstructorQualification.findOne({
             where: {
                 id: req.params.id
             }
         });
-        if (!profile) {
+        if (!qualification) {
             return res.status(400).send({
                 success: true,
-                message: "Profile photo is not present!",
+                message: "This qualification is not present!",
             });
         }
-        await profile.destroy();
+        await qualification.destroy();
         // Final response
         res.status(200).send({
             success: true,
-            message: "Profile photo deleted successfully!"
+            message: "Qualification soft deleted successfully!"
         });
     } catch (err) {
         res.status(500).send({

@@ -38,8 +38,11 @@ db.courseReview = require('./Review/courseReviewModel.js')(sequelize, Sequelize)
 
 // Instructor
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
-db.instructorProfile = require('./User/Instructor/insturctorProfileModel.js')(sequelize, Sequelize);
+db.insturctorQualification = require('./User/Instructor/insturctorQualificationModel.js')(sequelize, Sequelize);
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
+
+// Instructor History
+db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);
 
 // Student
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
@@ -49,8 +52,11 @@ db.studentProfile = require('./User/Student/studentProfileModel.js')(sequelize, 
 // Student's Association with profile
 db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' });
 
-// Instructor's Association with profile
-db.instructor.hasOne(db.instructorProfile, { foreignKey: 'instructorId', as: 'profile' });
+// Instructor's Association with Qualification
+db.instructor.hasMany(db.insturctorQualification, { foreignKey: 'instructorId', as: 'qualifications' });
+
+// Instructor's Association with Instructor history
+db.instructor.hasMany(db.instructorHistory, { foreignKey: 'instructorId', as: 'updateHistory' });
 
 // Course's Association with course content
 db.course.hasMany(db.courseContent, { foreignKey: 'courseId', as: 'contents' });
@@ -108,15 +114,15 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 // );
 // db.emailCredential.findOne({
 //     where: {
-//         email: ""
+//         email: "morarjidesai19@gmail.com"
 //     }
 // }).then((res) => {
 //     console.log(res);
 //     if (!res) {
 //         db.emailCredential.create({
-//             email: "",
+//             email: "morarjidesai19@gmail.com",
 //             plateForm: "BREVO",
-//             EMAIL_API_KEY: ""
+//             EMAIL_API_KEY: process.env.EMAIL_API_KEY
 //         });
 //     }
 // }).catch((err) => { console.log(err) });

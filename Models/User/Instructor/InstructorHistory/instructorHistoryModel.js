@@ -1,27 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    const Instructor = sequelize.define("instructors", {
+    const InstructorHistory = sequelize.define("instructorHistorys", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
         name: {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.STRING
         },
         email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            type: DataTypes.STRING
         },
         phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        instructorCode: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            type: DataTypes.STRING
         },
         instructorType: {
             type: DataTypes.STRING,
@@ -32,20 +23,13 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        createdBy: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Self', 'Admin']]
-            },
-            defaultValue: 'Self'
-        },
         imageOriginalName: {
             type: DataTypes.STRING
         },
         imagePath: {
             type: DataTypes.STRING(1234)
         },
-        imageFileName: {
+        ImageFileName: {
             type: DataTypes.STRING(1234)
         },
         location: {
@@ -60,5 +44,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         paranoid: true
     })
-    return Instructor;
+    return InstructorHistory;
 }
+
+// ForiegnKey
+// instructorId

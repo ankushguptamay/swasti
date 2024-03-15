@@ -1,42 +1,39 @@
 module.exports = (sequelize, DataTypes) => {
-    const Course = sequelize.define("courses", {
+    const InstructorQualification = sequelize.define("instructorQualification", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        category: {
+        courseType: {
             type: DataTypes.STRING
         },
-        coursePrice: {
+        course: {
             type: DataTypes.STRING
         },
-        heading: {
+        university_institute_name: {
             type: DataTypes.STRING
         },
-        description: {
+        year: {
             type: DataTypes.STRING
         },
-        level: {
+        marksType: {
             type: DataTypes.STRING
         },
-        language: {
+        marks: {
             type: DataTypes.STRING
         },
-        courseName: {
+        certificationNumber: {
             type: DataTypes.STRING
         },
-        duration: {
+        documentOriginalName: {
             type: DataTypes.STRING
         },
-        teacherName: {
-            type: DataTypes.STRING
-        },
-        introVideoLink: {
+        documentPath: {
             type: DataTypes.STRING(1234)
         },
-        createrId: {
-            type: DataTypes.STRING
+        documentFileName: {
+            type: DataTypes.STRING(1234)
         },
         approvalStatusByAdmin: {
             type: DataTypes.STRING,
@@ -48,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         paranoid: true
     })
-    return Course;
+    return InstructorQualification;
 }
 
 // ForiegnKey
