@@ -58,7 +58,7 @@ exports.isInstructorProfileComplete = async (req, res, next) => {
                 message: "Instructor is not present! Are you register?.. "
             })
         }
-        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.instructorType && instructor.imageFileName && instructor.socialMediaLink && instructor.bio && instructor.location) {
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.instructorType && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
             next();
         } else {
             return res.status(400).json({

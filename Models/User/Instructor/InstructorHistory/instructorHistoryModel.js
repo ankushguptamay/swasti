@@ -40,6 +40,24 @@ module.exports = (sequelize, DataTypes) => {
         },
         socialMediaLink: {
             type: DataTypes.STRING(1234)
+        },
+        linkedIn: {
+            type: DataTypes.STRING
+        },
+        twitter_x: {
+            type: DataTypes.STRING
+        },
+        instagram: {
+            type: DataTypes.STRING
+        },
+        facebook: {
+            type: DataTypes.STRING
+        },
+        languages: {
+            type: DataTypes.JSON
+        },
+        dateOfBirth: {
+            type: DataTypes.DATEONLY
         }
     }, {
         paranoid: true

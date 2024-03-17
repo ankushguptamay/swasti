@@ -127,10 +127,17 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructorQualifications", "deletedThrough", {
-//     type: DataTypes.STRING, validate: {
-//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
-//     }
-// }).then((res) => { console.log(res) }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "facebook", { type: DataTypes.STRING }).then((res) => { console.log("Facebook added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "linkedIn", { type: DataTypes.STRING }).then((res) => { console.log("LinkedIn added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "twitter_x", { type: DataTypes.STRING }).then((res) => { console.log("Twitter added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "instagram", { type: DataTypes.STRING }).then((res) => { console.log("Instagram added") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "languages", { type: DataTypes.JSON }).then((res) => { console.log("Languages added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "dateOfBirth", { type: DataTypes.DATEONLY }).then((res) => { console.log("Date Of Birth added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "facebook", { type: DataTypes.STRING }).then((res) => { console.log("Facebook added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "twitter_x", { type: DataTypes.STRING }).then((res) => { console.log("Twitter added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "linkedIn", { type: DataTypes.STRING }).then((res) => { console.log("LinkedIn added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "instagram", { type: DataTypes.STRING }).then((res) => { console.log("Instagram added") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "languages", { type: DataTypes.JSON }).then((res) => { console.log("Languages added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "dateOfBirth", { type: DataTypes.DATEONLY }).then((res) => { console.log("Date Of Birth added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

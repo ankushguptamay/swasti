@@ -717,7 +717,7 @@ exports.updateInstructor = async (req, res) => {
                 message: "Instructor is not present!"
             });
         }
-        const { bio, name, socialMediaLink, location } = req.body;
+        const { bio, name, socialMediaLink, location, twitter_x, facebook, instagram, linkedIn, languages, dateOfBirth } = req.body;
         // store current data in history
         await InstructorHistory.create({
             name: instructor.name,
@@ -730,7 +730,13 @@ exports.updateInstructor = async (req, res) => {
             instructorId: req.instructor.id,
             imagePath: instructor.imagePath,
             imageFileName: instructor.imageFileName,
-            imageOriginalName: instructor.imageOriginalName
+            imageOriginalName: instructor.imageOriginalName,
+            twitter_x: instructor.twitter_x,
+            facebook: instructor.facebook,
+            instagram: instructor.instagram,
+            linkedIn: instructor.linkedIn,
+            languages: instructor.languages,
+            dateOfBirth: instructor.dateOfBirth
         });
         let imagePath = instructor.imagePath,
             imageFileName = instructor.imageFileName,
@@ -748,7 +754,13 @@ exports.updateInstructor = async (req, res) => {
             location: location,
             imagePath: imagePath,
             imageFileName: imageFileName,
-            imageOriginalName: imageOriginalName
+            imageOriginalName: imageOriginalName,
+            twitter_x: twitter_x,
+            facebook: facebook,
+            instagram: instagram,
+            linkedIn: linkedIn,
+            languages: languages,
+            dateOfBirth: dateOfBirth
         });
         // Send final success response
         res.status(200).send({

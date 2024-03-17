@@ -23,7 +23,13 @@ exports.updateInstructor = (data) => {
         name: joi.string().min(3).max(30).required(),
         location: joi.string().required(),
         bio: joi.string().max(1000).required(),
-        socialMediaLink: joi.string().required()
+        socialMediaLink: joi.string().optional(),
+        facebook: joi.string().optional(),
+        instagram: joi.string().optional(),
+        linkedIn: joi.string().optional(),
+        twitter_x: joi.string().optional(),
+        languages: joi.array().required(),
+        dateOfBirth: joi.string().required(),
     })//.options({ allowUnknown: true });
     return schema.validate(data);
 }

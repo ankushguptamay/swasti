@@ -70,7 +70,7 @@ exports.changeQualificationStatus = async (req, res) => {
         }
 
         await qualification.update({
-            ...profile,
+            ...qualification,
             approvalStatusByAdmin: approvalStatusByAdmin
         });
         // Final response
