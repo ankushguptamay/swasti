@@ -1,6 +1,7 @@
 const db = require('../../../Models');
 const Instructor = db.instructor;
 const InstructorQualification = db.insturctorQualification;
+const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
@@ -424,6 +425,9 @@ exports.getInstructor = async (req, res) => {
             include: [{
                 model: InstructorQualification,
                 as: 'qualifications'
+            }, {
+                model: InstructorExperience,
+                as: "experience"
             }]
         });
         // Send final success response
@@ -499,6 +503,10 @@ exports.getInstructorForAdmin = async (req, res) => {
             include: [{
                 model: InstructorQualification,
                 as: 'qualifications',
+                paranoid: false
+            }, {
+                model: InstructorExperience,
+                as: "experience",
                 paranoid: false
             }],
             paranoid: false

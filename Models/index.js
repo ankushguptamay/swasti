@@ -39,6 +39,7 @@ db.courseReview = require('./Review/courseReviewModel.js')(sequelize, Sequelize)
 // Instructor
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
 db.insturctorQualification = require('./User/Instructor/insturctorQualificationModel.js')(sequelize, Sequelize);
+db.instructorExperience = require('./User/Instructor/instructorExperienceModel.js')(sequelize, Sequelize);
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 
 // Instructor History
@@ -54,6 +55,9 @@ db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' })
 
 // Instructor's Association with Qualification
 db.instructor.hasMany(db.insturctorQualification, { foreignKey: 'instructorId', as: 'qualifications' });
+
+// Instructor's Association with Experience
+db.instructor.hasOne(db.instructorExperience, { foreignKey: 'instructorId', as: 'experience' });
 
 // Instructor's Association with Instructor history
 db.instructor.hasMany(db.instructorHistory, { foreignKey: 'instructorId', as: 'updateHistory' });

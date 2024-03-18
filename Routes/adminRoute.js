@@ -2,6 +2,7 @@ const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
 const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin } = require('../Controller/User/Instructor/instructorQualificationController');
+const { softDeleteExperienceAdmin, restoreExperienceAdmin } = require('../Controller/User/Instructor/instructorExperienceController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
@@ -44,6 +45,10 @@ admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDe
 admin.put("/changeQualificationStatus/:id", verifyAdminJWT, isAdminPresent, changeQualificationStatus);
 admin.delete("/softDeleteQualification/:id", verifyAdminJWT, isAdminPresent, softDeleteQualificationAdmin);
 admin.put("/restoreQualification/:id", verifyAdminJWT, isAdminPresent, restoreQualificationAdmin);
+
+// Instructor Experience
+admin.put("/restoreExperienceAdmin/:id", verifyAdminJWT, isAdminPresent, restoreExperienceAdmin);
+admin.delete("/softDeleteExperienceAdmin/:id", verifyAdminJWT, isAdminPresent, softDeleteExperienceAdmin);
 
 // Student
 admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);

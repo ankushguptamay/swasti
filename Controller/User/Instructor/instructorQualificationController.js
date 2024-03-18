@@ -193,6 +193,7 @@ exports.updateQualification = async (req, res) => {
             documentPath: req.file.path,
             documentFileName: req.file.filename,
             instructorId: req.instructor.id,
+            createdAt: qualification.createdAt,
             approvalStatusByAdmin: "Pending"
         });
 

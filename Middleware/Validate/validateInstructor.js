@@ -61,3 +61,15 @@ exports.changeQualificationStatus = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.addExperience = (data) => {
+    const schema = joi.object().keys({
+        skills: joi.array().required(),
+        workHistory: joi.string().required(),
+        role: joi.string().required(),
+        organization: joi.string().required(),
+        joinDate: joi.string().required(),
+        department: joi.string().required()
+    })//.options({ allowUnknown: true });
+    return schema.validate(data);
+}

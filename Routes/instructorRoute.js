@@ -1,6 +1,7 @@
 const express = require('express');
 const { register, login, getInstructor, verifyOTP, updateInstructor } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor } = require('../Controller/User/Instructor/instructorQualificationController');
+const { addExperience, updateExperiencen, deleteExperienceInstructor } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
@@ -29,6 +30,11 @@ instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("pro
 instructor.post("/addQualification", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), addQualification);
 instructor.put("/updateQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), updateQualification);
 instructor.delete("/deleteQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, deleteQualificationInstructor);
+
+// Experience
+instructor.post("/addExperience", verifyInstructorJWT, isInstructorProfileComplete, addExperience);
+instructor.put("/updateExperiencen/:id", verifyInstructorJWT, isInstructorProfileComplete, updateExperiencen);
+instructor.delete("/deleteExperienceInstructor/:id", verifyInstructorJWT, isInstructorProfileComplete, deleteExperienceInstructor);
 
 // Course And Content
 // 1. Add
