@@ -57,7 +57,7 @@ db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' })
 db.instructor.hasMany(db.insturctorQualification, { foreignKey: 'instructorId', as: 'qualifications' });
 
 // Instructor's Association with Experience
-db.instructor.hasOne(db.instructorExperience, { foreignKey: 'instructorId', as: 'experience' });
+db.instructor.hasMany(db.instructorExperience, { foreignKey: 'instructorId', as: 'experience' });
 
 // Instructor's Association with Instructor history
 db.instructor.hasMany(db.instructorHistory, { foreignKey: 'instructorId', as: 'updateHistory' });

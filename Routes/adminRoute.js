@@ -1,8 +1,8 @@
 const express = require('express');
 const { register, login, getAdmin, changePassword } = require('../Controller/Admin/adminController');
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
-const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin } = require('../Controller/User/Instructor/instructorQualificationController');
-const { softDeleteExperienceAdmin, restoreExperienceAdmin } = require('../Controller/User/Instructor/instructorExperienceController');
+const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin, getQualificationById } = require('../Controller/User/Instructor/instructorQualificationController');
+const { softDeleteExperienceAdmin, restoreExperienceAdmin, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
@@ -42,11 +42,13 @@ admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstr
 admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
 
 // Instructor Qualification
+admin.put("/qualification/:id", verifyAdminJWT, isAdminPresent, getQualificationById);
 admin.put("/changeQualificationStatus/:id", verifyAdminJWT, isAdminPresent, changeQualificationStatus);
 admin.delete("/softDeleteQualification/:id", verifyAdminJWT, isAdminPresent, softDeleteQualificationAdmin);
 admin.put("/restoreQualification/:id", verifyAdminJWT, isAdminPresent, restoreQualificationAdmin);
 
 // Instructor Experience
+admin.get("/experience/:id", verifyAdminJWT, isAdminPresent, getExperienceById);
 admin.put("/restoreExperienceAdmin/:id", verifyAdminJWT, isAdminPresent, restoreExperienceAdmin);
 admin.delete("/softDeleteExperienceAdmin/:id", verifyAdminJWT, isAdminPresent, softDeleteExperienceAdmin);
 

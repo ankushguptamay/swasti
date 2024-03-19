@@ -242,3 +242,39 @@ exports.deleteQualificationInstructor = async (req, res) => {
         });
     }
 };
+
+exports.getQualificationById = async (req, res) => {
+    try {
+        let argument = {
+            where: {
+                id: req.params.id
+            }
+        }
+        if (req.admin) {
+            argument = {
+                where: {
+                    id: req.params.id
+                },
+                paranoid: false
+            }
+        }
+        const qualification = await InstructorQualification.findOne(argument);
+        if (!qualification) {
+            return res.status(400).send({
+                success: true,
+                message: "This qualification is not present!",
+            });
+        }
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Qualification fetched successfully!",
+            data: qualification
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

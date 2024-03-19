@@ -177,3 +177,39 @@ exports.deleteExperienceInstructor = async (req, res) => {
         });
     }
 };
+
+exports.getExperienceById = async (req, res) => {
+    try {
+        let argument = {
+            where: {
+                id: req.params.id
+            }
+        }
+        if (req.admin) {
+            argument = {
+                where: {
+                    id: req.params.id
+                },
+                paranoid: false
+            }
+        }
+        const experience = await InstructorExperience.findOne(argument);
+        if (!experience) {
+            return res.status(400).send({
+                success: true,
+                message: "This experience is not present!",
+            });
+        }
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Experience fetched successfully!",
+            data: experience
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
