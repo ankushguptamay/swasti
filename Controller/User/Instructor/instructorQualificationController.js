@@ -278,3 +278,27 @@ exports.getQualificationById = async (req, res) => {
         });
     }
 };
+
+exports.getSoftDeletedQualification = async (req, res) => {
+    try {
+        const argument = {
+            where: {
+                instructorId: req.params.id,
+                deletedAt: { [Op.ne]: null }
+            },
+            paranoid: false
+        };
+        const qualification = await InstructorQualification.findAll(argument);
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Soft deleted qualification fetched successfully!",
+            data: qualification
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

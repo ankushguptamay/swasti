@@ -502,12 +502,10 @@ exports.getInstructorForAdmin = async (req, res) => {
             },
             include: [{
                 model: InstructorQualification,
-                as: 'qualifications',
-                paranoid: false
+                as: 'qualifications'
             }, {
                 model: InstructorExperience,
-                as: "experience",
-                paranoid: false
+                as: "experience"
             }],
             paranoid: false
         });

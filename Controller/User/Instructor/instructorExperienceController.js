@@ -213,3 +213,27 @@ exports.getExperienceById = async (req, res) => {
         });
     }
 };
+
+exports.getSoftDeletedExperience = async (req, res) => {
+    try {
+        const argument = {
+            where: {
+                instructorId: req.params.id,
+                deletedAt: { [Op.ne]: null }
+            },
+            paranoid: false
+        };
+        const experience = await InstructorExperience.findAll(argument);
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Soft deleted experience fetched successfully!",
+            data: experience
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
