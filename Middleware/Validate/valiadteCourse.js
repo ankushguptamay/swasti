@@ -20,7 +20,8 @@ exports.courseValidation = (data) => {
 
 exports.contentValidation = (data) => {
     const schema = joi.object().keys({
-        title: joi.string().required()
+        title: joi.string().required(),
+        courseId: joi.string().required()
     });
     return schema.validate(data);
 }

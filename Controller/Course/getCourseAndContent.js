@@ -212,7 +212,6 @@ exports.getCourseByIdForInstructor = async (req, res) => {
             include: [{
                 model: CourseContent,
                 as: 'contents',
-                paranoid: false,
                 include: [{
                     model: CourseAndContentFile,
                     as: 'files',

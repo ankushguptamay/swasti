@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         createrId: {
             type: DataTypes.STRING
+        },
+        isPublish: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         paranoid: true

@@ -73,3 +73,10 @@ exports.addExperience = (data) => {
     })//.options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.changePublish = (data) => {
+    const schema = joi.object().keys({
+        isPublish: joi.boolean().required()
+    });
+    return schema.validate(data);
+}

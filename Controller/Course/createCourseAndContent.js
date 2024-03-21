@@ -280,12 +280,13 @@ exports.addContent = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { title } = req.body;
+        const { title, courseId } = req.body;
         if (req.instructor) {
             await CourseContent.create({
                 title: title,
                 createrId: req.instructor.id,
-                courseId: req.params.id
+                courseId: courseId,
+                approvalStatusByAdmin: "Pending"
             });
             // Final response
             res.status(200).send({
@@ -295,8 +296,9 @@ exports.addContent = async (req, res) => {
         } else if (req.admin) {
             await CourseContent.create({
                 title: title,
-                createrId: req.amdin.id,
-                courseId: req.params.id
+                createrId: req.admin.id,
+                courseId: req.params.id,
+                approvalStatusByAdmin: "Approved"
             });
             // Final response
             res.status(200).send({

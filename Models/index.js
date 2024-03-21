@@ -131,7 +131,8 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("courses", "certificationType", { type: DataTypes.STRING }).then((res) => { console.log("Certification Type added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("courses", "certificationFromInstitute", { type: DataTypes.STRING }).then((res) => { console.log("Certification From Institute added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in course!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courseContents", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in content!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courseAndContentFiles", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in file!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         certificationFromInstitute: {
             type: DataTypes.STRING
+        },
+        isPublish: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         paranoid: true

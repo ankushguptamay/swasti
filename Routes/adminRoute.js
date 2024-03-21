@@ -7,7 +7,7 @@ const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, r
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { changeContentStatus, changeCourseFileStatus, changeCourseStatus } = require('../Controller/Course/approvalCourseAndContent');
+const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeContentPublish, changeCoursePublish, changeCourseFilePublish } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingRejectCourse, getSoftDeletdContentByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
@@ -75,7 +75,7 @@ admin.post("/addCourseImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.si
 admin.post("/addTeacherImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
 admin.post("/addContent", verifyAdminJWT, isAdminPresent, addContent); // courseId
 admin.post("/addContentFile/:id", verifyAdminJWT, isAdminPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
-admin.post("/addContentVideo/:id", verifyAdminJWT, isAdminPresent, addContentVideo);
+admin.post("/addContentVideo/:id", verifyAdminJWT, isAdminPresent, addContentVideo); // contentId
 // 2. Get
 admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // Approved
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);  // courseId
@@ -87,6 +87,9 @@ admin.get("/getSoftDeletdContent/:id", verifyAdminJWT, isAdminPresent, getSoftDe
 admin.put("/changeCourseStatus/:id", verifyAdminJWT, isAdminPresent, changeCourseStatus);  // courseId
 admin.put("/changeContentStatus/:id", verifyAdminJWT, isAdminPresent, changeContentStatus); // contentId
 admin.put("/changeCourseFileStatus/:id", verifyAdminJWT, isAdminPresent, changeCourseFileStatus); // fileId
+admin.put("/coursePublish/:id", verifyAdminJWT, isAdminPresent, changeCoursePublish);  // courseId
+admin.put("/contentPublish/:id", verifyAdminJWT, isAdminPresent, changeContentPublish); // contentId
+admin.put("/filePublish/:id", verifyAdminJWT, isAdminPresent, changeCourseFilePublish); // fileId
 // 4. Delete
 admin.delete("/softDeleteCourse/:id", verifyAdminJWT, isAdminPresent, softDeleteCourseForAdmin); // courseId
 admin.delete("/softDeleteContent/:id", verifyAdminJWT, isAdminPresent, softDeleteContentForAdmin); // contentId

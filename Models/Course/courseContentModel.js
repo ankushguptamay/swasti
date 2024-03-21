@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             },
             defaultValue: 'Pending'
+        },
+        isPublish: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         paranoid: true
