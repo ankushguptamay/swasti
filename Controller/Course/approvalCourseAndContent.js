@@ -12,6 +12,7 @@ exports.changeCourseStatus = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { approvalStatusByAdmin } = req.body;
         // Find Course In Database
         const course = await Course.findOne({
             where: {
@@ -49,6 +50,7 @@ exports.changeContentStatus = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { approvalStatusByAdmin } = req.body;
         // Find Content In Database
         const content = await CourseContent.findOne({
             where: {
@@ -86,6 +88,7 @@ exports.changeCourseFileStatus = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { approvalStatusByAdmin } = req.body;
         // Find Course In Database
         const file = await CourseAndContentFile.findOne({
             where: {
