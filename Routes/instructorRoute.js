@@ -4,7 +4,7 @@ const { addQualification, updateQualification, deleteQualificationInstructor, ge
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingCourse, getAllRejectedCourse } = require('../Controller/Course/getCourseAndContent');
+const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingRejectCourse } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { addDiscountToCourse } = require('../Controller/Course/updateCourseAndContent');
@@ -49,8 +49,7 @@ instructor.post("/addContentVideo/:id", verifyInstructorJWT, isInstructorPresent
 // 2. Get
 instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllApprovedCourse); // Approved
 instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
-instructor.get("/pendingCourse", verifyInstructorJWT, isInstructorPresent, getAllPendingCourse); // Pending
-instructor.get("/rejectedCourse", verifyInstructorJWT, isInstructorPresent, getAllRejectedCourse); // Rejected
+instructor.get("/pendingRejectCourse", verifyInstructorJWT, isInstructorPresent, getAllPendingRejectCourse);
 // 3. Delete
 instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourseForInstructor);
 instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContentForInstructor);

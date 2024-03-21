@@ -11,8 +11,9 @@ exports.courseValidation = (data) => {
         courseName: joi.string().required(),
         duration: joi.string().required(),
         introVideoLink: joi.string().required(),
-        teacherName: joi.string().required()
-
+        teacherName: joi.string().required(),
+        certificationFromInstitute: joi.string().optional(),
+        certificationType: joi.string().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }

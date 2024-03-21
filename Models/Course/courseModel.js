@@ -44,6 +44,12 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             },
             defaultValue: 'Pending'
+        },
+        certificationType: {
+            type: DataTypes.STRING
+        },
+        certificationFromInstitute: {
+            type: DataTypes.STRING
         }
     }, {
         paranoid: true

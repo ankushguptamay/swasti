@@ -32,7 +32,7 @@ exports.addCourse = async (req, res) => {
             }
             return res.status(400).send(error.details[0].message);
         }
-        const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName } = req.body;
+        const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
         // Set approvalStatusByAdmin according to creater
         let approvalStatusByAdmin;
         let createrId;
@@ -67,6 +67,8 @@ exports.addCourse = async (req, res) => {
             teacherName: teacherName,
             introVideoLink: introVideoLink,
             createrId: createrId,
+            certificationType: certificationType,
+            certificationFromInstitute: certificationFromInstitute,
             approvalStatusByAdmin: approvalStatusByAdmin
         });
         if (courseImage) {
