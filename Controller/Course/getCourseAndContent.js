@@ -54,7 +54,8 @@ exports.getAllApprovedCourse = async (req, res) => {
                 as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
-                }
+                },
+                required: false
             }],
             order: [
                 ['createdAt', 'ASC']
@@ -166,6 +167,7 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                     where: {
                         fieldName: 'ContentFile'
                     },
+                    required: false,
                     paranoid: false
                 }]
             }, {
@@ -174,6 +176,7 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 },
+                required: false,
                 paranoid: false
             }],
             paranoid: false
@@ -216,17 +219,15 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                     where: {
                         fieldName: 'ContentFile'
                     },
-                    paranoid: false
+                    required: false
                 }]
             }, {
                 model: CourseAndContentFile,
                 as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
-                },
-                paranoid: false
-            }],
-            paranoid: false
+                }
+            }]
         });
         if (!course) {
             res.status(400).send({
@@ -291,7 +292,8 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
-                }
+                },
+                required: false
             }, {
                 model: Course_Discount_Junctions,
                 as: 'course_Discount_Junction',
@@ -347,13 +349,15 @@ exports.getCourseByIdForStudent = async (req, res) => {
                 where: {
                     approvalStatusByAdmin: "Approved"
                 },
+                required: false,
                 include: [{
                     model: CourseAndContentFile,
                     as: 'files',
                     where: {
                         fieldName: 'ContentFile',
                         approvalStatusByAdmin: "Approved"
-                    }
+                    },
+                    required: false
                 }]
             }, {
                 model: CourseAndContentFile,
@@ -361,7 +365,8 @@ exports.getCourseByIdForStudent = async (req, res) => {
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     approvalStatusByAdmin: "Approved"
-                }
+                },
+                required: false
             }]
         });
         if (!course) {
@@ -407,10 +412,6 @@ exports.getAllSoftDeletedCourse = async (req, res) => {
                 ]
             })
         }
-        // For Instructor
-        if (req.instructor) {
-            condition.push({ createrId: req.instructor.id });
-        }
         // Count All Course
         const totalCourse = await Course.count({
             where: {
@@ -435,6 +436,7 @@ exports.getAllSoftDeletedCourse = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage'],
                     deletedAt: { [Op.ne]: null }
                 },
+                required: false,
                 paranoid: false
             }],
             paranoid: false
@@ -482,6 +484,7 @@ exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
                     approvalStatusByAdmin: "Approved",
                     deletedAt: { [Op.ne]: null }
                 },
+                required: false,
                 paranoid: false
             }],
             paranoid: false
@@ -515,6 +518,7 @@ exports.getSoftDeletdContentByContentId = async (req, res) => {
                     fieldName: 'ContentFile',
                     deletedAt: { [Op.ne]: null }
                 },
+                required: false,
                 paranoid: false
             }],
             paranoid: false

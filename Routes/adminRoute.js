@@ -7,7 +7,7 @@ const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, r
     verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
 const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { approveContent, approveCourse, rejectContent, rejectCourse, approveCourseFile, rejectCourseFile } = require('../Controller/Course/approvalCourseAndContent');
+const { changeContentStatus, changeCourseFileStatus, changeCourseStatus } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingRejectCourse, getSoftDeletdContentByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
@@ -84,12 +84,9 @@ admin.get("/softDeletedCourse/:id", verifyAdminJWT, isAdminPresent, getAllSoftDe
 admin.get("/softDeletedContent/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedContentByCourseId); // Soft Deleted Content courseId
 admin.get("/getSoftDeletdContent/:id", verifyAdminJWT, isAdminPresent, getSoftDeletdContentByContentId); // contentId
 // 3. Approval
-admin.put("/approveCourse/:id", verifyAdminJWT, isAdminPresent, approveCourse);  // courseId
-admin.put("/approveContent/:id", verifyAdminJWT, isAdminPresent, approveContent); // contentId
-admin.put("/rejectCourse/:id", verifyAdminJWT, isAdminPresent, rejectCourse); // courseId
-admin.put("/rejectContent/:id", verifyAdminJWT, isAdminPresent, rejectContent); // contentId
-admin.put("/approveCourseFile/:id", verifyAdminJWT, isAdminPresent, approveCourseFile); // fileId
-admin.put("/rejectCourseFile/:id", verifyAdminJWT, isAdminPresent, rejectCourseFile); // fileId
+admin.put("/changeCourseStatus/:id", verifyAdminJWT, isAdminPresent, changeCourseStatus);  // courseId
+admin.put("/changeContentStatus/:id", verifyAdminJWT, isAdminPresent, changeContentStatus); // contentId
+admin.put("/changeCourseFileStatus/:id", verifyAdminJWT, isAdminPresent, changeCourseFileStatus); // fileId
 // 4. Delete
 admin.delete("/softDeleteCourse/:id", verifyAdminJWT, isAdminPresent, softDeleteCourseForAdmin); // courseId
 admin.delete("/softDeleteContent/:id", verifyAdminJWT, isAdminPresent, softDeleteContentForAdmin); // contentId

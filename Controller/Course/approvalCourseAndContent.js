@@ -1,11 +1,17 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
+const { changeQualificationStatus } = require("../../Middleware/Validate/validateInstructor");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
 
-exports.approveCourse = async (req, res) => {
+exports.changeCourseStatus = async (req, res) => {
     try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
         // Find Course In Database
         const course = await Course.findOne({
             where: {
@@ -21,12 +27,12 @@ exports.approveCourse = async (req, res) => {
         // Update Course
         await course.update({
             ...course,
-            approvalStatusByAdmin: "Approved"
+            approvalStatusByAdmin: approvalStatusByAdmin
         });
         // Final Response
         res.status(200).send({
             success: true,
-            message: "Course approved successfully!"
+            message: `Course ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({
@@ -36,40 +42,13 @@ exports.approveCourse = async (req, res) => {
     }
 };
 
-exports.rejectCourse = async (req, res) => {
+exports.changeContentStatus = async (req, res) => {
     try {
-        // Find Course In Database
-        const course = await Course.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!course) {
-            return res.status(400).send({
-                success: false,
-                message: "This Course is not present!"
-            });
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
         }
-        // Update Course
-        await course.update({
-            ...course,
-            approvalStatusByAdmin: "Rejected"
-        });
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: "Course rejected successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.approveContent = async (req, res) => {
-    try {
         // Find Content In Database
         const content = await CourseContent.findOne({
             where: {
@@ -85,12 +64,12 @@ exports.approveContent = async (req, res) => {
         // Update content
         await content.update({
             ...content,
-            approvalStatusByAdmin: "Approved"
+            approvalStatusByAdmin: approvalStatusByAdmin
         });
         // Final Response
         res.status(200).send({
             success: true,
-            message: "Content approved successfully!"
+            message: `Content ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({
@@ -100,40 +79,13 @@ exports.approveContent = async (req, res) => {
     }
 };
 
-exports.rejectContent = async (req, res) => {
+exports.changeCourseFileStatus = async (req, res) => {
     try {
-        // Find Content In Database
-        const content = await CourseContent.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!content) {
-            return res.status(400).send({
-                success: false,
-                message: "This content is not present!"
-            });
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
         }
-        // Update content
-        await content.update({
-            ...content,
-            approvalStatusByAdmin: "Rejected"
-        });
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: "Content rejected successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.approveCourseFile = async (req, res) => {
-    try {
         // Find Course In Database
         const file = await CourseAndContentFile.findOne({
             where: {
@@ -149,44 +101,12 @@ exports.approveCourseFile = async (req, res) => {
         // Update File
         await file.update({
             ...file,
-            approvalStatusByAdmin: "Approved"
+            approvalStatusByAdmin: approvalStatusByAdmin
         });
         // Final Response
         res.status(200).send({
             success: true,
-            message: `${file.fieldName} approved successfully!`
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.rejectCourseFile = async (req, res) => {
-    try {
-        // Find Course In Database
-        const file = await CourseAndContentFile.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!file) {
-            return res.status(400).send({
-                success: false,
-                message: "This file is not present!"
-            });
-        }
-        // Update Course
-        await file.update({
-            ...file,
-            approvalStatusByAdmin: "Rejected"
-        });
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: `${file.fieldName} rejected successfully!`
+            message: `${file.fieldName} ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({
