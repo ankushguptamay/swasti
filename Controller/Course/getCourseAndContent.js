@@ -535,3 +535,33 @@ exports.getSoftDeletdContentByContentId = async (req, res) => {
         });
     }
 };
+
+exports.getFileByContentId = async (req, res) => {
+    try {
+        // Get All File
+        const courseContent = await CourseContent.findOne({
+            where: {
+                id: req.params.id
+            },
+            include: [{
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: 'ContentFile'
+                },
+                required: false
+            }]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "All Files fetched successfully!",
+            data: courseContent
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
