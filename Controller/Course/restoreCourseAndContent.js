@@ -20,22 +20,12 @@ exports.restoreCourse = async (req, res) => {
                 message: "This Course is not present in delete section!"
             });
         }
-        // Restore Content, This will restore content whose delete time is greater and equal to course delete time
-        await CourseContent.restore({
-            where: {
-                courseId: req.params.id,
-                deletedAt: { [Op.lte]: course.deletedAt }
-            },
-            paranoid: false
-        });
-        // Restore File, This will restore file whose delete time is greater and equal to course delete time
-        await CourseAndContentFile.restore({
-            where: {
-                courseId: req.params.id,
-                deletedAt: { [Op.lte]: course.deletedAt }
-            },
-            paranoid: false
-        });
+        if (course.deletedThrough === "Instructor" || course.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: true,
+                message: "Warning! This Course is not deleted by Swastee!",
+            });
+        }
         // Restore Course
         await course.restore();
         // Final Response
@@ -67,16 +57,12 @@ exports.restoreContent = async (req, res) => {
                 message: "Data is not present!"
             });
         }
-        // Restore File, This will restore file whose delete time is greater and equal to content delete time
-        const file = await CourseAndContentFile.restore({
-            where: {
-                contentId: req.params.id,
-                deletedAt: { [Op.lte]: courseContent.deletedAt },
-                fieldName: "ContentFile"
-            },
-            paranoid: false
-        });
-
+        if (courseContent.deletedThrough === "Instructor" || courseContent.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: true,
+                message: "Warning! This Content is not deleted by Swastee!",
+            });
+        }
         // Restore Content
         await courseContent.restore();
         // Final Response
@@ -106,6 +92,12 @@ exports.restoreFile = async (req, res) => {
             return res.status(400).send({
                 success: false,
                 message: "Data is not present!"
+            });
+        }
+        if (file.deletedThrough === "Instructor" || file.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: true,
+                message: "Warning! This File is not deleted by Swastee!",
             });
         }
         // Restore File

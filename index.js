@@ -22,6 +22,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
+app.use('/files', express.static('./Resource'));
+
 app.use('/api/admin', admin);
 app.use('/api/instructor', instructor);
 app.use('/api/student', student);

@@ -37,6 +37,12 @@ module.exports = (sequelize, DataTypes) => {
         isPublish: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        deletedThrough: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor', 'ByUpdation']]
+            }
         }
     }, {
         paranoid: true

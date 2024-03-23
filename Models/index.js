@@ -131,8 +131,23 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("courses", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in course!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("courseContents", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in content!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("courseAndContentFiles", "isPublish", { type: DataTypes.BOOLEAN, defaultValue: false }).then((res) => { console.log("isPublish added in file!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "deletedThrough", {
+//     type: DataTypes.STRING,
+//     validate: {
+//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//     }
+// }).then((res) => { console.log("added in course!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courseContents", "deletedThrough", {
+//     type: DataTypes.STRING,
+//     validate: {
+//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//     }
+// }).then((res) => { console.log("added in content!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courseAndContentFiles", "deletedThrough", {
+//     type: DataTypes.STRING,
+//     validate: {
+//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//     }
+// }).then((res) => { console.log("added in file!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
