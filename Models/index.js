@@ -131,23 +131,23 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("courses", "deletedThrough", {
+// queryInterface.changeColumn("courses", "approvalStatusByAdmin", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//         isIn: [['Pending', 'Approved', 'Rejected']]
 //     }
-// }).then((res) => { console.log("added in course!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("courseContents", "deletedThrough", {
+// }).then((res) => { console.log("changed in course!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("courseContents", "approvalStatusByAdmin", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//         isIn: [['Pending', 'Approved', 'Rejected']]
 //     }
-// }).then((res) => { console.log("added in content!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("courseAndContentFiles", "deletedThrough", {
+// }).then((res) => { console.log("changed in content!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("courseAndContentFiles", "approvalStatusByAdmin", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Admin', 'Instructor', 'ByUpdation']]
+//         isIn: [['Pending', 'Approved', 'Rejected']]
 //     }
-// }).then((res) => { console.log("added in file!") }).catch((err) => { console.log(err) });
+// }).then((res) => { console.log("changed in file!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

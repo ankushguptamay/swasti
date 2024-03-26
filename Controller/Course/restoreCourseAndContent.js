@@ -26,6 +26,7 @@ exports.restoreCourse = async (req, res) => {
                 message: "Warning! This Course is not deleted by Swastee!",
             });
         }
+        await course.update({ deletedThrough: null });
         // Restore Course
         await course.restore();
         // Final Response
@@ -63,6 +64,7 @@ exports.restoreContent = async (req, res) => {
                 message: "Warning! This Content is not deleted by Swastee!",
             });
         }
+        await courseContent.update({ deletedThrough: null });
         // Restore Content
         await courseContent.restore();
         // Final Response
@@ -100,6 +102,7 @@ exports.restoreFile = async (req, res) => {
                 message: "Warning! This File is not deleted by Swastee!",
             });
         }
+        await file.update({ deletedThrough: null });
         // Restore File
         await file.restore();
         // Final Response

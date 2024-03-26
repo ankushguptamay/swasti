@@ -28,8 +28,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Pending', 'Approved', 'Rejected']]
-            },
-            defaultValue: 'Pending'
+            }
         },
         createrId: {
             type: DataTypes.STRING

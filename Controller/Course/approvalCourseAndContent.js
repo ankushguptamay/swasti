@@ -305,3 +305,116 @@ exports.changeCourseFilePublish = async (req, res) => {
         });
     }
 };
+
+exports.submitCourseForApproval = async (req, res) => {
+    try {
+        const createrId = req.instructor.id;
+
+        // Find Course In Database
+        const course = await Course.findOne({
+            where: {
+                id: req.params.id,
+                createrId: createrId,
+                approvalStatusByAdmin: null
+            }
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "This Course is not present!"
+            });
+        }
+
+        // Update Course
+        await course.update({
+            ...course,
+            approvalStatusByAdmin: "Pending"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Course successfully submit for approval!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.submitContentForApproval = async (req, res) => {
+    try {
+        const createrId = req.instructor.id;
+
+        // Find Content In Database
+        const content = await CourseContent.findOne({
+            where: {
+                id: req.params.id,
+                createrId: createrId,
+                approvalStatusByAdmin: null
+            }
+        });
+        if (!content) {
+            return res.status(400).send({
+                success: false,
+                message: "This content is not present!"
+            });
+        }
+
+        // Update content
+        await content.update({
+            ...content,
+            approvalStatusByAdmin: "Pending"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Content successfully submit for approval!`
+        });
+
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.submitFileForApproval = async (req, res) => {
+    try {
+        const createrId = req.instructor.id;
+
+        // Find Course In Database
+        const file = await CourseAndContentFile.findOne({
+            where: {
+                id: req.params.id,
+                createrId: createrId,
+                approvalStatusByAdmin: null
+            }
+        });
+        if (!file) {
+            return res.status(400).send({
+                success: false,
+                message: "This file is not present!"
+            });
+        }
+
+        // Update file
+        await file.update({
+            ...file,
+            approvalStatusByAdmin: "Pending"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `File successfully submit for approval!`
+        });
+
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

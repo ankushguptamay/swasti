@@ -93,7 +93,13 @@ exports.getAllPendingRejectCourse = async (req, res) => {
         if (approvalStatusByAdmin) {
             condition.push({ approvalStatusByAdmin: approvalStatusByAdmin });
         } else {
-            condition.push({ approvalStatusByAdmin: ["Rejected", "Pending"] });
+            condition.push({
+                [Op.or]: [
+                    { approvalStatusByAdmin: "Pending" },
+                    { approvalStatusByAdmin: null },
+                    { approvalStatusByAdmin: "Rejected" }
+                ]
+            });
         }
         // Search
         if (search) {

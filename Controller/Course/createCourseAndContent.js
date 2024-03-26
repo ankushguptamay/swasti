@@ -38,7 +38,7 @@ exports.addCourse = async (req, res) => {
         let createrId;
         if (req.instructor) {
             createrId = req.instructor.id;
-            approvalStatusByAdmin = "Pending";
+            approvalStatusByAdmin = null;
         } else if (req.admin) {
             createrId = req.admin.id;
             approvalStatusByAdmin = "Approved";
@@ -123,8 +123,7 @@ exports.addCourseImage = async (req, res) => {
                 where: {
                     courseId: req.params.id,
                     createrId: req.instructor.id,
-                    fieldName: "CourseImage",
-                    deletedAt: null
+                    fieldName: "CourseImage"
                 }
             });
             if (courseImage.length > 0) {
@@ -140,19 +139,18 @@ exports.addCourseImage = async (req, res) => {
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
                 courseId: req.params.id,
-                approvalStatusByAdmin: "Pending"
+                approvalStatusByAdmin: null
             });
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Course Image added successfully! Wait For Admin Approval!"
+                message: "Course Image added successfully!"
             });
         } else if (req.admin) {
             const courseImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
-                    fieldName: "CourseImage",
-                    deletedAt: null
+                    fieldName: "CourseImage"
                 }
             });
             if (courseImage.length > 0) {
@@ -205,8 +203,7 @@ exports.addTeacherImage = async (req, res) => {
                 where: {
                     courseId: req.params.id,
                     createrId: req.instructor.id,
-                    fieldName: "TeacherImage",
-                    deletedAt: null
+                    fieldName: "TeacherImage"
                 }
             });
             if (teacherImage.length > 0) {
@@ -222,19 +219,18 @@ exports.addTeacherImage = async (req, res) => {
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
                 courseId: req.params.id,
-                approvalStatusByAdmin: "Pending"
+                approvalStatusByAdmin: null
             });
             // Final response
             res.status(200).send({
                 success: true,
-                message: "Teacher Image added successfully! Wait For Admin Approval!"
+                message: "Teacher Image added successfully!"
             });
         } else if (req.admin) {
             const teacherImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
-                    fieldName: "TeacherImage",
-                    deletedAt: null
+                    fieldName: "TeacherImage"
                 }
             });
             if (teacherImage.length > 0) {
@@ -286,7 +282,7 @@ exports.addContent = async (req, res) => {
                 title: title,
                 createrId: req.instructor.id,
                 courseId: courseId,
-                approvalStatusByAdmin: "Pending"
+                approvalStatusByAdmin: null
             });
             // Final response
             res.status(200).send({
@@ -351,7 +347,7 @@ exports.addContentVideo = async (req, res) => {
                 createrId: req.instructor.id,
                 fieldName: fieldName,
                 courseId: fileContent.courseId,
-                approvalStatusByAdmin: "Pending",
+                approvalStatusByAdmin: null,
                 contentId: req.params.id
             });
             // Final response
@@ -421,7 +417,7 @@ exports.addContentFile = async (req, res) => {
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
                 courseId: fileContent.courseId,
-                approvalStatusByAdmin: "Pending",
+                approvalStatusByAdmin: null,
                 contentId: req.params.id
             });
             // Final response
