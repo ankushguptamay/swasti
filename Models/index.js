@@ -137,17 +137,17 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //         isIn: [['Admin', 'Instructor']]
 //     }
 // }).then((res) => { console.log("added in course!") }).catch((err) => { console.log(err) });
-// queryInterface.changeColumn("courseContents", "approvalStatusByAdmin", {
+// queryInterface.addColumn("courseContents", "creater", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Pending', 'Approved', 'Rejected']]
+//         isIn: [['Admin', 'Instructor']]
 //     }
-// }).then((res) => { console.log("changed in content!") }).catch((err) => { console.log(err) });
-// queryInterface.changeColumn("courseAndContentFiles", "approvalStatusByAdmin", {
+// }).then((res) => { console.log("added in content!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courseAndContentFiles", "creater", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Pending', 'Approved', 'Rejected']]
+//         isIn: [['Admin', 'Instructor']]
 //     }
-// }).then((res) => { console.log("changed in file!") }).catch((err) => { console.log(err) });
+// }).then((res) => { console.log("added in file!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

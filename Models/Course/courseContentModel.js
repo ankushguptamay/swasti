@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isIn: [['Admin', 'Instructor', 'ByUpdation']]
             }
+        },
+        creater: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor']]
+            }
         }
     }, {
         paranoid: true

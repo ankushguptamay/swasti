@@ -82,6 +82,7 @@ exports.addCourse = async (req, res) => {
                 fileName: courseImage.filename,
                 fieldName: courseImage.fieldname,
                 createrId: createrId,
+                creater: creater,
                 courseId: course.id,
                 approvalStatusByAdmin: approvalStatusByAdmin
             });
@@ -93,6 +94,7 @@ exports.addCourse = async (req, res) => {
                 mimeType: teacherImage.mimetype,
                 fileName: teacherImage.filename,
                 fieldName: teacherImage.fieldname,
+                creater: creater,
                 createrId: createrId,
                 courseId: course.id,
                 approvalStatusByAdmin: approvalStatusByAdmin
@@ -141,6 +143,7 @@ exports.addCourseImage = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
+                creater: "Instructor",
                 courseId: req.params.id,
                 approvalStatusByAdmin: null
             });
@@ -168,6 +171,7 @@ exports.addCourseImage = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.admin.id,
+                creater: "Admin",
                 courseId: req.params.id,
                 approvalStatusByAdmin: "Approved"
             });
@@ -221,6 +225,7 @@ exports.addTeacherImage = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
+                creater: "Instructor",
                 courseId: req.params.id,
                 approvalStatusByAdmin: null
             });
@@ -248,6 +253,7 @@ exports.addTeacherImage = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.admin.id,
+                creater: "Admin",
                 courseId: req.params.id,
                 approvalStatusByAdmin: "Approved"
             });
@@ -284,6 +290,7 @@ exports.addContent = async (req, res) => {
             await CourseContent.create({
                 title: title,
                 createrId: req.instructor.id,
+                creater: "Instructor",
                 courseId: courseId,
                 approvalStatusByAdmin: null
             });
@@ -296,6 +303,7 @@ exports.addContent = async (req, res) => {
             await CourseContent.create({
                 title: title,
                 createrId: req.admin.id,
+                creater: "Admin",
                 courseId: req.params.id,
                 approvalStatusByAdmin: "Approved"
             });
@@ -348,6 +356,7 @@ exports.addContentVideo = async (req, res) => {
                 linkOrPath: linkOrPath,
                 mimeType: mimeType,
                 createrId: req.instructor.id,
+                creater: "Instructor",
                 fieldName: fieldName,
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: null,
@@ -364,6 +373,7 @@ exports.addContentVideo = async (req, res) => {
                 linkOrPath: linkOrPath,
                 mimeType: mimeType,
                 createrId: req.admin.id,
+                creater: "Admin",
                 fieldName: fieldName,
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: "Approved",
@@ -419,6 +429,7 @@ exports.addContentFile = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.instructor.id,
+                creater: "Instructor",
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: null,
                 contentId: req.params.id
@@ -436,6 +447,7 @@ exports.addContentFile = async (req, res) => {
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
                 createrId: req.admin.id,
+                creater: "Admin",
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: "Approved",
                 contentId: req.params.id
