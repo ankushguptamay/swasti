@@ -35,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
         introVideoLink: {
             type: DataTypes.STRING(1234)
         },
+        creater: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor']]
+            }
+        },
         createrId: {
             type: DataTypes.STRING
         },

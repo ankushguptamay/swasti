@@ -131,12 +131,12 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.changeColumn("courses", "approvalStatusByAdmin", {
+// queryInterface.addColumn("courses", "creater", {
 //     type: DataTypes.STRING,
 //     validate: {
-//         isIn: [['Pending', 'Approved', 'Rejected']]
+//         isIn: [['Admin', 'Instructor']]
 //     }
-// }).then((res) => { console.log("changed in course!") }).catch((err) => { console.log(err) });
+// }).then((res) => { console.log("added in course!") }).catch((err) => { console.log(err) });
 // queryInterface.changeColumn("courseContents", "approvalStatusByAdmin", {
 //     type: DataTypes.STRING,
 //     validate: {

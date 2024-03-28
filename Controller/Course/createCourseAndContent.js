@@ -35,11 +35,13 @@ exports.addCourse = async (req, res) => {
         const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
         // Set approvalStatusByAdmin according to creater
         let approvalStatusByAdmin;
-        let createrId;
+        let createrId, creater;
         if (req.instructor) {
             createrId = req.instructor.id;
+            creater = "Instructor";
             approvalStatusByAdmin = null;
         } else if (req.admin) {
+            creater = "Admin";
             createrId = req.admin.id;
             approvalStatusByAdmin = "Approved";
         } else {
@@ -67,6 +69,7 @@ exports.addCourse = async (req, res) => {
             teacherName: teacherName,
             introVideoLink: introVideoLink,
             createrId: createrId,
+            creater: creater,
             certificationType: certificationType,
             certificationFromInstitute: certificationFromInstitute,
             approvalStatusByAdmin: approvalStatusByAdmin
