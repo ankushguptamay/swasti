@@ -185,7 +185,12 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                 required: false,
                 paranoid: false
             }],
-            paranoid: false
+            paranoid: false,
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
+                [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+            ]
         });
         if (!course) {
             res.status(400).send({
@@ -232,7 +237,12 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
-            }]
+            }],
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
+                [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+            ]
         });
         if (!course) {
             res.status(400).send({
@@ -372,7 +382,12 @@ exports.getCourseByIdForStudent = async (req, res) => {
                     approvalStatusByAdmin: "Approved"
                 },
                 required: false
-            }]
+            }],
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
+                [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+            ]
         });
         if (!course) {
             return res.status(400).send({
@@ -492,7 +507,11 @@ exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
                 required: false,
                 paranoid: false
             }],
-            paranoid: false
+            paranoid: false,
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+            ]
         });
         // Final response
         res.status(200).send({
@@ -526,7 +545,11 @@ exports.getSoftDeletdContentByContentId = async (req, res) => {
                 required: false,
                 paranoid: false
             }],
-            paranoid: false
+            paranoid: false,
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+            ]
         });
         // Final response
         res.status(200).send({
@@ -556,7 +579,11 @@ exports.getFileByContentId = async (req, res) => {
                     fieldName: 'ContentFile'
                 },
                 required: false
-            }]
+            }],
+            order: [
+                ["createdAt", "ASC"],
+                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+            ]
         });
         // Final response
         res.status(200).send({
