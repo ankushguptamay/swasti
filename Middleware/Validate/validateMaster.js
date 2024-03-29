@@ -8,10 +8,11 @@ exports.courseCategoryValidation = (data) => {
     return schema.validate(data);
 }
 
-exports.courseDiscountValidation = (data) => {
+exports.courseCouponValidation = (data) => {
     const schema = joi.object().keys({
-        discountTitle: joi.string().required(),
-        discountInPercent: joi.string().required()
+        couponTitle: joi.string().required(),
+        discountInPercent: joi.string().required(),
+        validTill: joi.string().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }

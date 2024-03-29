@@ -8,8 +8,8 @@ const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo,
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingRejectCourse, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
-const { addDiscountToCourse } = require('../Controller/Course/updateCourseAndContent');
-const { createDiscount, softDeleteDiscount, getAllInstructorDiscount } = require('../Controller/Master/discountController');
+const { addCouponToCourse } = require('../Controller/Course/updateCourseAndContent');
+const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const instructor = express.Router();
 
@@ -68,16 +68,17 @@ instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPre
 instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
 
 // 4. Update
-instructor.put("/addDiscountToCourse/:id", verifyInstructorJWT, isInstructorPresent, addDiscountToCourse); // courseId
+// instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
 
 // Master
 // 1. Coursecategory
 instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, getAllCourseCategory);
 
-// 2. Discount
-instructor.post("/createDiscount", verifyInstructorJWT, isInstructorPresent, createDiscount);
-instructor.delete("/softDeleteDiscount/:id", verifyInstructorJWT, isInstructorPresent, softDeleteDiscount);
-instructor.get("/instructorDiscount", verifyInstructorJWT, isInstructorPresent, getAllInstructorDiscount);
+// 2. Coupon
+instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, createCoupon);
+instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCoupon);
+instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getAllInstructorCoupon);
+instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getCouponById);
 
 // Review
 // 1. Instructor Review

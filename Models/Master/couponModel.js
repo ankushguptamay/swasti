@@ -1,18 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
-    const Discount = sequelize.define("discounts", {
+    const Coupon = sequelize.define("coupons", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        discountTitle: {
+        couponTitle: {
             type: DataTypes.STRING
         },
-        discountNumber: {
-            type: DataTypes.TEXT
+        couponNumber: {
+            type: DataTypes.STRING
         },
         discountInPercent: {
             type: DataTypes.STRING
+        },
+        creater: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor']]
+            }
         },
         createrId: {
             type: DataTypes.STRING
@@ -26,11 +32,17 @@ module.exports = (sequelize, DataTypes) => {
         },
         validTill: {
             type: DataTypes.STRING
+        },
+        deletedThrough: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor', 'ByUpdation']]
+            }
         }
     }, {
         paranoid: true
     })
-    return Discount;
+    return Coupon;
 }
 
 // ForiegnKey

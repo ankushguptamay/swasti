@@ -304,7 +304,7 @@ exports.addContent = async (req, res) => {
                 title: title,
                 createrId: req.admin.id,
                 creater: "Admin",
-                courseId: req.params.id,
+                courseId: courseId,
                 approvalStatusByAdmin: "Approved"
             });
             // Final response

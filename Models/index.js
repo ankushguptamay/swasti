@@ -23,13 +23,13 @@ db.emailCredential = require('./Admin/bravoEmailCredentialModel.js')(sequelize, 
 
 // Course
 db.course_Student_Junction = require('./Course/JunctionTable/course_Student_JunctionModel.js')(sequelize, Sequelize);
-db.course_Discount_Junction = require('./Course/JunctionTable/Course_Discount_JunctionModel.js')(sequelize, Sequelize);
+db.course_Coupon_Junction = require('./Course/JunctionTable/course_Coupon_JunctionModel.js')(sequelize, Sequelize);
 db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequelize);
 db.courseAndContentFile = require('./Course/courseAndContentFileModel.js')(sequelize, Sequelize);
 db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
 
 // Master
-db.discount = require('./Master/discountModel.js')(sequelize, Sequelize);
+db.coupon = require('./Master/couponModel.js')(sequelize, Sequelize);
 db.courseCategory = require('./Master/courseCategoryModel.js')(sequelize, Sequelize);
 
 // Review
@@ -66,12 +66,12 @@ db.instructor.hasMany(db.instructorHistory, { foreignKey: 'instructorId', as: 'u
 db.course.hasMany(db.courseContent, { foreignKey: 'courseId', as: 'contents' });
 db.courseContent.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
 
-// Course's Association with discount
-db.course.hasMany(db.course_Discount_Junction, { foreignKey: 'courseId', as: 'course_Discount_Junction' });
-db.course_Discount_Junction.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
+// Course's Association with coupon
+db.course.hasMany(db.course_Coupon_Junction, { foreignKey: 'courseId', as: 'course_coupon_junction' });
+db.course_Coupon_Junction.belongsTo(db.course, { foreignKey: 'courseId', as: 'course' });
 
-db.discount.hasMany(db.course_Discount_Junction, { foreignKey: 'discountId', as: 'course_Discount_Junction' });
-db.course_Discount_Junction.belongsTo(db.discount, { foreignKey: 'discountId', as: 'discount' });
+db.coupon.hasMany(db.course_Coupon_Junction, { foreignKey: 'couponId', as: 'course_coupon_junction' });
+db.course_Coupon_Junction.belongsTo(db.coupon, { foreignKey: 'couponId', as: 'coupon' });
 
 // Course's Association with file
 db.course.hasMany(db.courseAndContentFile, { foreignKey: 'courseId', as: 'files' });
@@ -149,5 +149,8 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //         isIn: [['Admin', 'Instructor']]
 //     }
 // }).then((res) => { console.log("added in file!") }).catch((err) => { console.log(err) });
+
+// queryInterface.dropTable("discounts").then((res) => { console.log("Course_Discount_Junctions!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("Course_Discount_Junctions").then((res) => { console.log("Course_Discount_Junctions!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

@@ -11,12 +11,11 @@ const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeC
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingRejectCourse, getSoftDeletdContentByContentId, getFileByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
-const { addDiscountToCourse } = require('../Controller/Course/updateCourseAndContent');
+const { addCouponToCourse } = require('../Controller/Course/updateCourseAndContent');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
-const { createDiscount, getAllDiscountForApproval, softDeleteDiscount, hardDeleteDiscount, restoreDiscount, rejectDiscount,
-    approveDiscount, getAllDeletedDiscount, getDiscountById } = require('../Controller/Master/discountController');
+const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const admin = express.Router();
 
@@ -103,22 +102,20 @@ admin.put("/restoreCourse/:id", verifyAdminJWT, isAdminPresent, restoreCourse); 
 admin.put("/restoreContent/:id", verifyAdminJWT, isAdminPresent, restoreContent); // contentId
 admin.put("/restoreFile/:id", verifyAdminJWT, isAdminPresent, restoreFile); // fileId
 // 6. Update
-admin.put("/addDiscountToCourse/:id", verifyAdminJWT, isAdminPresent, addDiscountToCourse); // courseId
+// admin.put("/addCouponToCourse/:id", verifyAdminJWT, isAdminPresent, addCouponToCourse); // courseId
 // Master
 // 1. CourseCategory
 admin.post("/createCourseCategory", verifyAdminJWT, isAdminPresent, createCourseCategory);
 admin.get("/courseCategories", verifyAdminJWT, isAdminPresent, getAllCourseCategory);
 admin.delete("/deleteCourseCategory/:id", verifyAdminJWT, isAdminPresent, deleteCourseCategory);
-// 2. Discount
-admin.post("/createDiscount", verifyAdminJWT, isAdminPresent, createDiscount);
-admin.get("/discountForApproval", verifyAdminJWT, isAdminPresent, getAllDiscountForApproval);
-admin.get("/deletedDiscounts", verifyAdminJWT, isAdminPresent, getAllDeletedDiscount);
-admin.get("/discount/:id", verifyAdminJWT, isAdminPresent, getDiscountById);
-admin.delete("/softDeleteDiscount/:id", verifyAdminJWT, isAdminPresent, softDeleteDiscount);
-admin.delete("/hardDeleteDiscount/:id", verifyAdminJWT, isAdminPresent, hardDeleteDiscount);
-admin.put("/restoreDiscount/:id", verifyAdminJWT, isAdminPresent, restoreDiscount);
-admin.put("/rejectDiscount/:id", verifyAdminJWT, isAdminPresent, rejectDiscount);
-admin.put("/approveDiscount/:id", verifyAdminJWT, isAdminPresent, approveDiscount);
+// 2. Coupon
+admin.post("/createCoupon", verifyAdminJWT, isAdminPresent, createCoupon);
+admin.get("/coupon", verifyAdminJWT, isAdminPresent, getAllCouponForAdmin);
+admin.get("/deletedCoupons", verifyAdminJWT, isAdminPresent, getAllSoftDeletedCoupon);
+admin.get("/coupon/:id", verifyAdminJWT, isAdminPresent, getCouponById);
+admin.delete("/softDeleteCoupon/:id", verifyAdminJWT, isAdminPresent, softDeleteCoupon);
+admin.put("/restoreCoupon/:id", verifyAdminJWT, isAdminPresent, restoreCoupon);
+admin.put("/changeCouponStatus/:id", verifyAdminJWT, isAdminPresent, changeCouponStatus);
 
 // Review
 // 1. Instructor Review
