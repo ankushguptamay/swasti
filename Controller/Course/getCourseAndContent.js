@@ -3,9 +3,9 @@ const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
-const Course_Discount_Junctions = db.course_Discount_Junction;
 const Course_Student_Junctions = db.course_Student_Junction;
-const Discount = db.discount;
+const Course_Coupon_Junctions = db.course_Coupon_Junction;
+const Coupon = db.coupon;
 
 // For Admin and Instructor
 exports.getAllApprovedCourse = async (req, res) => {
@@ -184,12 +184,20 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                 },
                 required: false,
                 paranoid: false
+            }, {
+                model: Course_Coupon_Junctions,
+                as: 'course_coupon_junction',
+                include: [{
+                    model: Coupon,
+                    as: 'coupon'
+                }]
             }],
             paranoid: false,
             order: [
                 ["createdAt", "ASC"],
                 [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
                 [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+                [{ model: Course_Coupon_Junctions, as: "course_coupon_junction" }, 'createdAt', 'ASC']
             ]
         });
         if (!course) {
@@ -237,11 +245,19 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
+            }, {
+                model: Course_Coupon_Junctions,
+                as: 'course_coupon_junction',
+                include: [{
+                    model: Coupon,
+                    as: 'coupon'
+                }]
             }],
             order: [
                 ["createdAt", "ASC"],
                 [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
                 [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+                [{ model: Course_Coupon_Junctions, as: "course_coupon_junction" }, 'createdAt', 'ASC']
             ]
         });
         if (!course) {
@@ -310,11 +326,11 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
                 },
                 required: false
             }, {
-                model: Course_Discount_Junctions,
-                as: 'course_Discount_Junction',
+                model: Course_Coupon_Junctions,
+                as: 'course_coupon_junction',
                 include: [{
-                    model: Discount,
-                    as: 'discount'
+                    model: Coupon,
+                    as: 'coupon'
                 }]
             }],
             order: [

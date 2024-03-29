@@ -11,11 +11,11 @@ const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeC
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingRejectCourse, getSoftDeletdContentByContentId, getFileByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
-const { addCouponToCourse } = require('../Controller/Course/updateCourseAndContent');
+const { } = require('../Controller/Course/updateCourseAndContent');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
-const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById } = require('../Controller/Master/couponController');
+const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById, addCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const admin = express.Router();
 
@@ -102,7 +102,7 @@ admin.put("/restoreCourse/:id", verifyAdminJWT, isAdminPresent, restoreCourse); 
 admin.put("/restoreContent/:id", verifyAdminJWT, isAdminPresent, restoreContent); // contentId
 admin.put("/restoreFile/:id", verifyAdminJWT, isAdminPresent, restoreFile); // fileId
 // 6. Update
-// admin.put("/addCouponToCourse/:id", verifyAdminJWT, isAdminPresent, addCouponToCourse); // courseId
+admin.put("/addCouponToCourse/:id", verifyAdminJWT, isAdminPresent, addCouponToCourse); // courseId
 // Master
 // 1. CourseCategory
 admin.post("/createCourseCategory", verifyAdminJWT, isAdminPresent, createCourseCategory);

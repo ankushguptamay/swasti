@@ -8,8 +8,8 @@ const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo,
 const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingRejectCourse, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
-const { addCouponToCourse } = require('../Controller/Course/updateCourseAndContent');
-const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById } = require('../Controller/Master/couponController');
+const {  } = require('../Controller/Course/updateCourseAndContent');
+const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const instructor = express.Router();
 
@@ -68,7 +68,7 @@ instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPre
 instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
 
 // 4. Update
-// instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
+instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
 
 // Master
 // 1. Coursecategory

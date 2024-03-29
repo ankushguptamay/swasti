@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const { courseCouponValidation } = require('../../Middleware/Validate/validateMaster');
 const { changeQualificationStatus } = require("../../Middleware/Validate/validateInstructor");
 const Coupon = db.coupon;
+const Course = db.course;
+const Course_Coupon_Junctions = db.course_Coupon_Junction;
 const Instructor = db.instructor;
 
 exports.createCoupon = async (req, res) => {
@@ -385,6 +387,142 @@ exports.getCouponById = async (req, res) => {
             success: true,
             message: "Coupon fetched successfully!",
             data: coupon
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.addCouponToCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const couponId = req.body.id;
+        let conditionForCoupon = {
+            id: couponId,
+            approvalStatusByAdmin: "Approved"
+        };
+        let conditionForCourse = {
+            id: courseId,
+            approvalStatusByAdmin: "Approved"
+        };
+        if (req.instructor) {
+            conditionForCoupon = {
+                id: couponId,
+                approvalStatusByAdmin: "Approved",
+                [Op.or]: [
+                    { createrId: req.instructor.id },
+                    { creater: "Admin" }
+                ]
+            };
+            conditionForCourse = {
+                id: courseId,
+                approvalStatusByAdmin: "Approved",
+                createrId: req.instructor.id
+            };
+        }
+        // find coupon
+        const coupon = await Coupon.findOne({
+            where: conditionForCoupon
+        });
+        if (!coupon) {
+            return res.status(400).send({
+                success: false,
+                message: "Either coupon is not present or not approved!"
+            });
+        }
+        // find course
+        const course = await Course.findOne({
+            where: conditionForCourse
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "Course is not present!"
+            });
+        }
+        // Entry in junction table
+        if (req.instructor) {
+            const isAdded = await Course_Coupon_Junctions.findOne({
+                where: {
+                    couponId: couponId,
+                    courseId: courseId
+                }
+            });
+            if (!isAdded) {
+                const softDelete = await Course_Coupon_Junctions.findOne({
+                    where: {
+                        couponId: couponId,
+                        courseId: courseId,
+                        deletedAt: { [Op.ne]: null }
+                    },
+                    paranoid: false
+                });
+                if (softDelete) {
+                    if (softDelete.deletedThrough === "Admin" || softDelete.deletedThrough === "ByUpdation") {
+                        return res.status(400).send({
+                            success: false,
+                            message: `You can not add this coupon to ${course.courseName}!`
+                        });
+                    } else {
+                        await softDelete.update({ ...softDelete, deletedThrough: null });
+                        await softDelete.restore();
+                    }
+                } else {
+                    await Course_Coupon_Junctions.create({
+                        createrId: req.instructor.id,
+                        creater: "Instructor",
+                        couponId: couponId,
+                        courseId: courseId
+                    });
+                }
+            }
+        } else if (req.admin) {
+            const isAdded = await Course_Coupon_Junctions.findOne({
+                where: {
+                    couponId: couponId,
+                    courseId: courseId
+                }
+            });
+            if (!isAdded) {
+                const softDelete = await Course_Coupon_Junctions.findOne({
+                    where: {
+                        couponId: couponId,
+                        courseId: courseId,
+                        deletedAt: { [Op.ne]: null }
+                    },
+                    paranoid: false
+                });
+                if (softDelete) {
+                    if (softDelete.deletedThrough === "Instructor" || softDelete.deletedThrough === "ByUpdation") {
+                        return res.status(400).send({
+                            success: false,
+                            message: `You can not add this coupon to ${course.courseName}!`
+                        });
+                    } else {
+                        await softDelete.update({ ...softDelete, deletedThrough: null });
+                        await softDelete.restore();
+                    }
+                } else {
+                    await Course_Coupon_Junctions.create({
+                        createrId: req.admin.id,
+                        creater: "Admin",
+                        couponId: couponId,
+                        courseId: courseId
+                    });
+                }
+            }
+        } else {
+            return res.status(400).send({
+                success: true,
+                message: "You can not add coupon to course!"
+            });
+        }
+        res.status(200).send({
+            success: true,
+            message: "Coupon added to course successfully!"
         });
     } catch (err) {
         res.status(500).send({
