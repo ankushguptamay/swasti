@@ -9,6 +9,7 @@ const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const {  } = require('../Controller/Course/updateCourseAndContent');
+const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile } = require('../Controller/User/Instructor/dashboardController');
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const instructor = express.Router();
@@ -77,7 +78,7 @@ instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, ge
 instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, createCoupon);
 instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCoupon);
 instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getAllInstructorCoupon);
-instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getCouponById);
+instructor.get("/coupons/:id", verifyInstructorJWT, isInstructorPresent, getCouponById);
 
 // Review
 // 1. Instructor Review
@@ -89,5 +90,11 @@ instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstruct
 instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorPresent, getCourseReview); // id = courseId
 instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorPresent, getCourseAverageRating); // id = courseId
 instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorPresent, deleteCourseReview); //id = review Id
+
+// Dashboard
+instructor.get("/totalCourse", verifyInstructorJWT, isInstructorPresent, totalCourse);
+instructor.get("/totalDraftedCourse", verifyInstructorJWT, isInstructorPresent, totalDraftedCourse);
+instructor.get("/totalOngoingCourse", verifyInstructorJWT, isInstructorPresent, totalOngoingCourse);
+instructor.get("/getContentAndFile/:id", verifyInstructorJWT, isInstructorPresent, getContentAndFile); // courseId
 
 module.exports = instructor;

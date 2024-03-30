@@ -102,6 +102,7 @@ admin.put("/restoreContent/:id", verifyAdminJWT, isAdminPresent, restoreContent)
 admin.put("/restoreFile/:id", verifyAdminJWT, isAdminPresent, restoreFile); // fileId
 // 6. Update
 admin.put("/addCouponToCourse/:id", verifyAdminJWT, isAdminPresent, addCouponToCourse); // courseId
+
 // Master
 // 1. CourseCategory
 admin.post("/createCourseCategory", verifyAdminJWT, isAdminPresent, createCourseCategory);
