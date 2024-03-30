@@ -324,7 +324,26 @@ exports.submitCourseForApproval = async (req, res) => {
                 message: "This Course is not present!"
             });
         }
-
+        // Change all content approvalStatusByAdmin Pending
+        await CourseContent.update({
+            approvalStatusByAdmin: "Pending"
+        }, {
+            where: {
+                courseId: req.params.id,
+                approvalStatusByAdmin: null,
+                createrId: createrId
+            }
+        });
+        // Change all file approvalStatusByAdmin Pending
+        await CourseAndContentFile.update({
+            approvalStatusByAdmin: "Pending"
+        }, {
+            where: {
+                courseId: req.params.id,
+                approvalStatusByAdmin: null,
+                createrId: createrId
+            }
+        });
         // Update Course
         await course.update({
             ...course,
@@ -361,7 +380,16 @@ exports.submitContentForApproval = async (req, res) => {
                 message: "This content is not present!"
             });
         }
-
+        // Change all file approvalStatusByAdmin Pending
+        await CourseAndContentFile.update({
+            approvalStatusByAdmin: "Pending"
+        }, {
+            where: {
+                contentId: req.params.id,
+                approvalStatusByAdmin: null,
+                createrId: createrId
+            }
+        });
         // Update content
         await content.update({
             ...content,

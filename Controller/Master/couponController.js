@@ -237,12 +237,6 @@ exports.getAllInstructorCoupon = async (req, res) => {
                 ]
             })
         }
-        // Count coupon
-        const totalCoupon = await Coupon.findAll({
-            where: {
-                [Op.and]: condition
-            }
-        });
         // Get All Coupon
         const coupon = await Coupon.findAll({
             where: {
@@ -256,8 +250,6 @@ exports.getAllInstructorCoupon = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Coupon fetched successfully!",
-            totalPage: Math.ceil(totalCoupon / recordLimit),
-            currentPage: currentPage,
             data: coupon
         });
     } catch (err) {

@@ -7,78 +7,8 @@ const Course_Student_Junctions = db.course_Student_Junction;
 const Course_Coupon_Junctions = db.course_Coupon_Junction;
 const Coupon = db.coupon;
 
-// For Admin and Instructor
-exports.getAllApprovedCourse = async (req, res) => {
-    try {
-        const { page, limit, search } = req.query;
-        // Pagination
-        const recordLimit = parseInt(limit) || 10;
-        let offSet = 0;
-        let currentPage = 1;
-        if (page) {
-            offSet = (parseInt(page) - 1) * recordLimit;
-            currentPage = parseInt(page);
-        }
-        // Search 
-        const condition = [
-            { approvalStatusByAdmin: "Approved" }
-        ];
-        if (search) {
-            condition.push({
-                [Op.or]: [
-                    { courseName: { [Op.substring]: search } },
-                    { heading: { [Op.substring]: search } },
-                    { category: { [Op.substring]: search } }
-                ]
-            })
-        }
-        // For Instructor
-        if (req.instructor) {
-            condition.push({ createrId: req.instructor.id });
-        }
-        // Count All Course
-        const totalCourse = await Course.count({
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Get All Course
-        const course = await Course.findAll({
-            limit: recordLimit,
-            offset: offSet,
-            where: {
-                [Op.and]: condition
-            },
-            include: [{
-                model: CourseAndContentFile,
-                as: 'files',
-                where: {
-                    fieldName: ['TeacherImage', 'CourseImage']
-                },
-                required: false
-            }],
-            order: [
-                ['createdAt', 'ASC']
-            ]
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Approved Course fetched successfully!",
-            totalPage: Math.ceil(totalCourse / recordLimit),
-            currentPage: currentPage,
-            data: course
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
 // For Admin and instructor
-exports.getAllPendingRejectCourse = async (req, res) => {
+exports.getAllCourse = async (req, res) => {
     try {
         const { page, limit, search, approvalStatusByAdmin } = req.query;
         // Pagination
@@ -92,14 +22,6 @@ exports.getAllPendingRejectCourse = async (req, res) => {
         const condition = [];
         if (approvalStatusByAdmin) {
             condition.push({ approvalStatusByAdmin: approvalStatusByAdmin });
-        } else {
-            condition.push({
-                [Op.or]: [
-                    { approvalStatusByAdmin: "Pending" },
-                    { approvalStatusByAdmin: null },
-                    { approvalStatusByAdmin: "Rejected" }
-                ]
-            });
         }
         // Search
         if (search) {

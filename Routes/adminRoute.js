@@ -9,7 +9,7 @@ const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentPr
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeContentPublish, changeCoursePublish, changeCourseFilePublish } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
-const { getAllApprovedCourse, getCourseByIdForAdmin, getAllPendingRejectCourse, getSoftDeletdContentByContentId, getFileByContentId,
+const { getAllCourse, getCourseByIdForAdmin, getSoftDeletdContentByContentId, getFileByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
 const { } = require('../Controller/Course/updateCourseAndContent');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -76,9 +76,8 @@ admin.post("/addContent", verifyAdminJWT, isAdminPresent, addContent); // course
 admin.post("/addContentFile/:id", verifyAdminJWT, isAdminPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
 admin.post("/addContentVideo/:id", verifyAdminJWT, isAdminPresent, addContentVideo); // contentId
 // 2. Get
-admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllApprovedCourse); // Approved
+admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllCourse);
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);  // courseId
-admin.get("/pendingRejectCourses", verifyAdminJWT, isAdminPresent, getAllPendingRejectCourse);
 admin.get("/softDeletedCourse/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedCourse); // Soft Deleted Course
 admin.get("/softDeletedContent/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedContentByCourseId); // Soft Deleted Content courseId
 admin.get("/getSoftDeletdContent/:id", verifyAdminJWT, isAdminPresent, getSoftDeletdContentByContentId); // contentId

@@ -5,7 +5,7 @@ const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperie
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { changeContentPublish, changeCoursePublish, changeCourseFilePublish, submitContentForApproval, submitCourseForApproval, submitFileForApproval } = require('../Controller/Course/approvalCourseAndContent');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { getAllApprovedCourse, getCourseByIdForInstructor, getAllPendingRejectCourse, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
+const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const {  } = require('../Controller/Course/updateCourseAndContent');
@@ -49,9 +49,8 @@ instructor.post("/addContentFile/:id", verifyInstructorJWT, isInstructorPresent,
 instructor.post("/addContentVideo/:id", verifyInstructorJWT, isInstructorPresent, addContentVideo); // contentId
 
 // 2. Get
-instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllApprovedCourse); // Approved
+instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllCourse);
 instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
-instructor.get("/pendingRejectCourse", verifyInstructorJWT, isInstructorPresent, getAllPendingRejectCourse);
 instructor.get("/files/:id", verifyInstructorJWT, isInstructorPresent, getFileByContentId); // id:contentId
 
 // 3. Publish
