@@ -188,12 +188,12 @@ exports.getMyNotificationForInstructor = async (req, res) => {
             offSet = (parseInt(page) - 1) * recordLimit;
             currentPage = parseInt(page);
         }
-        const condition = [];
+        const condition = [
+            { createrId: req.instructor.id },
+            { creater: "instructor" }
+        ];
         if (approvalStatusByAdmin) {
-            condition.push(
-                { approvalStatusByAdmin: approvalStatusByAdmin },
-                { createrId: req.instructor.id },
-                { creater: "instructor" });
+            condition.push({ approvalStatusByAdmin: approvalStatusByAdmin });
         }
         // Search
         if (search) {
