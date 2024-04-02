@@ -23,7 +23,16 @@ exports.totalCourse = async (req, res) => {
 
 exports.totalOngoingCourse = async (req, res) => {
     try {
-        const courses = await Course.count({ where: { createrId: req.instructor.id, isPublish: true } });
+        const courses = await Course.count({
+            where: {
+                createrId: req.instructor.id,
+                isPublish: false,
+                [Op.or]: [
+                    { approvalStatusByAdmin: "Approved" },
+                    { approvalStatusByAdmin: "Pending" }
+                ]
+            }
+        });
         // Final Response
         res.status(200).send({
             success: true,
@@ -40,7 +49,7 @@ exports.totalOngoingCourse = async (req, res) => {
 
 exports.totalDraftedCourse = async (req, res) => {
     try {
-        const courses = await Course.count({ where: { createrId: req.instructor.id, isPublish: false } });
+        const courses = await Course.count({ where: { createrId: req.instructor.id, approvalStatusByAdmin: null } });
         // Final Response
         res.status(200).send({
             success: true,

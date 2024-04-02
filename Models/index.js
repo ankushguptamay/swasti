@@ -49,6 +49,9 @@ db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHi
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
 db.studentProfile = require('./User/Student/studentProfileModel.js')(sequelize, Sequelize);
 
+// Notification
+db.createNotification = require('./createNotificationModel.js')(sequelize, Sequelize);
+
 // Association
 // Student's Association with profile
 db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' });

@@ -15,8 +15,10 @@ const { } = require('../Controller/Course/updateCourseAndContent');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
-const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById, addCouponToCourse } = require('../Controller/Master/couponController');
+const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById,
+    getCouponToCourse, addCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
+const { createNotificationForAdmin, getNotificationForAdmin } = require('../Controller/createNotificationCont');
 const admin = express.Router();
 
 // middleware
@@ -78,7 +80,7 @@ admin.post("/addContentVideo/:id", verifyAdminJWT, isAdminPresent, addContentVid
 // 2. Get
 admin.get("/courses", verifyAdminJWT, isAdminPresent, getAllCourse);
 admin.get("/courses/:id", verifyAdminJWT, isAdminPresent, getCourseByIdForAdmin);  // courseId
-admin.get("/softDeletedCourse/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedCourse); // Soft Deleted Course
+admin.get("/softDeletedCourse", verifyAdminJWT, isAdminPresent, getAllSoftDeletedCourse); // Soft Deleted Course
 admin.get("/softDeletedContent/:id", verifyAdminJWT, isAdminPresent, getAllSoftDeletedContentByCourseId); // Soft Deleted Content courseId
 admin.get("/getSoftDeletdContent/:id", verifyAdminJWT, isAdminPresent, getSoftDeletdContentByContentId); // contentId
 admin.get("/files/:id", verifyAdminJWT, isAdminPresent, getFileByContentId);  // contentId
@@ -116,6 +118,7 @@ admin.get("/coupon/:id", verifyAdminJWT, isAdminPresent, getCouponById);
 admin.delete("/softDeleteCoupon/:id", verifyAdminJWT, isAdminPresent, softDeleteCoupon);
 admin.put("/restoreCoupon/:id", verifyAdminJWT, isAdminPresent, restoreCoupon);
 admin.put("/changeCouponStatus/:id", verifyAdminJWT, isAdminPresent, changeCouponStatus);
+admin.get("/couponToCourse/:id", verifyAdminJWT, isAdminPresent, getCouponToCourse);
 
 // Review
 // 1. Instructor Review
@@ -126,5 +129,9 @@ admin.delete("/deleteInstructorReview/:id", verifyAdminJWT, isAdminPresent, dele
 admin.get("/getCourseReview/:id", verifyAdminJWT, isAdminPresent, getCourseReview); //id = courseId
 admin.get("/getCourseAverageRating/:id", verifyAdminJWT, isAdminPresent, getCourseAverageRating);  //id = courseId
 admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCourseReview); //id = review Id
+
+// Notification
+admin.post("/createNotification", verifyAdminJWT, isAdminPresent, createNotificationForAdmin);
+admin.get("/notifications", verifyAdminJWT, isAdminPresent, getNotificationForAdmin);
 
 module.exports = admin;

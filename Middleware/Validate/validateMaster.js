@@ -16,3 +16,11 @@ exports.courseCouponValidation = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.createNotification = (data) => {
+    const schema = joi.object().keys({
+        notification: joi.string().max(1000).required(),
+        forWhom: joi.string().valid('Student', 'Instructor', 'Both').required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}

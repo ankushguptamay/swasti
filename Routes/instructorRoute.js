@@ -8,10 +8,11 @@ const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo,
 const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
-const {  } = require('../Controller/Course/updateCourseAndContent');
+const { } = require('../Controller/Course/updateCourseAndContent');
 const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile } = require('../Controller/User/Instructor/dashboardController');
-const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse } = require('../Controller/Master/couponController');
+const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
+const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
 const instructor = express.Router();
 
 // middleware
@@ -79,6 +80,7 @@ instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, creat
 instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCoupon);
 instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getAllInstructorCoupon);
 instructor.get("/coupons/:id", verifyInstructorJWT, isInstructorPresent, getCouponById);
+instructor.get("/couponToCourse/:id", verifyInstructorJWT, isInstructorPresent, getCouponToCourse);
 
 // Review
 // 1. Instructor Review
@@ -96,5 +98,10 @@ instructor.get("/totalCourse", verifyInstructorJWT, isInstructorPresent, totalCo
 instructor.get("/totalDraftedCourse", verifyInstructorJWT, isInstructorPresent, totalDraftedCourse);
 instructor.get("/totalOngoingCourse", verifyInstructorJWT, isInstructorPresent, totalOngoingCourse);
 instructor.get("/getContentAndFile/:id", verifyInstructorJWT, isInstructorPresent, getContentAndFile); // courseId
+
+// Notification
+instructor.post("/createNotification", verifyInstructorJWT, isInstructorPresent, createNotificationForInstructor);
+instructor.get("/myNotifications", verifyInstructorJWT, isInstructorPresent, getMyNotificationForInstructor);
+instructor.get("/notifications", verifyInstructorJWT, isInstructorPresent, getNotificationForInstructor);
 
 module.exports = instructor;

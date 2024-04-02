@@ -129,6 +129,56 @@ exports.getAllCouponForAdmin = async (req, res) => {
     }
 };
 
+exports.getCouponToCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        // Search 
+        const condition = { id: courseId };
+        if (req.instructor) {
+            condition = {
+                id: courseId,
+                createrId: req.instructor.id
+            };
+        }
+        const course = await Course.findOne({
+            where: condition
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "This course is not present!"
+            });
+        }
+        // Count coupon
+        const junctionRecord = await Course_Coupon_Junctions.findAll({
+            where: {
+                courseId: courseId
+            }
+        });
+        const couponIds = [];
+        for (let i = 0; i < junctionRecord.length; i++) {
+            junctionRecord.push(junctionRecord.couponId);
+        }
+        // Get All Course
+        const coupon = await Coupon.findAll({
+            where: {
+                id: couponIds
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Coupon fetched successfully!",
+            data: coupon
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
 exports.softDeleteCoupon = async (req, res) => {
     try {
         let deletedThrough, condition, message;
@@ -309,7 +359,7 @@ exports.getAllSoftDeletedCoupon = async (req, res) => {
             currentPage = parseInt(page);
         }
         // Search 
-        const condition = [{ deletdAt: { [Op.ne]: null } }];
+        const condition = [{ deletedAt: { [Op.ne]: null } }];
         if (approval) {
             condition.push({
                 approvalStatusByAdmin: approval // Pending, Approved, Rejected
@@ -391,7 +441,7 @@ exports.getCouponById = async (req, res) => {
 exports.addCouponToCourse = async (req, res) => {
     try {
         const courseId = req.params.id;
-        const couponId = req.body.id;
+        const couponId = req.body.couponId;
         let conditionForCoupon = {
             id: couponId,
             approvalStatusByAdmin: "Approved"
