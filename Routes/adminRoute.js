@@ -18,7 +18,7 @@ const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = req
 const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById,
     getCouponToCourse, addCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
-const { createNotificationForAdmin, getNotificationForAdmin } = require('../Controller/createNotificationCont');
+const { createNotificationForAdmin, getNotificationForAdmin, changeNotificationStatus } = require('../Controller/createNotificationCont');
 const admin = express.Router();
 
 // middleware
@@ -133,5 +133,6 @@ admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCo
 // Notification
 admin.post("/createNotification", verifyAdminJWT, isAdminPresent, createNotificationForAdmin);
 admin.get("/notifications", verifyAdminJWT, isAdminPresent, getNotificationForAdmin);
+admin.put("/changeNotificationStatus/:id", verifyAdminJWT, isAdminPresent, changeNotificationStatus);  // notificationId
 
 module.exports = admin;

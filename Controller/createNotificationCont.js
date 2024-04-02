@@ -1,6 +1,7 @@
 const db = require('../Models');
 const { Op } = require("sequelize");
 const { createNotification } = require("../Middleware/Validate/validateMaster");
+const { changeQualificationStatus } = require("../Middleware/Validate/validateInstructor");
 const CreateNotification = db.createNotification;
 
 exports.createNotificationForAdmin = async (req, res) => {
@@ -45,7 +46,7 @@ exports.createNotificationForInstructor = async (req, res) => {
             forWhom: "Student",
             creater: "Instructor",
             createrId: req.instructor.id,
-            approvalStatusByAdmin: "pending"
+            approvalStatusByAdmin: "Pending"
         });
         // Final Response
         res.status(200).send({
@@ -226,6 +227,44 @@ exports.getMyNotificationForInstructor = async (req, res) => {
             totalPage: Math.ceil(totalNotification / recordLimit),
             currentPage: currentPage,
             data: notification
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeNotificationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find notification In Database
+        const notification = await CreateNotification.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!notification) {
+            return res.status(400).send({
+                success: false,
+                message: "This notification is not present!"
+            });
+        }
+        // Update notification
+        await notification.update({
+            ...notification,
+            approvalStatusByAdmin: approvalStatusByAdmin
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Notification ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({
