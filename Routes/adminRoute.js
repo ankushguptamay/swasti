@@ -3,9 +3,8 @@ const { register, login, getAdmin, changePassword } = require('../Controller/Adm
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
 const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin, getQualificationById, getSoftDeletedQualification } = require('../Controller/User/Instructor/instructorQualificationController');
 const { softDeleteExperienceAdmin, restoreExperienceAdmin, getExperienceById, getSoftDeletedExperience } = require('../Controller/User/Instructor/instructorExperienceController');
-const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent,
-    verifyStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
-const { getAllDeletedStudentProfileById, getAllStudentProfiles, approveStudentProfile, rejectStudentProfile } = require('../Controller/User/Student/studentProfileController');
+const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
+const { deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeContentPublish, changeCoursePublish, changeCourseFilePublish } = require('../Controller/Course/approvalCourseAndContent');
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
@@ -60,14 +59,10 @@ admin.get("/student", verifyAdminJWT, isAdminPresent, getAllStudent);
 admin.get("/student/:id", verifyAdminJWT, isAdminPresent, getStudentForAdmin);
 admin.get("/deletedStudents", verifyAdminJWT, isAdminPresent, getAllDeletedStudent);
 admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
-admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent);
-admin.put("/verifyStudent/:id", verifyAdminJWT, isAdminPresent, verifyStudent);
+admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent)
 admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
 
-admin.get("/allDeletedStudentProfile/:id", verifyAdminJWT, isAdminPresent, getAllDeletedStudentProfileById);
-admin.get("/allStudentProfiles", verifyAdminJWT, isAdminPresent, getAllStudentProfiles);
-admin.put("/approveStudentProfile/:id", verifyAdminJWT, isAdminPresent, approveStudentProfile);
-admin.put("/rejectStudentProfile/:id", verifyAdminJWT, isAdminPresent, rejectStudentProfile);
+admin.delete("/deleteStudentProfile/:id", verifyAdminJWT, isAdminPresent, deleteStudentProfile);
 
 // Course And Content
 // 1. Add

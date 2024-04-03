@@ -4,7 +4,7 @@ const { } = require("../../../Middleware/Validate/validateStudent");
 const { deleteSingleFile } = require("../../../Util/deleteFile")
 const StudentProfile = db.studentProfile;
 
-exports.addStudentProfile = async (req, res) => {
+exports.addUpdateStudentProfile = async (req, res) => {
     try {
         // File should be exist
         if (!req.file) {
@@ -13,14 +13,34 @@ exports.addStudentProfile = async (req, res) => {
                 message: "Please..upload profile photo!"
             });
         }
-        // Find in database
-        await StudentProfile.create({
-            originalName: req.file.originalname,
-            path: req.file.path,
-            fileName: req.file.filename,
-            studentId: req.student.id,
-            approvalStatusByAdmin: "Pending"
+        const profile = await StudentProfile.findOne({
+            where: {
+                studentId: req.student.id
+            }
         });
+        if (!profile) {
+            await StudentProfile.create({
+                originalName: req.file.originalname,
+                path: req.file.path,
+                fileName: req.file.filename,
+                studentId: req.student.id
+            });
+        } else {
+            // update deletedThrough
+            await profile.update({
+                ...profile,
+                deletedThrough: "ByUpdation"
+            });
+            // soft delete previos profile
+            await profile.destroy();
+            // create new profile pic
+            await StudentProfile.create({
+                originalName: req.file.originalname,
+                path: req.file.path,
+                fileName: req.file.filename,
+                studentId: req.student.id
+            });
+        }
         // Final response
         res.status(200).send({
             success: true,
@@ -34,99 +54,23 @@ exports.addStudentProfile = async (req, res) => {
     }
 };
 
-exports.getAllDeletedStudentProfileById = async (req, res) => {
+exports.deleteStudentProfile = async (req, res) => {
     try {
-        const { page, limit } = req.query;
-        // Pagination
-        const recordLimit = parseInt(limit) || 10;
-        let offSet = 0;
-        let currentPage = 1;
-        if (page) {
-            offSet = (parseInt(page) - 1) * recordLimit;
-            currentPage = parseInt(page);
-        }
-        const totalProfile = await StudentProfile.count({
-            where: {
-                id: req.params.id,
-                deletedAt: { [Op.ne]: null }
-            },
-            paranoid: false
-        });
-        // Find in database
-        const deleteProfile = await StudentProfile.findAll({
-            where: {
-                id: req.params.id,
-                deletedAt: { [Op.ne]: null }
-            },
-            paranoid: false
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Delted Profile fetched successfully!",
-            totalPage: Math.ceil(totalProfile / recordLimit),
-            currentPage: currentPage,
-            data: deleteProfile
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.getAllStudentProfiles = async (req, res) => {
-    try {
-        const { page, limit, search } = req.query;
-        // Pagination
-        const recordLimit = parseInt(limit) || 10;
-        let offSet = 0;
-        let currentPage = 1;
-        if (page) {
-            offSet = (parseInt(page) - 1) * recordLimit;
-            currentPage = parseInt(page);
-        }
-        // Search 
-        const condition = [];
-        if (search) {
-            condition.push({
-                approvalStatusByAdmin: search
-            })
-        }
-        const totalProfile = await StudentProfile.count({
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Find in database
-        const profile = await StudentProfile.findAll({
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Profile for approval fetched successfully!",
-            totalPage: Math.ceil(totalProfile / recordLimit),
-            currentPage: currentPage,
-            data: profile
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.approveStudentProfile = async (req, res) => {
-    try {
-        const profile = await StudentProfile.findOne({
-            where: {
+        let condition = {
+            id: req.params.id,
+            studentId: req.student.id
+        };
+        let deletedThrough = "Student";
+        let message = "deleted";
+        if (req.admin) {
+            condition = {
                 id: req.params.id
-            }
+            };
+            deletedThrough = "Admin";
+            message = "soft deleted";
+        }
+        const profile = await StudentProfile.findOne({
+            where: condition
         });
         if (!profile) {
             return res.status(400).send({
@@ -134,87 +78,22 @@ exports.approveStudentProfile = async (req, res) => {
                 message: "Profile photo is not present!",
             });
         }
-        const previousProfile = await StudentProfile.findAll({
-            where: {
-                id: req.params.id,
-                createdAt: { [Op.lt]: profile.createdAt }
-            }
-        });
-        if (previousProfile.length > 0) {
-            for (let i = 0; i < previousProfile.length; i++) {
-                await previousProfile[i].destroy();
-            }
-        }
+        // update deletedThrough
         await profile.update({
             ...profile,
-            approvalStatusByAdmin: "Approved"
+            deletedThrough: deletedThrough
         });
+        // soft delete previos profile
+        await profile.destroy();
         // Final response
         res.status(200).send({
             success: true,
-            message: "Profile photo approved successfully!"
+            message: `Profile photo ${message} successfully!`
         });
     } catch (err) {
         res.status(500).send({
             success: false,
-            message: err.message
+            message: erapprovalStatusByAdminr.message
         });
     }
 };
-
-exports.rejectStudentProfile = async (req, res) => {
-    try {
-        const profile = await StudentProfile.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!profile) {
-            return res.status(400).send({
-                success: true,
-                message: "Profile photo is not present!",
-            });
-        }
-        await profile.update({
-            ...profile,
-            approvalStatusByAdmin: "Rejected"
-        });
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Profile photo rejected successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-// exports.deleteStudentProfile = async (req, res) => {
-//     try {
-//         const profile = await StudentProfile.findOne({
-//             where: {
-//                 id: req.params.id
-//             }
-//         });
-//         if (!profile) {
-//             return res.status(400).send({
-//                 success: true,
-//                 message: "Profile photo is not present!",
-//             });
-//         }
-//         await profile.destroy();
-//         // Final response
-//         res.status(200).send({
-//             success: true,
-//             message: "Profile photo deleted successfully!"
-//         });
-//     } catch (err) {
-//         res.status(500).send({
-//             success: false,
-//             message: err.message
-//         });
-//     }
-// };

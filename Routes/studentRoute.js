@@ -1,6 +1,6 @@
 const express = require('express');
-const { register, login, getStudent, changePassword } = require('../Controller/User/Student/studentController');
-const { addStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
+const { register, login, getStudent, verifyOTP, verifyOTPByLandingPage } = require('../Controller/User/Student/studentController');
+const { addUpdateStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
 const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
@@ -15,11 +15,12 @@ const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
 
 student.post("/register", register);
 student.post("/login", login);
-student.get("/student", verifyStudentJWT, isStudentPresent, getStudent);
-student.put("/changePassword", verifyStudentJWT, isStudentPresent, changePassword);
+student.post("/verifyOTP", verifyOTP);
+student.post("/verifyOTPByLandingPage", verifyOTPByLandingPage);
+student.get("/student", verifyStudentJWT, getStudent);
 
-student.post("/addProfile", verifyStudentJWT, isStudentPresent, uploadImage.single("StudentProfile"), addStudentProfile);
-// student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
+student.post("/addUpdateStudentProfile", verifyStudentJWT, isStudentPresent, uploadImage.single("StudentProfile"), addUpdateStudentProfile);
+student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
 
 student.get("/courses", verifyStudentJWT, isStudentPresent, getAllApprovedCourseForStudent);
 // student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);

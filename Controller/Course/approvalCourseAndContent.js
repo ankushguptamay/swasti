@@ -130,7 +130,7 @@ exports.changeCoursePublish = async (req, res) => {
         // Change message
         let message = "unpublish";
         if (isPublish === true) {
-            message === "publish";
+            message = "publish";
         }
         let createrId;
         if (req.instructor) {
@@ -191,9 +191,9 @@ exports.changeContentPublish = async (req, res) => {
         }
         const { isPublish } = req.body;
         // Change message
-        let message = "unpublish";
+        let message = "Unpublish";
         if (isPublish === true) {
-            message === "publish";
+            message = "Publish";
         }
         let createrId;
         if (req.instructor) {
@@ -253,9 +253,9 @@ exports.changeCourseFilePublish = async (req, res) => {
         }
         const { isPublish } = req.body;
         // Change message
-        let message = "unpublish";
+        let message = "Unpublish";
         if (isPublish === true) {
-            message === "publish";
+            message = "Publish";
         }
         let createrId;
         if (req.instructor) {

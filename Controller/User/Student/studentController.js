@@ -1,16 +1,19 @@
 const db = require('../../../Models');
 const Student = db.student;
 const StudentProfile = db.studentProfile;
-const { loginStudent, registerStudent, changePassword } = require("../../../Middleware/Validate/validateStudent");
-const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY } = process.env;
+const EmailOTP = db.emailOTP;
+const EmailCredential = db.emailCredential;
+const { registerStudent, verifyOTPByLandingPage } = require("../../../Middleware/Validate/validateStudent");
+const { loginInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
+const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const generateOTP = require("../../../Util/generateOTP");
+const { sendEmail } = require("../../../Util/sendEmail");
 const { Op } = require("sequelize");
-const SALT = 10;
 
 // register
 // login
-// changePassword
+// verifyOtp
 // getStudent
 
 // getAllStudent
@@ -68,29 +71,133 @@ exports.register = async (req, res) => {
             let incrementedDigits = parseInt(lastDigits, 10) + 1;
             code = "STUD" + incrementedDigits;
         }
-        // Hash password
-        const salt = await bcrypt.genSalt(SALT);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
         // Create student in database
         const student = await Student.create({
             ...req.body,
-            password: hashedPassword,
             studentCode: code
         });
-        // generate JWT Token
-        const authToken = jwt.sign(
-            {
-                id: student.id,
-                email: req.body.email
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Update sendEmail 0 every day
+        const date = JSON.stringify(new Date());
+        const todayDate = `${date.slice(1, 11)}`;
+        const changeUpdateDate = await EmailCredential.findAll({
+            where: {
+                updatedAt: { [Op.lt]: todayDate }
             },
-            STUDENT_JWT_SECRET_KEY,
-            { expiresIn: JWT_VALIDITY } // five day
-        );
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        for (let i = 0; i < changeUpdateDate.length; i++) {
+            // console.log("hii");
+            await EmailCredential.update({
+                emailSend: 0
+            }, {
+                where: {
+                    id: changeUpdateDate[i].id
+                }
+            });
+        }
+        // finalise email credentiel
+        const emailCredential = await EmailCredential.findAll({
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        let finaliseEmailCredential;
+        for (let i = 0; i < emailCredential.length; i++) {
+            if (parseInt(emailCredential[i].emailSend) < 300) {
+                finaliseEmailCredential = emailCredential[i];
+                break;
+            }
+        }
+        if (finaliseEmailCredential) {
+            if (finaliseEmailCredential.plateForm === "BREVO") {
+                const options = {
+                    brevoEmail: finaliseEmailCredential.email,
+                    brevoKey: finaliseEmailCredential.EMAIL_API_KEY,
+                    headers: { "Swasti verification OTP": "123A" },
+                    subject: "Registration",
+                    htmlContent: `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Verification Card</title>
+                            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+                        <style>
+                            body {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                height: 100vh;
+                                margin: 0;
+                                font-family: 'Poppins', sans-serif;
+                            }
+                            .verification-card {
+                                padding: 30px;
+                                border: 1px solid #ccc;
+                                box-shadow: 0 0 10px rgba(0, 0, 255, 0.1);
+                                max-width: 400px;
+                                width: 100%;
+                                font-family: 'Poppins', sans-serif;
+                            }
+                            .logo-img {
+                                max-width: 100px;
+                                height: auto;
+                            }
+                            .otp-container{
+                                font-size: 32px;
+                                font-weight: bold;
+                                text-align:center;
+                                color:#1c2e4a;
+                                font-family: 'Poppins', sans-serif;
+                              }
+                            .horizontal-line {
+                                border-top: 1px solid #ccc;
+                                margin: 15px 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="verification-card">
+                            <img src="https://images.unsplash.com/photo-1636051028886-0059ad2383c8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Logo" class="logo-img">
+                            <p style='font-size:14px'>Hi <span style=" font-weight:600">${req.body.email},</span></p>
+                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the  Swasti.</p>
+                             <div class="horizontal-line"></div>
+                             <p class="otp-container"> ${otp}</p>
+                            <div class="horizontal-line"></div>
+                            
+                            <p style='font-size:14px;'>This code <span style="font-weight:600;" >expires in ${parseInt(OTP_VALIDITY_IN_MILLISECONDS) / 1000 / 60} minutes.</span>Please,  <span style="font-weight:600;" >DONOT SHARE OR SEND THIS CODE TO ANYONE!</span></p>
+                              <div class="horizontal-line"></div>
+                        </div>
+                    </body>
+                    </html>`,
+                    userEmail: req.body.email,
+                    userName: req.body.name ? req.body.name : "User"
+                }
+                const response = await sendEmail(options);
+                // console.log(response);
+                const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
+                await EmailCredential.update({
+                    emailSend: increaseNumber
+                }, { where: { id: finaliseEmailCredential.id } });
+            }
+            //  Store OTP
+            await EmailOTP.create({
+                vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+                otp: otp,
+                receiverId: student.id
+            });
+        }
         // Send final success response
         res.status(200).send({
             success: true,
-            message: 'Registered successfully!',
-            authToken: authToken
+            message: `OTP send to email successfully! Valid for ${OTP_VALIDITY_IN_MILLISECONDS / (60 * 1000)} minutes!`,
+            data: {
+                email: req.body.email
+            }
         });
     } catch (err) {
         res.status(500).send({
@@ -103,7 +210,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         // Validate Body
-        const { error } = loginStudent(req.body);
+        const { error } = loginInstructor(req.body);
         if (error) {
             console.log(error);
             return res.status(400).send(error.details[0].message);
@@ -117,34 +224,132 @@ exports.login = async (req, res) => {
         if (!student) {
             return res.status(400).send({
                 success: false,
-                message: "Invalid email or password!"
+                message: "Invalid credentials!"
             });
         }
-        // Compare password with hashed password
-        const validPassword = await bcrypt.compare(
-            req.body.password,
-            student.password
-        );
-        if (!validPassword) {
-            return res.status(400).send({
-                success: false,
-                message: "Invalid email or password!"
-            });
-        }
-        // generate JWT Token
-        const authToken = jwt.sign(
-            {
-                id: student.id,
-                email: req.body.email
+
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Update sendEmail 0 every day
+        const date = JSON.stringify(new Date());
+        const todayDate = `${date.slice(1, 11)}`;
+        const changeUpdateDate = await EmailCredential.findAll({
+            where: {
+                updatedAt: { [Op.lt]: todayDate }
             },
-            STUDENT_JWT_SECRET_KEY,
-            { expiresIn: JWT_VALIDITY } // five day
-        );
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        for (let i = 0; i < changeUpdateDate.length; i++) {
+            // console.log("hii");
+            await EmailCredential.update({
+                emailSend: 0
+            }, {
+                where: {
+                    id: changeUpdateDate[i].id
+                }
+            });
+        }
+        // finalise email credentiel
+        const emailCredential = await EmailCredential.findAll({
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        let finaliseEmailCredential;
+        for (let i = 0; i < emailCredential.length; i++) {
+            if (parseInt(emailCredential[i].emailSend) < 300) {
+                finaliseEmailCredential = emailCredential[i];
+                break;
+            }
+        }
+        if (finaliseEmailCredential) {
+            if (finaliseEmailCredential.plateForm === "BREVO") {
+                const options = {
+                    brevoEmail: finaliseEmailCredential.email,
+                    brevoKey: finaliseEmailCredential.EMAIL_API_KEY,
+                    headers: { "Swasti verification OTP": "123A" },
+                    subject: "Login to swasti",
+                    htmlContent: `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Verification Card</title>
+                            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+                        <style>
+                            body {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                height: 100vh;
+                                margin: 0;
+                                font-family: 'Poppins', sans-serif;
+                            }
+                            .verification-card {
+                                padding: 30px;
+                                border: 1px solid #ccc;
+                                box-shadow: 0 0 10px rgba(0, 0, 255, 0.1);
+                                max-width: 400px;
+                                width: 100%;
+                                font-family: 'Poppins', sans-serif;
+                            }
+                            .logo-img {
+                                max-width: 100px;
+                                height: auto;
+                            }
+                            .otp-container{
+                                font-size: 32px;
+                                font-weight: bold;
+                                text-align:center;
+                                color:#1c2e4a;
+                                font-family: 'Poppins', sans-serif;
+                              }
+                            .horizontal-line {
+                                border-top: 1px solid #ccc;
+                                margin: 15px 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="verification-card">
+                            <img src="https://images.unsplash.com/photo-1636051028886-0059ad2383c8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Logo" class="logo-img">
+                            <p style='font-size:14px'>Hi <span style=" font-weight:600">${req.body.email},</span></p>
+                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the  Swasti.</p>
+                             <div class="horizontal-line"></div>
+                             <p class="otp-container"> ${otp}</p>
+                            <div class="horizontal-line"></div>
+                            
+                            <p style='font-size:14px;'>This code <span style="font-weight:600;" >expires in ${parseInt(OTP_VALIDITY_IN_MILLISECONDS) / 1000 / 60} minutes.</span>Please,  <span style="font-weight:600;" >DONOT SHARE OR SEND THIS CODE TO ANYONE!</span></p>
+                              <div class="horizontal-line"></div>
+                        </div>
+                    </body>
+                    </html>`,
+                    userEmail: req.body.email,
+                    userName: student.name
+                }
+                const response = await sendEmail(options);
+                // console.log(response);
+                const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
+                await EmailCredential.update({
+                    emailSend: increaseNumber
+                }, { where: { id: finaliseEmailCredential.id } });
+            }
+            //  Store OTP
+            await EmailOTP.create({
+                vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+                otp: otp,
+                receiverId: student.id
+            });
+        }
         // Send final success response
         res.status(200).send({
             success: true,
-            message: 'Loged in successfully!',
-            authToken: authToken
+            message: `OTP send to email successfully! Valid for ${OTP_VALIDITY_IN_MILLISECONDS / (60 * 1000)} minutes!`,
+            data: {
+                email: req.body.email
+            }
         });
     } catch (err) {
         res.status(500).send({
@@ -154,59 +359,72 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.changePassword = async (req, res) => {
+exports.verifyOTP = async (req, res) => {
     try {
-        // Validate Body
-        const { error } = changePassword(req.body);
+        // Validate body
+        const { error } = verifyOTP(req.body);
         if (error) {
-            console.log(error);
             return res.status(400).send(error.details[0].message);
         }
-        const student = await Student.findOne({
+        const { email, otp } = req.body;
+        // Is Email Otp exist
+        const isOtp = await EmailOTP.findOne({
             where: {
-                email: req.student.email
+                otp: otp
             }
         });
-        // Compare current password with hashed password
-        const validPassword = await bcrypt.compare(
-            req.body.currentPassword,
-            student.password
-        );
-        if (!validPassword) {
+        if (!isOtp) {
             return res.status(400).send({
                 success: false,
-                message: "Invalid current password!"
+                message: `Invalid OTP!`
             });
         }
-        // Generate hash password of newPassword
-        const salt = await bcrypt.genSalt(SALT);
-        const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
-        await student.update({
-            ...student,
-            password: hashedPassword
+        // Checking is user present or not
+        const student = await Student.findOne({
+            where: {
+                [Op.and]: [
+                    { email: email }, { id: isOtp.receiverId }
+                ]
+            }
         });
-        // Generate JWT Token
+        if (!student) {
+            return res.status(400).send({
+                success: false,
+                message: "No Details Found. Register Now!"
+            });
+        }
+        // is email otp expired?
+        const isOtpExpired = new Date().getTime() > parseInt(isOtp.vallidTill);
+        if (isOtpExpired) {
+            await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+            return res.status(400).send({
+                success: false,
+                message: `OTP expired!`
+            });
+        }
+        await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // generate JWT Token
         const authToken = jwt.sign(
             {
                 id: student.id,
-                email: req.body.email
+                email: email
             },
             STUDENT_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
         );
-        // Send final success response
-        res.status(200).send({
+        res.status(201).send({
             success: true,
-            message: 'Password changed successfully!',
+            message: `Verified successfully!`,
             authToken: authToken
         });
-    } catch (err) {
+    }
+    catch (err) {
         res.status(500).send({
             success: false,
-            message: err.message
+            err: err.message
         });
     }
-}
+};
 
 exports.getStudent = async (req, res) => {
     try {
@@ -218,12 +436,8 @@ exports.getStudent = async (req, res) => {
             },
             include: [{
                 model: StudentProfile,
-                as: "profile",
-                where: {
-                    approvalStatusByAdmin: "Approved"
-                }
-            }],
-            attributes: { exclude: ['password'] }
+                as: "profile"
+            }]
         });
         // Send final success response
         res.status(200).send({
@@ -271,8 +485,7 @@ exports.getAllStudent = async (req, res) => {
             offset: offSet,
             where: {
                 [Op.and]: condition
-            },
-            attributes: { exclude: ['password'] }
+            }
         });
         // Send final success response
         res.status(200).send({
@@ -296,7 +509,10 @@ exports.getStudentForAdmin = async (req, res) => {
             where: {
                 id: req.params.id
             },
-            attributes: { exclude: ['password'] },
+            include: [{
+                model: StudentProfile,
+                as: "profile"
+            }],
             paranoid: false
         });
         if (!student) {
@@ -318,80 +534,6 @@ exports.getStudentForAdmin = async (req, res) => {
         });
     }
 }
-
-exports.registerStudent = async (req, res) => {
-    try {
-        // Validate Body
-        const { error } = registerStudent(req.body);
-        if (error) {
-            return res.status(400).send(error.details[0].message);
-        }
-        // Check in paranoid true
-        const paranoidTrue = await Student.findOne({
-            where: {
-                email: req.body.email
-            }
-        });
-        if (paranoidTrue) {
-            return res.status(400).send({
-                success: false,
-                message: "Student is already present!"
-            });
-        }
-        // Check in paranoid false
-        const paranoidFalse = await Student.findOne({
-            paranoid: false,
-            where: {
-                email: req.body.email
-            }
-        });
-        if (paranoidFalse) {
-            return res.status(400).send({
-                success: false,
-                message: "Student is present in soft delete!",
-                data: paranoidFalse
-            });
-        }
-        // generate employee code
-        let code;
-        const isStudentCode = await Student.findAll({
-            paranoid: false,
-            order: [
-                ['createdAt', 'ASC']
-            ]
-        });
-        if (isStudentCode.length == 0) {
-            code = "STUD" + 1000;
-        } else {
-            let lastStudentCode = isStudentCode[isStudentCode.length - 1];
-            let lastDigits = lastStudentCode.studentCode.substring(4);
-            let incrementedDigits = parseInt(lastDigits, 10) + 1;
-            code = "STUD" + incrementedDigits;
-        }
-        // Hash password
-        const salt = await bcrypt.genSalt(SALT);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        // Create student in database
-        const student = await Student.create({
-            ...req.body,
-            password: hashedPassword,
-            studentCode: code,
-            createdBy: "Admin",
-            verified: true
-        });
-        // Email or SMS to Student
-        // Send final success response
-        res.status(200).send({
-            success: true,
-            message: 'Registered successfully!'
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
 
 exports.softDeleteStudent = async (req, res) => {
     try {
@@ -453,38 +595,6 @@ exports.restoreStudent = async (req, res) => {
     }
 }
 
-exports.verifyStudent = async (req, res) => {
-    try {
-        // Check perticular instructor present in database
-        const student = await Student.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
-        if (!student) {
-            return res.status(400).send({
-                success: false,
-                message: "Student is not present!"
-            });
-        }
-        // verified : true
-        await student.update({
-            ...student,
-            verified: true
-        });
-        // Send final success response
-        res.status(200).send({
-            success: true,
-            message: `Student Profile [${student.studentCode}] verified successfully!`
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-}
-
 exports.getAllDeletedStudent = async (req, res) => {
     try {
         const { page, search } = req.query;
@@ -521,8 +631,7 @@ exports.getAllDeletedStudent = async (req, res) => {
             where: {
                 [Op.and]: condition
             },
-            paranoid: false,
-            attributes: { exclude: ['password'] }
+            paranoid: false
         });
         // Send final success response
         res.status(200).send({
@@ -539,3 +648,145 @@ exports.getAllDeletedStudent = async (req, res) => {
         });
     }
 }
+
+exports.registerStudent = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = registerStudent(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check in paranoid true
+        const paranoidTrue = await Student.findOne({
+            where: {
+                email: req.body.email
+            }
+        });
+        if (paranoidTrue) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is already present!"
+            });
+        }
+        // Check in paranoid false
+        const paranoidFalse = await Student.findOne({
+            paranoid: false,
+            where: {
+                email: req.body.email
+            }
+        });
+        if (paranoidFalse) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is present in soft delete!",
+                data: paranoidFalse
+            });
+        }
+        // generate employee code
+        let code;
+        const isStudentCode = await Student.findAll({
+            paranoid: false,
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        if (isStudentCode.length == 0) {
+            code = "STUD" + 1000;
+        } else {
+            let lastStudentCode = isStudentCode[isStudentCode.length - 1];
+            let lastDigits = lastStudentCode.studentCode.substring(4);
+            let incrementedDigits = parseInt(lastDigits, 10) + 1;
+            code = "STUD" + incrementedDigits;
+        }
+        // Create student in database
+        await Student.create({
+            ...req.body,
+            studentCode: code,
+            createdBy: "Admin"
+        });
+        // Email or SMS to Student
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: 'Registered successfully!'
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.verifyOTPByLandingPage = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = verifyOTPByLandingPage(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { email, otp, name, location, phoneNumber } = req.body;
+        // Is Email Otp exist
+        const isOtp = await EmailOTP.findOne({
+            where: {
+                otp: otp
+            }
+        });
+        if (!isOtp) {
+            return res.status(400).send({
+                success: false,
+                message: `Invalid OTP!`
+            });
+        }
+        // Checking is user present or not
+        const student = await Student.findOne({
+            where: {
+                [Op.and]: [
+                    { email: email }, { id: isOtp.receiverId }
+                ]
+            }
+        });
+        if (!student) {
+            return res.status(400).send({
+                success: false,
+                message: "This credentials do not exist!"
+            });
+        }
+        await student.update({
+            ...student,
+            name: name,
+            phoneNumber: phoneNumber,
+            location: location
+        });
+        // is email otp expired?
+        const isOtpExpired = new Date().getTime() > parseInt(isOtp.vallidTill);
+        if (isOtpExpired) {
+            await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+            return res.status(400).send({
+                success: false,
+                message: `OTP expired!`
+            });
+        }
+        await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // generate JWT Token
+        const authToken = jwt.sign(
+            {
+                id: student.id,
+                email: email
+            },
+            STUDENT_JWT_SECRET_KEY,
+            { expiresIn: JWT_VALIDITY } // five day
+        );
+        res.status(201).send({
+            success: true,
+            message: `Verified successfully!`,
+            authToken: authToken
+        });
+    }
+    catch (err) {
+        res.status(500).send({
+            success: false,
+            err: err.message
+        });
+    }
+};

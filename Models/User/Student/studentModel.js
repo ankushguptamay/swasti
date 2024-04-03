@@ -6,8 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true
         },
         name: {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.STRING
         },
         email: {
             type: DataTypes.STRING,
@@ -15,12 +14,10 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         },
         phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.STRING
         },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false
+        location: {
+            type: DataTypes.STRING(1234)
         },
         studentCode: {
             type: DataTypes.STRING,
@@ -33,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Self', 'Admin']]
             },
             defaultValue: 'Self'
-        },
-        verified: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
         }
     }, {
         paranoid: true

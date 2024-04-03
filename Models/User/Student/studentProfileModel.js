@@ -14,12 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         fileName: {
             type: DataTypes.STRING(1234)
         },
-        approvalStatusByAdmin: {
+        deletedThrough: {
             type: DataTypes.STRING,
             validate: {
-                isIn: [['Pending', 'Approved', 'Rejected']]
-            },
-            defaultValue: 'Pending'
+                isIn: [['Admin', 'Student', 'ByUpdation']]
+            }
         }
     }, {
         paranoid: true

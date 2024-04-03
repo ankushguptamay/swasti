@@ -8,7 +8,6 @@ const InstructorHistory = db.instructorHistory;
 const { loginInstructor, registerInstructor, updateInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 const { deleteMultiFile, deleteSingleFile } = require("../../../Util/deleteFile");
 const generateOTP = require("../../../Util/generateOTP");
@@ -110,7 +109,7 @@ exports.register = async (req, res) => {
                 const options = {
                     brevoEmail: finaliseEmailCredential.email,
                     brevoKey: finaliseEmailCredential.EMAIL_API_KEY,
-                    headers: { "Vedam verification OTP": "123A" },
+                    headers: { "Swasti verification OTP": "123A" },
                     subject: "Registration",
                     htmlContent: `<!DOCTYPE html>
                     <html lang="en">
@@ -157,7 +156,7 @@ exports.register = async (req, res) => {
                         <div class="verification-card">
                             <img src="https://images.unsplash.com/photo-1636051028886-0059ad2383c8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Logo" class="logo-img">
                             <p style='font-size:14px'>Hi <span style=" font-weight:600">${req.body.email},</span></p>
-                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the  Vedam.</p>
+                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the Swasti.</p>
                              <div class="horizontal-line"></div>
                              <p class="otp-container"> ${otp}</p>
                             <div class="horizontal-line"></div>
@@ -258,8 +257,8 @@ exports.login = async (req, res) => {
                 const options = {
                     brevoEmail: finaliseEmailCredential.email,
                     brevoKey: finaliseEmailCredential.EMAIL_API_KEY,
-                    headers: { "Vedam verification OTP": "123A" },
-                    subject: "Login to vedam",
+                    headers: { "Swasti verification OTP": "123A" },
+                    subject: "Login to swasti",
                     htmlContent: `<!DOCTYPE html>
                     <html lang="en">
                     <head>
@@ -305,7 +304,7 @@ exports.login = async (req, res) => {
                         <div class="verification-card">
                             <img src="https://images.unsplash.com/photo-1636051028886-0059ad2383c8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Logo" class="logo-img">
                             <p style='font-size:14px'>Hi <span style=" font-weight:600">${req.body.email},</span></p>
-                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the  Vedam.</p>
+                            <p style='font-size:14px;'>Please copy the One Time Password (OTP) below and enter it in the verification page on the  Swasti.</p>
                              <div class="horizontal-line"></div>
                              <p class="otp-container"> ${otp}</p>
                             <div class="horizontal-line"></div>

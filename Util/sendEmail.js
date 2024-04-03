@@ -8,8 +8,8 @@ exports.sendEmail = (options) => {
         let apiInstance = new brevo.TransactionalEmailsApi();
         let sendSmtpEmail = new brevo.SendSmtpEmail();
         sendSmtpEmail.subject = options.subject;
-        sendSmtpEmail.sender = { "name": "Vedam", "email": options.brevoEmail };
-        sendSmtpEmail.replyTo = { "email": options.brevoEmail, "name": "Vedam" };
+        sendSmtpEmail.sender = { "name": "Swasti", "email": options.brevoEmail };
+        sendSmtpEmail.replyTo = { "email": options.brevoEmail, "name": "Swasti" };
         sendSmtpEmail.headers = options.headers;
         sendSmtpEmail.htmlContent = options.htmlContent;
         sendSmtpEmail.to = [
