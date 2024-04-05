@@ -33,3 +33,11 @@ exports.contentVideoValidation = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.applyCouponToCourse = (data) => {
+    const schema = joi.object().keys({
+        couponNumber: joi.string().required(),
+        courseId: joi.string().required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}

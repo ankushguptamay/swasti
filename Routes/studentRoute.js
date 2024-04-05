@@ -5,6 +5,7 @@ const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../
 const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
+const { applyCouponToCourse } = require('../Controller/Master/couponController');
 const student = express.Router();
 
 // middleware
@@ -35,5 +36,8 @@ student.post("/giveCourseReview/:id", verifyStudentJWT, isStudentPresent, giveCo
 student.get("/getCourseReview/:id", verifyStudentJWT, isStudentPresent, getCourseReview); //id = courseId
 student.get("/getCourseAverageRating/:id", verifyStudentJWT, isStudentPresent, getCourseAverageRating); //id = courseId
 student.delete("/deleteCourseReview/:id", verifyStudentJWT, isStudentPresent, deleteCourseReview); //id = review Id
+
+// Coupon
+student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCouponToCourse); //id = review Id
 
 module.exports = student;

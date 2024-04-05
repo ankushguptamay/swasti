@@ -2,6 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const { courseCouponValidation } = require('../../Middleware/Validate/validateMaster');
 const { changeQualificationStatus } = require("../../Middleware/Validate/validateInstructor");
+const { applyCouponToCourse } = require('../../Middleware/Validate/valiadteCourse');
 const Coupon = db.coupon;
 const Course = db.course;
 const Course_Coupon_Junctions = db.course_Coupon_Junction;
@@ -570,6 +571,91 @@ exports.addCouponToCourse = async (req, res) => {
         res.status(500).send({
             success: false,
             message: err.message
+        });
+    }
+};
+
+exports.applyCouponToCourse = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = applyCouponToCourse(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { couponNumber, courseId } = req.body;
+        const coupon = await Coupon.findOne({
+            where: {
+                couponCode: couponNumber
+            }
+        });
+        // is coupon present?
+        if (!coupon) {
+            return res.status(400).send({
+                success: false,
+                message: `This coupon is not present!`
+            });
+        }
+        // is coupon expired?
+        if (coupon.validTill) {
+            const isCouponExpired = new Date().getTime() > parseInt(coupon.validTill);
+            if (isCouponExpired) {
+                return res.status(400).send({
+                    success: false,
+                    message: `This coupon has expired!`
+                });
+            }
+        }
+        // find course
+        const course = await Course.findOne({
+            where: {
+                id: courseId
+            }
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: `This course is not present!`
+            });
+        }
+        // Check is coupon apply on this course
+        const isCourseHasCoupon = await Course_Coupon_Junctions.findOne({
+            where: {
+                courseId: courseId,
+                couponId: coupon.id
+            }
+        });
+        if (!isCourseHasCoupon) {
+            res.status(400).send({
+                success: false,
+                message: `This coupon is not applicable on this course!`
+            });
+        }
+        // check applicable time
+        if (isCourseHasCoupon.validTill) {
+            const isCouponExpired = new Date().getTime() > parseInt(isCourseHasCoupon.validTill);
+            if (isCouponExpired) {
+                return res.status(400).send({
+                    success: false,
+                    message: `This coupon has expired!`
+                });
+            }
+        }
+        const savedMoney = (parseInt(course.coursePrice) * parseInt(coupon.discountInPercent)) / 100;
+        const payableMoney = parseInt(course.coursePrice) - savedMoney;
+        res.status(201).send({
+            success: true,
+            message: `Coupon applied to course ${course.courseName} successfully!`,
+            data: {
+                savedMoney: savedMoney,
+                payableMoney: payableMoney
+            }
+        });
+
+    }
+    catch (err) {
+        res.status(500).send({
+            success: false,
+            err: err.message
         });
     }
 };

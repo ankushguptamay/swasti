@@ -10,7 +10,7 @@ const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDelet
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { } = require('../Controller/Course/updateCourseAndContent');
 const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile } = require('../Controller/User/Instructor/dashboardController');
-const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse } = require('../Controller/Master/couponController');
+const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
 const instructor = express.Router();
@@ -81,6 +81,7 @@ instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorPres
 instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getAllInstructorCoupon);
 instructor.get("/coupons/:id", verifyInstructorJWT, isInstructorPresent, getCouponById);
 instructor.get("/couponToCourse/:id", verifyInstructorJWT, isInstructorPresent, getCouponToCourse);
+instructor.put("/applyCouponToCourse", verifyInstructorJWT, isInstructorPresent, applyCouponToCourse);
 
 // Review
 // 1. Instructor Review
