@@ -3,8 +3,8 @@ const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
-const Course_Student_Junctions = db.course_Student_Junction;
-const Course_Coupon_Junctions = db.course_Coupon_Junction;
+const Course_Student = db.course_Student;
+const Course_Coupon = db.course_Coupon;
 const Coupon = db.coupon;
 
 // For Admin and instructor
@@ -107,8 +107,8 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                 required: false,
                 paranoid: false
             }, {
-                model: Course_Coupon_Junctions,
-                as: 'course_coupon_junction',
+                model: Course_Coupon,
+                as: 'course_coupon',
                 include: [{
                     model: Coupon,
                     as: 'coupon'
@@ -119,7 +119,7 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                 ["createdAt", "ASC"],
                 [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
                 [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
-                [{ model: Course_Coupon_Junctions, as: "course_coupon_junction" }, 'createdAt', 'ASC']
+                [{ model: Course_Coupon, as: "course_coupon" }, 'createdAt', 'ASC']
             ]
         });
         if (!course) {
@@ -168,8 +168,8 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage']
                 }
             }, {
-                model: Course_Coupon_Junctions,
-                as: 'course_coupon_junction',
+                model: Course_Coupon,
+                as: 'course_coupon',
                 include: [{
                     model: Coupon,
                     as: 'coupon'
@@ -179,7 +179,7 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                 ["createdAt", "ASC"],
                 [{ model: CourseContent, as: "contents" }, 'createdAt', 'ASC'],
                 [{ model: CourseContent, as: "contents" }, { model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
-                [{ model: Course_Coupon_Junctions, as: "course_coupon_junction" }, 'createdAt', 'ASC']
+                [{ model: Course_Coupon, as: "course_coupon" }, 'createdAt', 'ASC']
             ]
         });
         if (!course) {
@@ -215,7 +215,8 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
         }
         // Search 
         const condition = [
-            { approvalStatusByAdmin: "Approved" }
+            { approvalStatusByAdmin: "Approved" },
+            { isPublish: true }
         ];
         if (search) {
             condition.push({
@@ -244,12 +245,13 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
                 as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
-                    approvalStatusByAdmin: "Approved"
+                    approvalStatusByAdmin: "Approved",
+                    isPublish: true
                 },
                 required: false
             }, {
-                model: Course_Coupon_Junctions,
-                as: 'course_coupon_junction',
+                model: Course_Coupon,
+                as: 'course_coupon',
                 include: [{
                     model: Coupon,
                     as: 'coupon'
@@ -275,13 +277,100 @@ exports.getAllApprovedCourseForStudent = async (req, res) => {
     }
 };
 
-exports.getCourseByIdForStudent = async (req, res) => {
+exports.getMyCourses = async (req, res) => {
+    try {
+        const purchase = await Course_Student.findAll({
+            where: {
+                studentId: req.student.id,
+                verify: true,
+                status: "paid"
+            }
+        });
+        const courseId = [];
+        for (let i = 0; i < purchase.length; i++) {
+            courseId.push(purchase[i].courseId);
+        }
+        // All Course
+        const course = await Course.findAll({
+            where: {
+                id: courseId,
+                approvalStatusByAdmin: "Approved",
+                isPublish: true
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Course fetched successfully!",
+            data: course
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getCourseByIdForPublicStudent = async (req, res) => {
+    try {
+        // Find course in database
+        const course = await Course.findOne({
+            where: {
+                id: req.params.id,
+                approvalStatusByAdmin: "Approved",
+                isPublish: true
+            },
+            include: [{
+                model: CourseAndContentFile,
+                as: 'files',
+                where: {
+                    fieldName: ['TeacherImage', 'CourseImage'],
+                    approvalStatusByAdmin: "Approved",
+                    isPublish: true
+                },
+                required: false
+            }, {
+                model: Course_Coupon,
+                as: 'course_coupon',
+                include: [{
+                    model: Coupon,
+                    as: 'coupon'
+                }]
+            }]
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "Course is not present!"
+            });
+        }
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Course fetched successfully!",
+            data: course
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.myCourseByIdForStudent = async (req, res) => {
     try {
         // Check is student has this course
-        const isCourseHas = await Course_Student_Junctions.findOne({
+        const isCourseHas = await Course_Student.findOne({
             where: {
                 courseId: req.params.id,
-                studentId: req.student.id
+                studentId: req.student.id,
+                verify: true,
+                status: "paid"
             }
         });
         if (!isCourseHas) {
@@ -294,13 +383,15 @@ exports.getCourseByIdForStudent = async (req, res) => {
         const course = await Course.findOne({
             where: {
                 id: req.params.id,
-                approvalStatusByAdmin: "Approved"
+                approvalStatusByAdmin: "Approved",
+                isPublish: true
             },
             include: [{
                 model: CourseContent,
                 as: 'contents',
                 where: {
-                    approvalStatusByAdmin: "Approved"
+                    approvalStatusByAdmin: "Approved",
+                    isPublish: true
                 },
                 required: false,
                 include: [{
@@ -308,7 +399,8 @@ exports.getCourseByIdForStudent = async (req, res) => {
                     as: 'files',
                     where: {
                         fieldName: 'ContentFile',
-                        approvalStatusByAdmin: "Approved"
+                        approvalStatusByAdmin: "Approved",
+                        isPublish: true
                     },
                     required: false
                 }]
@@ -317,7 +409,8 @@ exports.getCourseByIdForStudent = async (req, res) => {
                 as: 'files',
                 where: {
                     fieldName: ['TeacherImage', 'CourseImage'],
-                    approvalStatusByAdmin: "Approved"
+                    approvalStatusByAdmin: "Approved",
+                    isPublish: true
                 },
                 required: false
             }],

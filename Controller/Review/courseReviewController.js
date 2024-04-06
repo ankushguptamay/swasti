@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const db = require('../../Models');
 const CourseReview = db.courseReview;
-const Course_Student_Junctions = db.course_Student_Junction;
+const Course_Student = db.course_Student;
 const Course = db.course;
 const { reviewValidation } = require("../../Middleware/Validate/validateReview");
 
@@ -14,10 +14,12 @@ exports.giveCourseReview = async (req, res) => {
         }
         const { reviewerName, reviewMessage, reviewStar } = req.body;
         // Check is student has this course
-        const isCourseHas = await Course_Student_Junctions.findOne({
+        const isCourseHas = await Course_Student.findOne({
             where: {
                 courseId: req.params.id,
-                studentId: req.student.id
+                studentId: req.student.id,
+                verify: true,
+                status: "paid"
             }
         });
         if (!isCourseHas) {
@@ -50,7 +52,7 @@ exports.giveCourseReview = async (req, res) => {
 exports.getCourseAverageRating = async (req, res) => {
     try {
         // find in database
-        const rating = await reviewValidation.findAll({
+        const rating = await CourseReview.findAll({
             where: { courseId: req.params.id },
             attributes: [[db.sequelize.fn('AVG', db.sequelize.col('reviewStar')), 'averageRating']],
             raw: true
@@ -122,57 +124,57 @@ exports.getCourseReview = async (req, res) => {
     }
 };
 
-exports.deleteCourseReview = async (req, res) => {
-    try {
-        // find in database
-        const review = await CourseReview.findOne({
-            where: { id: req.params.id }
-        });
-        if (!review) {
-            return res.status(400).send({
-                success: false,
-                message: "This review is not present!"
-            });
-        }
-        if (req.instructor) {
-            const isInstructorCourse = await Course.findOne({
-                createrId: req.instructor.id,
-                id: review.courseId
-            });
-            if (isInstructorCourse) {
-                await review.destroy();
-            } else {
-                return res.status(400).send({
-                    success: false,
-                    message: "You can not delete this review!"
-                });
-            }
-        } else if (req.student) {
-            if (review.reviewerId === req.student.id) {
-                await review.destroy();
-            } else {
-                return res.status(400).send({
-                    success: false,
-                    message: "You can not delete this review!"
-                });
-            }
-        } else if (req.admin) {
-            await review.destroy();
-        } else {
-            return res.status(400).send({
-                success: false,
-                message: "You can not delete this review!"
-            });
-        }
-        // Final response
-        res.status(200).send({
-            success: true,
-            message: "Review deleted successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
+// exports.deleteCourseReview = async (req, res) => {
+//     try {
+//         // find in database
+//         const review = await CourseReview.findOne({
+//             where: { id: req.params.id }
+//         });
+//         if (!review) {
+//             return res.status(400).send({
+//                 success: false,
+//                 message: "This review is not present!"
+//             });
+//         }
+//         if (req.instructor) {
+//             const isInstructorCourse = await Course.findOne({
+//                 createrId: req.instructor.id,
+//                 id: review.courseId
+//             });
+//             if (isInstructorCourse) {
+//                 await review.destroy();
+//             } else {
+//                 return res.status(400).send({
+//                     success: false,
+//                     message: "You can not delete this review!"
+//                 });
+//             }
+//         } else if (req.student) {
+//             if (review.reviewerId === req.student.id) {
+//                 await review.destroy();
+//             } else {
+//                 return res.status(400).send({
+//                     success: false,
+//                     message: "You can not delete this review!"
+//                 });
+//             }
+//         } else if (req.admin) {
+//             await review.destroy();
+//         } else {
+//             return res.status(400).send({
+//                 success: false,
+//                 message: "You can not delete this review!"
+//             });
+//         }
+//         // Final response
+//         res.status(200).send({
+//             success: true,
+//             message: "Review deleted successfully!"
+//         });
+//     } catch (err) {
+//         res.status(500).send({
+//             success: false,
+//             message: err.message
+//         });
+//     }
+// };

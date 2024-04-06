@@ -92,7 +92,7 @@ instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstruct
 // 2. Course Review
 instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorPresent, getCourseReview); // id = courseId
 instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorPresent, getCourseAverageRating); // id = courseId
-instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorPresent, deleteCourseReview); //id = review Id
+// instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorPresent, deleteCourseReview); //id = review Id
 
 // Dashboard
 instructor.get("/totalCourse", verifyInstructorJWT, isInstructorPresent, totalCourse);

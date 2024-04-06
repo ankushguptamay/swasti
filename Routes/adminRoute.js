@@ -10,7 +10,7 @@ const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeC
 const { restoreContent, restoreCourse, restoreFile } = require('../Controller/Course/restoreCourseAndContent');
 const { getAllCourse, getCourseByIdForAdmin, getSoftDeletdContentByContentId, getFileByContentId,
     getAllSoftDeletedCourse, getAllSoftDeletedContentByCourseId } = require('../Controller/Course/getCourseAndContent');
-const { } = require('../Controller/Course/updateCourseAndContent');
+const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
@@ -124,11 +124,14 @@ admin.delete("/deleteInstructorReview/:id", verifyAdminJWT, isAdminPresent, dele
 // 2. Course Review
 admin.get("/getCourseReview/:id", verifyAdminJWT, isAdminPresent, getCourseReview); //id = courseId
 admin.get("/getCourseAverageRating/:id", verifyAdminJWT, isAdminPresent, getCourseAverageRating);  //id = courseId
-admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCourseReview); //id = review Id
+// admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCourseReview); //id = review Id
 
 // Notification
 admin.post("/createNotification", verifyAdminJWT, isAdminPresent, createNotificationForAdmin);
 admin.get("/notifications", verifyAdminJWT, isAdminPresent, getNotificationForAdmin);
 admin.put("/changeNotificationStatus/:id", verifyAdminJWT, isAdminPresent, changeNotificationStatus);  // notificationId
+
+// Danger
+admin.post("/studentToCourse/:id", verifyAdminJWT, isAdminPresent, studentToCourse);  //id = courseId
 
 module.exports = admin;

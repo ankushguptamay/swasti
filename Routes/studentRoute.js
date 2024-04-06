@@ -1,10 +1,9 @@
 const express = require('express');
 const { register, login, getStudent, verifyOTP, verifyOTPByLandingPage } = require('../Controller/User/Student/studentController');
 const { addUpdateStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
-const { getAllApprovedCourseForStudent, getCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
+const { getAllApprovedCourseForStudent, getCourseByIdForPublicStudent, getMyCourses, myCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
 const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
-const { studentToCourse } = require('../Controller/Course/updateCourseAndContent');
 const { applyCouponToCourse } = require('../Controller/Master/couponController');
 const student = express.Router();
 
@@ -23,9 +22,10 @@ student.get("/student", verifyStudentJWT, getStudent);
 student.post("/addUpdateStudentProfile", verifyStudentJWT, isStudentPresent, uploadImage.single("StudentProfile"), addUpdateStudentProfile);
 student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
 
-student.get("/courses", verifyStudentJWT, isStudentPresent, getAllApprovedCourseForStudent);
-// student.put("/studentToCourse/:id", verifyStudentJWT, isStudentPresent, studentToCourse);
-student.get("/courses/:id", verifyStudentJWT, isStudentPresent, getCourseByIdForStudent);
+student.get("/courses", getAllApprovedCourseForStudent);
+student.get("/courses/:id", getCourseByIdForPublicStudent);
+student.get("/myCourses", verifyStudentJWT, isStudentPresent, getMyCourses);
+student.get("/myCourses/:id", verifyStudentJWT, isStudentPresent, myCourseByIdForStudent);
 
 student.post("/giveInstructorReview/:id", verifyStudentJWT, isStudentPresent, giveInstructorReview); //id = instructorId
 student.get("/getInstructorAverageRating/:id", verifyStudentJWT, isStudentPresent, getInstructorAverageRating); //id = instructorId
@@ -35,9 +35,9 @@ student.delete("/deleteInstructorReview/:id", verifyStudentJWT, isStudentPresent
 student.post("/giveCourseReview/:id", verifyStudentJWT, isStudentPresent, giveCourseReview); //id = courseId
 student.get("/getCourseReview/:id", verifyStudentJWT, isStudentPresent, getCourseReview); //id = courseId
 student.get("/getCourseAverageRating/:id", verifyStudentJWT, isStudentPresent, getCourseAverageRating); //id = courseId
-student.delete("/deleteCourseReview/:id", verifyStudentJWT, isStudentPresent, deleteCourseReview); //id = review Id
+// student.delete("/deleteCourseReview/:id", verifyStudentJWT, isStudentPresent, deleteCourseReview); //id = review Id
 
 // Coupon
-student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCouponToCourse); //id = review Id
+student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCouponToCourse);
 
 module.exports = student;

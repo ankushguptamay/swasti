@@ -5,7 +5,7 @@ const { changeQualificationStatus } = require("../../Middleware/Validate/validat
 const { applyCouponToCourse } = require('../../Middleware/Validate/valiadteCourse');
 const Coupon = db.coupon;
 const Course = db.course;
-const Course_Coupon_Junctions = db.course_Coupon_Junction;
+const Course_Coupon = db.course_Coupon;
 const Instructor = db.instructor;
 
 exports.createCoupon = async (req, res) => {
@@ -151,14 +151,14 @@ exports.getCouponToCourse = async (req, res) => {
             });
         }
         // Count coupon
-        const junctionRecord = await Course_Coupon_Junctions.findAll({
+        const junctionRecord = await Course_Coupon.findAll({
             where: {
                 courseId: courseId
             }
         });
         const couponIds = [];
         for (let i = 0; i < junctionRecord.length; i++) {
-            junctionRecord.push(junctionRecord.couponId);
+            couponIds.push(junctionRecord.couponId);
         }
         // Get All Course
         const coupon = await Coupon.findAll({
@@ -488,14 +488,14 @@ exports.addCouponToCourse = async (req, res) => {
         }
         // Entry in junction table
         if (req.instructor) {
-            const isAdded = await Course_Coupon_Junctions.findOne({
+            const isAdded = await Course_Coupon.findOne({
                 where: {
                     couponId: couponId,
                     courseId: courseId
                 }
             });
             if (!isAdded) {
-                const softDelete = await Course_Coupon_Junctions.findOne({
+                const softDelete = await Course_Coupon.findOne({
                     where: {
                         couponId: couponId,
                         courseId: courseId,
@@ -514,7 +514,7 @@ exports.addCouponToCourse = async (req, res) => {
                         await softDelete.restore();
                     }
                 } else {
-                    await Course_Coupon_Junctions.create({
+                    await Course_Coupon.create({
                         createrId: req.instructor.id,
                         creater: "Instructor",
                         couponId: couponId,
@@ -523,14 +523,14 @@ exports.addCouponToCourse = async (req, res) => {
                 }
             }
         } else if (req.admin) {
-            const isAdded = await Course_Coupon_Junctions.findOne({
+            const isAdded = await Course_Coupon.findOne({
                 where: {
                     couponId: couponId,
                     courseId: courseId
                 }
             });
             if (!isAdded) {
-                const softDelete = await Course_Coupon_Junctions.findOne({
+                const softDelete = await Course_Coupon.findOne({
                     where: {
                         couponId: couponId,
                         courseId: courseId,
@@ -549,7 +549,7 @@ exports.addCouponToCourse = async (req, res) => {
                         await softDelete.restore();
                     }
                 } else {
-                    await Course_Coupon_Junctions.create({
+                    await Course_Coupon.create({
                         createrId: req.admin.id,
                         creater: "Admin",
                         couponId: couponId,
@@ -618,7 +618,7 @@ exports.applyCouponToCourse = async (req, res) => {
             });
         }
         // Check is coupon apply on this course
-        const isCourseHasCoupon = await Course_Coupon_Junctions.findOne({
+        const isCourseHasCoupon = await Course_Coupon.findOne({
             where: {
                 courseId: courseId,
                 couponId: coupon.id
