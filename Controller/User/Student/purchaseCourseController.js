@@ -68,3 +68,59 @@ exports.createOrder = async (req, res) => {
         });
     }
 };
+
+exports.verifyPayment = async (req, res) => {
+    try {
+        const orderId = req.body.razorpay_order_id;
+        const paymentId = req.body.razorpay_payment_id;
+        const razorpay_signature = req.body.razorpay_signature;
+        // Creating hmac object 
+        let hmac = crypto.createHmac('sha256', RAZORPAY_SECRET_ID);
+        // Passing the data to be hashed
+        hmac.update(orderId + "|" + paymentId);
+        // Creating the hmac in the required format
+        const generated_signature = hmac.digest('hex');
+        const purchase = await Course_Student.findOne({
+            where: {
+                razorpayOrderId: orderId,
+                verify: false,
+                status: "Created"
+            }
+        });
+        if (razorpay_signature === generated_signature) {
+            if (!purchase) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Payment has been verified! Second Time!"
+                });
+            }
+            // Update Purchase
+            await purchase.update({
+                ...purchase,
+                status: "Paid",
+                razorpayPaymentId: paymentId,
+                verify: true
+            });
+            res.status(200).json({
+                success: true,
+                message: "Payment verified successfully!"
+            })
+        }
+        else {
+            await purchase.update({
+                ...purchase,
+                status: "Failed"
+            });
+            res.status(400).json({
+                success: false,
+                message: "Payment verification failed!"
+            });
+        }
+    }
+    catch (err) {
+        res.status(500).send({
+            success: false,
+            err: err.message
+        });
+    }
+};
