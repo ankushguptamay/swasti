@@ -146,6 +146,10 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 // queryInterface.removeColumn("students", "verified").then((res) => { console.log("verified Droped!") }).catch((err) => { console.log(err) });
 // queryInterface.removeColumn("studentProfiles", "approvalStatusByAdmin").then((res) => { console.log("approvalStatusByAdmin Droped!") }).catch((err) => { console.log(err) });
 
-// queryInterface.dropTable("course_coupon").then((res) => { console.log("Password Droped!") }).catch((err) => { console.log(err) });
-
+// queryInterface.changeColumn("user_courses", "status", {
+//     type: DataTypes.STRING,
+//     validate: {
+//         isIn: [['Created', 'Paid', 'Failed']]
+//     }
+// }).then((res) => { console.log("Status Changed!") }).catch((err) => { console.log(err) });
 module.exports = db;

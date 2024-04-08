@@ -41,3 +41,14 @@ exports.applyCouponToCourse = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.purchaseCourseValidation = (data) => {
+    const schema = joi.object().keys({
+        amount: joi.string().required(),
+        currency: joi.string().required(),
+        receipt: joi.string().required(),
+        couponCode: joi.string().optional(),
+        courseId: joi.string().required()
+    });
+    return schema.validate(data);
+}

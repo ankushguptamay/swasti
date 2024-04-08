@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         status: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Created', 'Paid', 'Failed']]
+            }
         },
         verify: {
             type: DataTypes.BOOLEAN,

@@ -283,7 +283,7 @@ exports.getMyCourses = async (req, res) => {
             where: {
                 studentId: req.student.id,
                 verify: true,
-                status: "paid"
+                status: "Paid"
             }
         });
         const courseId = [];
@@ -370,7 +370,7 @@ exports.myCourseByIdForStudent = async (req, res) => {
                 courseId: req.params.id,
                 studentId: req.student.id,
                 verify: true,
-                status: "paid"
+                status: "Paid"
             }
         });
         if (!isCourseHas) {
