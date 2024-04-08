@@ -124,3 +124,75 @@ exports.verifyPayment = async (req, res) => {
         });
     }
 };
+
+// exports.getPaymentDetailsForAdmin = async (req, res) => {
+//     try {
+//         const { page, limit, search } = req.query;
+//         // Pagination
+//         const recordLimit = parseInt(limit) || 10;
+//         let offSet = 0;
+//         let currentPage = 1;
+//         if (page) {
+//             offSet = (parseInt(page) - 1) * recordLimit;
+//             currentPage = parseInt(page);
+//         }
+//         // Search 
+//         const condition = [];
+//         if (search) {
+//             condition.push({
+//                 [Op.or]: [
+//                     { courseName: { [Op.substring]: search } },
+//                     { heading: { [Op.substring]: search } },
+//                     { category: { [Op.substring]: search } }
+//                 ]
+//             })
+//         }
+//         // Count All Course
+//         const totalCourse = await Course.count({
+//             where: {
+//                 [Op.and]: condition
+//             }
+//         });
+//         // Get All Course
+//         const course = await Course.findAll({
+//             limit: recordLimit,
+//             offset: offSet,
+//             where: {
+//                 [Op.and]: condition
+//             },
+//             include: [{
+//                 model: CourseAndContentFile,
+//                 as: 'files',
+//                 where: {
+//                     fieldName: ['TeacherImage', 'CourseImage'],
+//                     approvalStatusByAdmin: "Approved",
+//                     isPublish: true
+//                 },
+//                 required: false
+//             }, {
+//                 model: Course_Coupon,
+//                 as: 'course_coupon',
+//                 include: [{
+//                     model: Coupon,
+//                     as: 'coupon'
+//                 }]
+//             }],
+//             order: [
+//                 ['createdAt', 'ASC']
+//             ]
+//         });
+//         // Final response
+//         res.status(200).send({
+//             success: true,
+//             message: "Approved Course fetched successfully!",
+//             totalPage: Math.ceil(totalCourse / recordLimit),
+//             currentPage: currentPage,
+//             data: course
+//         });
+//     } catch (err) {
+//         res.status(500).send({
+//             success: false,
+//             message: err.message
+//         });
+//     }
+// };

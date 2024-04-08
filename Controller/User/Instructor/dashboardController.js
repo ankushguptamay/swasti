@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Course_Student = db.course_Student;
 
 exports.totalCourse = async (req, res) => {
     try {
@@ -89,6 +90,35 @@ exports.getContentAndFile = async (req, res) => {
                 totalContent: totalContent,
                 totalFile: totalFile
             }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.totalStudent = async (req, res) => {
+    try {
+        // Total course
+        const courses = await Course.findAll({ where: { createrId: req.instructor.id } });
+        const courseId = [];
+        for (let i = 0; i < courses.length; i++) {
+            courseId.push(courses[i].id);
+        }
+        const totalStudent = await Course_Student.count({
+            where: {
+                courseId: courseId,
+                status: "Paid",
+                verify: true
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Total student fetched successfully!`,
+            data: totalStudent
         });
     } catch (err) {
         res.status(500).send({

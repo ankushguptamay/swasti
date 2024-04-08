@@ -9,7 +9,7 @@ const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { } = require('../Controller/Course/updateCourseAndContent');
-const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile } = require('../Controller/User/Instructor/dashboardController');
+const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile, totalStudent } = require('../Controller/User/Instructor/dashboardController');
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
@@ -99,6 +99,7 @@ instructor.get("/totalCourse", verifyInstructorJWT, isInstructorPresent, totalCo
 instructor.get("/totalDraftedCourse", verifyInstructorJWT, isInstructorPresent, totalDraftedCourse);
 instructor.get("/totalOngoingCourse", verifyInstructorJWT, isInstructorPresent, totalOngoingCourse);
 instructor.get("/getContentAndFile/:id", verifyInstructorJWT, isInstructorPresent, getContentAndFile); // courseId
+instructor.get("/totalStudent", verifyInstructorJWT, isInstructorPresent, totalStudent);
 
 // Notification
 instructor.post("/createNotification", verifyInstructorJWT, isInstructorPresent, createNotificationForInstructor);
