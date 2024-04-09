@@ -33,6 +33,24 @@ exports.addCourse = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
+        const isCourse = await Course.findOne({
+            where: {
+                courseName: courseName
+            },
+            paranoid: false
+        });
+        if (isCourse) {
+            if (courseImage) {
+                deleteSingleFile(courseImage.path);
+            }
+            if (teacherImage) {
+                deleteSingleFile(teacherImage.path);
+            }
+            return res.status(400).send({
+                success: false,
+                message: "This course is present!"
+            });
+        }
         // Set approvalStatusByAdmin according to creater
         let approvalStatusByAdmin;
         let createrId, creater;
