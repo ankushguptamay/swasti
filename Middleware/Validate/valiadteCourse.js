@@ -52,3 +52,13 @@ exports.purchaseCourseValidation = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.createOrderYogaVolunteerCourse = (data) => {
+    const schema = joi.object().keys({
+        amount: joi.string().required(),
+        currency: joi.string().required(),
+        receipt: joi.string().required(),
+        couponCode: joi.string().optional()
+    });
+    return schema.validate(data);
+}

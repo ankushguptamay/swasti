@@ -1,5 +1,5 @@
 const db = require('../../../Models');
-const { purchaseCourseValidation } = require("../../../Middleware/Validate/valiadteCourse");
+const { purchaseCourseValidation, createOrderYogaVolunteerCourse } = require("../../../Middleware/Validate/valiadteCourse");
 const Course_Student = db.course_Student;
 const Course = db.course;
 const Student = db.student;
@@ -72,7 +72,7 @@ exports.createOrder = async (req, res) => {
 exports.createOrderYogaVolunteerCourse = async (req, res) => {
     try {
         // Validate body
-        const { error } = purchaseCourseValidation(req.body);
+        const { error } = createOrderYogaVolunteerCourse(req.body);
         if (error) {
             return res.status(400).send(error.details[0].message);
         }

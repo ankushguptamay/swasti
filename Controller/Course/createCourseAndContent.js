@@ -33,6 +33,7 @@ exports.addCourse = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
+        // check is this course present
         const isCourse = await Course.findOne({
             where: {
                 courseName: courseName
