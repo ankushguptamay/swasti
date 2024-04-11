@@ -18,6 +18,8 @@ const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, cha
     getCouponToCourse, addCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForAdmin, getNotificationForAdmin, changeNotificationStatus } = require('../Controller/createNotificationCont');
+const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCourse, totalVerifiedCourse, totalStudent, getContentAndFile,
+    totalInstructor } = require('../Controller/Admin/dashboardController');
 const admin = express.Router();
 
 // middleware
@@ -133,5 +135,15 @@ admin.put("/changeNotificationStatus/:id", verifyAdminJWT, isAdminPresent, chang
 
 // Danger
 admin.post("/studentToCourse/:id", verifyAdminJWT, isAdminPresent, studentToCourse);  //id = courseId
+
+// Danger
+admin.get("/getContentAndFile/:id", verifyAdminJWT, isAdminPresent, getContentAndFile);  //id = courseId
+admin.get("/totalCourse", verifyAdminJWT, isAdminPresent, totalCourse); // all course , except drafted course
+admin.get("/totalDraftedCourse", verifyAdminJWT, isAdminPresent, totalDraftedCourse); // course created by instructor but not submit for approval
+admin.get("/totalPendingCourse", verifyAdminJWT, isAdminPresent, totalPendingCourse); // submited by instructor for approval
+admin.get("/totalPublishedCourse", verifyAdminJWT, isAdminPresent, totalPublishedCourse); // user can see this courses 
+admin.get("/totalVerifiedCourse", verifyAdminJWT, isAdminPresent, totalVerifiedCourse); // approved by swasti, user can see if courses is published
+admin.get("/totalStudent", verifyAdminJWT, isAdminPresent, totalStudent);
+admin.get("/totalInstructor", verifyAdminJWT, isAdminPresent, totalInstructor);
 
 module.exports = admin;
