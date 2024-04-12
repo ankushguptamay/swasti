@@ -29,8 +29,8 @@ exports.createOrder = async (req, res) => {
                 if (!err) {
                     Course_Student.create({
                         courseId: courseId,
-                        userId: studentId,
-                        studentId: amount / 100,
+                        studentId: studentId,
+                        amount: amount / 100,
                         currency: currency,
                         receipt: receipt,
                         razorpayOrderId: order.id,
@@ -95,8 +95,8 @@ exports.createOrderYogaVolunteerCourse = async (req, res) => {
                 if (!err) {
                     Course_Student.create({
                         courseId: course.id,
-                        userId: studentId,
-                        studentId: amount / 100,
+                        studentId: studentId,
+                        amount: amount / 100,
                         currency: currency,
                         receipt: receipt,
                         razorpayOrderId: order.id,

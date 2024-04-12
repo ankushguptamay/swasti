@@ -90,7 +90,7 @@ exports.totalPublishedCourse = async (req, res) => {
 
 exports.totalDraftedCourse = async (req, res) => {
     try {
-        const courses = await Course.count({ where: { createrId: req.instructor.id, approvalStatusByAdmin: null } });
+        const courses = await Course.count({ where: { approvalStatusByAdmin: null } });
         // Final Response
         res.status(200).send({
             success: true,
