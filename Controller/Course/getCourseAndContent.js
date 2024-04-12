@@ -57,6 +57,13 @@ exports.getAllCourse = async (req, res) => {
                     fieldName: ['TeacherImage', 'CourseImage']
                 },
                 required: false
+            }, {
+                model: Course_Coupon,
+                as: 'course_coupon',
+                include: [{
+                    model: Coupon,
+                    as: 'coupon'
+                }]
             }],
             order: [
                 ['createdAt', 'ASC']
