@@ -585,7 +585,7 @@ exports.applyCouponToCourse = async (req, res) => {
         const { couponNumber, courseId } = req.body;
         const coupon = await Coupon.findOne({
             where: {
-                couponCode: couponNumber
+                couponNumber: couponNumber
             }
         });
         // is coupon present?
