@@ -13,6 +13,7 @@ const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile, 
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
+const { getPaymentDetailsForInstructor } = require('../Controller/User/Student/purchaseCourseController');
 const instructor = express.Router();
 
 // middleware
@@ -105,5 +106,8 @@ instructor.get("/totalStudent", verifyInstructorJWT, isInstructorPresent, totalS
 instructor.post("/createNotification", verifyInstructorJWT, isInstructorPresent, createNotificationForInstructor);
 instructor.get("/myNotifications", verifyInstructorJWT, isInstructorPresent, getMyNotificationForInstructor);
 instructor.get("/notifications", verifyInstructorJWT, isInstructorPresent, getNotificationForInstructor);
+
+// Payment
+instructor.get("/paymentDetails", verifyInstructorJWT, isInstructorPresent, getPaymentDetailsForInstructor);
 
 module.exports = instructor;

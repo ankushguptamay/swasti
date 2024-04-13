@@ -20,6 +20,7 @@ const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require(
 const { createNotificationForAdmin, getNotificationForAdmin, changeNotificationStatus } = require('../Controller/createNotificationCont');
 const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCourse, totalVerifiedCourse, totalStudent, getContentAndFile,
     totalInstructor } = require('../Controller/Admin/dashboardController');
+const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const admin = express.Router();
 
 // middleware
@@ -145,5 +146,8 @@ admin.get("/totalPublishedCourse", verifyAdminJWT, isAdminPresent, totalPublishe
 admin.get("/totalVerifiedCourse", verifyAdminJWT, isAdminPresent, totalVerifiedCourse); // approved by swasti, user can see if courses is published
 admin.get("/totalStudent", verifyAdminJWT, isAdminPresent, totalStudent);
 admin.get("/totalInstructor", verifyAdminJWT, isAdminPresent, totalInstructor);
+
+// Payment
+admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsForAdmin);
 
 module.exports = admin;

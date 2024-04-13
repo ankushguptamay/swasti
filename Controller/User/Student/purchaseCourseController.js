@@ -31,6 +31,7 @@ exports.createOrder = async (req, res) => {
                         courseId: courseId,
                         studentId: studentId,
                         amount: amount / 100,
+                        studentName: req.studentName,
                         currency: currency,
                         receipt: receipt,
                         razorpayOrderId: order.id,
@@ -99,6 +100,7 @@ exports.createOrderYogaVolunteerCourse = async (req, res) => {
                         amount: amount / 100,
                         currency: currency,
                         receipt: receipt,
+                        studentName: req.studentName,
                         razorpayOrderId: order.id,
                         status: "Created",
                         razorpayTime: order.created_at,
@@ -191,74 +193,129 @@ exports.verifyPayment = async (req, res) => {
     }
 };
 
-// exports.getPaymentDetailsForAdmin = async (req, res) => {
-//     try {
-//         const { page, limit, search } = req.query;
-//         // Pagination
-//         const recordLimit = parseInt(limit) || 10;
-//         let offSet = 0;
-//         let currentPage = 1;
-//         if (page) {
-//             offSet = (parseInt(page) - 1) * recordLimit;
-//             currentPage = parseInt(page);
-//         }
-//         // Search 
-//         const condition = [];
-//         if (search) {
-//             condition.push({
-//                 [Op.or]: [
-//                     { courseName: { [Op.substring]: search } },
-//                     { heading: { [Op.substring]: search } },
-//                     { category: { [Op.substring]: search } }
-//                 ]
-//             })
-//         }
-//         // Count All Course
-//         const totalCourse = await Course.count({
-//             where: {
-//                 [Op.and]: condition
-//             }
-//         });
-//         // Get All Course
-//         const course = await Course.findAll({
-//             limit: recordLimit,
-//             offset: offSet,
-//             where: {
-//                 [Op.and]: condition
-//             },
-//             include: [{
-//                 model: CourseAndContentFile,
-//                 as: 'files',
-//                 where: {
-//                     fieldName: ['TeacherImage', 'CourseImage'],
-//                     approvalStatusByAdmin: "Approved",
-//                     isPublish: true
-//                 },
-//                 required: false
-//             }, {
-//                 model: Course_Coupon,
-//                 as: 'course_coupon',
-//                 include: [{
-//                     model: Coupon,
-//                     as: 'coupon'
-//                 }]
-//             }],
-//             order: [
-//                 ['createdAt', 'ASC']
-//             ]
-//         });
-//         // Final response
-//         res.status(200).send({
-//             success: true,
-//             message: "Approved Course fetched successfully!",
-//             totalPage: Math.ceil(totalCourse / recordLimit),
-//             currentPage: currentPage,
-//             data: course
-//         });
-//     } catch (err) {
-//         res.status(500).send({
-//             success: false,
-//             message: err.message
-//         });
-//     }
-// };
+exports.getPaymentDetailsForAdmin = async (req, res) => {
+    try {
+        const { page, limit, search, courseId } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        // Search 
+        const condition = [];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { studentName: { [Op.substring]: search } },
+                    { status: { [Op.substring]: search } }
+                ]
+            })
+        }
+        if (courseId) {
+            condition.push({ courseId: courseId });
+        }
+        // Count All Payment
+        const totalPayment = await Course_Student.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        // Get All Payment
+        const payment = await Course_Student.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Payment fetched successfully!",
+            totalPage: Math.ceil(totalPayment / recordLimit),
+            currentPage: currentPage,
+            data: payment
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getPaymentDetailsForInstructor = async (req, res) => {
+    try {
+        const { page, limit, search, courseId } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        // Search 
+        const condition = [];
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { studentName: { [Op.substring]: search } },
+                    { status: { [Op.substring]: search } }
+                ]
+            })
+        }
+        // Only instructors course
+        if (courseId) {
+            condition.push({ courseId: courseId });
+        }
+        else {
+            const course = await Course.findAll({
+                where: {
+                    isPublish: true
+                }
+            });
+            const courseIds = [];
+            for (let i = 0; i < course.length; i++) {
+                courseIds.push(course[i].id);
+            }
+            condition.push({ courseId: courseIds });
+        }
+        // Count All Payment
+        const totalPayment = await Course_Student.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        // Get All Payment
+        const payment = await Course_Student.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Payment fetched successfully!",
+            totalPage: Math.ceil(totalPayment / recordLimit),
+            currentPage: currentPage,
+            data: payment
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

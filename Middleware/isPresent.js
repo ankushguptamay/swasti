@@ -85,6 +85,7 @@ exports.isStudentPresent = async (req, res, next) => {
                 message: "Student is not present! Are you register?.. "
             })
         }
+        req.studentName = student.name;
         next();
     } catch (err) {
         res.status(500).send({ message: err.message });

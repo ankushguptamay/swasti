@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
         currency: {
             type: DataTypes.STRING
         },
+        studentName: {
+            type: DataTypes.STRING
+        },
         receipt: {
             type: DataTypes.STRING
         },
