@@ -19,7 +19,7 @@ const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, cha
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForAdmin, getNotificationForAdmin, changeNotificationStatus } = require('../Controller/createNotificationCont');
 const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCourse, totalVerifiedCourse, totalStudent, getContentAndFile,
-    totalInstructor } = require('../Controller/Admin/dashboardController');
+    totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const admin = express.Router();
 
@@ -137,7 +137,7 @@ admin.put("/changeNotificationStatus/:id", verifyAdminJWT, isAdminPresent, chang
 // Danger
 admin.post("/studentToCourse/:id", verifyAdminJWT, isAdminPresent, studentToCourse);  //id = courseId
 
-// Danger
+// Dashboard
 admin.get("/getContentAndFile/:id", verifyAdminJWT, isAdminPresent, getContentAndFile);  //id = courseId
 admin.get("/totalCourse", verifyAdminJWT, isAdminPresent, totalCourse); // all course , except drafted course
 admin.get("/totalDraftedCourse", verifyAdminJWT, isAdminPresent, totalDraftedCourse); // course created by instructor but not submit for approval
@@ -146,6 +146,8 @@ admin.get("/totalPublishedCourse", verifyAdminJWT, isAdminPresent, totalPublishe
 admin.get("/totalVerifiedCourse", verifyAdminJWT, isAdminPresent, totalVerifiedCourse); // approved by swasti, user can see if courses is published
 admin.get("/totalStudent", verifyAdminJWT, isAdminPresent, totalStudent);
 admin.get("/totalInstructor", verifyAdminJWT, isAdminPresent, totalInstructor);
+admin.get("/totalPendingInstructor", verifyAdminJWT, isAdminPresent, totalPendingInstructor);
+admin.get("/totalVerifiedInstructor", verifyAdminJWT, isAdminPresent, totalVerifiedInstructor);
 
 // Payment
 admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsForAdmin);

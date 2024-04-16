@@ -171,3 +171,37 @@ exports.totalInstructor = async (req, res) => {
         });
     }
 };
+
+exports.totalVerifiedInstructor = async (req, res) => {
+    try {
+        const instructor = await Instructor.count({ where: { isVerify: true } });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Total verified instructor fetched successfully!`,
+            data: instructor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.totalPendingInstructor = async (req, res) => {
+    try {
+        const instructor = await Instructor.count({ where: { isVerify: false } });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Total pending instructor fetched successfully!`,
+            data: instructor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

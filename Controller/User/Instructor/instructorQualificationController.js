@@ -68,7 +68,9 @@ exports.changeQualificationStatus = async (req, res) => {
                 message: "This qualification is not present!",
             });
         }
-
+        if (approvalStatusByAdmin === "Approved") {
+            await Instructor.update({ isVerify: true }, { where: { id: qualification.instructorId } });
+        }
         await qualification.update({
             ...qualification,
             approvalStatusByAdmin: approvalStatusByAdmin

@@ -74,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         dateOfBirth: {
             type: DataTypes.DATEONLY
+        },
+        isVerify: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         paranoid: true
