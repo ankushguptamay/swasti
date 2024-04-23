@@ -20,7 +20,7 @@ exports.createCourseCategory = async (req, res) => {
         if (isPresent) {
             return res.status(400).send({
                 success: false,
-                message: 'This course category present!'
+                message: 'This course category is present!'
             });
         }
         // generate Category code

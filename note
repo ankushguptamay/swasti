@@ -7,3 +7,11 @@ dashboard
 2. total courses
 3. total publish course/ ongoing course
 4. total unpublish course/ drafted course
+
+
+Task 22/04/2024
+type of instructor.....is multi?
+
+university_institute_name would be dynamic from backend in instructor qualification
+courseType would be dynamic from backend in instructor qualification
+duration would be dynamic from backend in instructor qualification

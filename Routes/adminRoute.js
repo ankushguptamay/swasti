@@ -14,6 +14,9 @@ const { studentToCourse } = require('../Controller/Course/updateCourseAndContent
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { softDeleteContentForAdmin, softDeleteCourseForAdmin, hardDeleteContent, hardDeleteCourse, softDeleteFileForAdmin, hardDeleteFile } = require('../Controller/Course/deleteCourseAndContent');
 const { createCourseCategory, getAllCourseCategory, deleteCourseCategory } = require('../Controller/Master/courseCategoryController');
+const { createCourseDuration, getAllCourseDuration, deleteCourseDuration } = require('../Controller/Master/courseDurationController');
+const { createCourseType, getAllCourseType, deleteCourseType } = require('../Controller/Master/courseTypeController');
+const { createUniversity_Institute, getAllUniversity_Institute, deleteUniversity_Institute } = require('../Controller/Master/university_instituteController');
 const { createCoupon, getAllCouponForAdmin, softDeleteCoupon, restoreCoupon, changeCouponStatus, getAllSoftDeletedCoupon, getCouponById,
     getCouponToCourse, addCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
@@ -118,6 +121,18 @@ admin.put("/restoreCoupon/:id", verifyAdminJWT, isAdminPresent, restoreCoupon);
 admin.put("/changeCouponStatus/:id", verifyAdminJWT, isAdminPresent, changeCouponStatus);
 admin.get("/couponToCourse/:id", verifyAdminJWT, isAdminPresent, getCouponToCourse);
 admin.put("/applyCouponToCourse", verifyAdminJWT, isAdminPresent, applyCouponToCourse);
+// 1. CourseDuration
+admin.post("/createCourseDuration", verifyAdminJWT, isAdminPresent, createCourseDuration);
+admin.get("/courseDurations", verifyAdminJWT, isAdminPresent, getAllCourseDuration);
+admin.delete("/deleteCourseDuration/:id", verifyAdminJWT, isAdminPresent, deleteCourseDuration);
+// 1. CourseType
+admin.post("/createCourseType", verifyAdminJWT, isAdminPresent, createCourseType);
+admin.get("/courseTypes", verifyAdminJWT, isAdminPresent, getAllCourseType);
+admin.delete("/deleteCourseType/:id", verifyAdminJWT, isAdminPresent, deleteCourseType);
+// 1. University_Institute
+admin.post("/university_institute", verifyAdminJWT, isAdminPresent, createUniversity_Institute);
+admin.get("/university_institutes", verifyAdminJWT, isAdminPresent, getAllUniversity_Institute);
+admin.delete("/university_institute/:id", verifyAdminJWT, isAdminPresent, deleteUniversity_Institute);
 
 // Review
 // 1. Instructor Review

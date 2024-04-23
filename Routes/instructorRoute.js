@@ -8,6 +8,9 @@ const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo,
 const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
 const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
+const { getAllCourseDuration } = require('../Controller/Master/courseDurationController');
+const { getAllCourseType } = require('../Controller/Master/courseTypeController');
+const { getAllUniversity_Institute } = require('../Controller/Master/university_instituteController');
 const { } = require('../Controller/Course/updateCourseAndContent');
 const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile, totalStudent } = require('../Controller/User/Instructor/dashboardController');
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
@@ -73,8 +76,10 @@ instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresen
 instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
 
 // Master
-// 1. Coursecategory
 instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, getAllCourseCategory);
+instructor.get("/courseDurations", verifyInstructorJWT, isInstructorPresent, getAllCourseDuration);
+instructor.get("/courseTypes", verifyInstructorJWT, isInstructorPresent, getAllCourseType);
+instructor.get("/university_institutes", verifyInstructorJWT, isInstructorPresent, getAllUniversity_Institute);
 
 // 2. Coupon
 instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, createCoupon);
