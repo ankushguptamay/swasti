@@ -116,19 +116,19 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 // }
 // );
 
-db.emailCredential.findOne({
-    where: {
-        email: "morarjidesai19@gmail.com"
-    }
-}).then((res) => {
-    console.log(res);
-    if (!res) {
-        db.emailCredential.create({
-            email: "morarjidesai19@gmail.com",
-            plateForm: "BREVO",
-            EMAIL_API_KEY: process.env.EMAIL_API_KEY
-        });
-    }
-}).catch((err) => { console.log(err) });
+// db.emailCredential.findOne({
+//     where: {
+//         email: "morarjidesai19@gmail.com"
+//     }
+// }).then((res) => {
+//     console.log(res);
+//     if (!res) {
+//         db.emailCredential.create({
+//             email: "morarjidesai19@gmail.com",
+//             plateForm: "BREVO",
+//             EMAIL_API_KEY: process.env.EMAIL_API_KEY
+//         });
+//     }
+// }).catch((err) => { console.log(err) });
 
 module.exports = db;
