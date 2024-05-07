@@ -340,6 +340,7 @@ exports.login = async (req, res) => {
                 const response = await sendEmail(options);
                 // console.log(response);
                 const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
+                console.log(increaseNumber);
                 await EmailCredential.update({
                     emailSend: increaseNumber
                 }, { where: { id: finaliseEmailCredential.id } });
