@@ -165,7 +165,6 @@ admin.get("/totalPendingInstructor", verifyAdminJWT, isAdminPresent, totalPendin
 admin.get("/totalVerifiedInstructor", verifyAdminJWT, isAdminPresent, totalVerifiedInstructor);
 
 // Payment
-
 admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsForAdmin);
 
 module.exports = admin;
