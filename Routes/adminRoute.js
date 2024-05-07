@@ -34,7 +34,6 @@ const uploadImage = require('../Middleware/uploadFile/image');
 const uploadPDF = require('../Middleware/uploadFile/pdf');
 
 // Admin
-admin.post("/register", register);
 admin.post("/login", login);
 admin.get("/admin", verifyAdminJWT, isAdminPresent, getAdmin);
 admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
