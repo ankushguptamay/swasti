@@ -130,7 +130,6 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-
 // queryInterface.addColumn("courses", "courseCode", {
 //     type: DataTypes.STRING,
 //     unique: true
