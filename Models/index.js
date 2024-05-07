@@ -115,28 +115,20 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     as: "leads"
 // }
 // );
-// db.emailCredential.findOne({
-//     where: {
-//         email: "morarjidesai19@gmail.com"
-//     }
-// }).then((res) => {
-//     console.log(res);
-//     if (!res) {
-//         db.emailCredential.create({
-//             email: "morarjidesai19@gmail.com",
-//             plateForm: "BREVO",
-//             EMAIL_API_KEY: process.env.EMAIL_API_KEY
-//         });
-//     }
-// }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("courses", "courseCode", {
-//     type: DataTypes.STRING,
-//     unique: true
-// }).then((res) => { console.log("courseCode Added!") }).catch((err) => { console.log(err) });
-// queryInterface.changeColumn("courses", "courseName", {
-//     type: DataTypes.STRING,
-//     unique: true
-// }).then((res) => { console.log("courseName Changed!") }).catch((err) => { console.log(err) });
+db.emailCredential.findOne({
+    where: {
+        email: "morarjidesai19@gmail.com"
+    }
+}).then((res) => {
+    console.log(res);
+    if (!res) {
+        db.emailCredential.create({
+            email: "morarjidesai19@gmail.com",
+            plateForm: "BREVO",
+            EMAIL_API_KEY: process.env.EMAIL_API_KEY
+        });
+    }
+}).catch((err) => { console.log(err) });
 
 module.exports = db;
