@@ -24,7 +24,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         courseName: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            unique: true
+        },
+        courseCode: {
+            type: DataTypes.STRING,
+            unique: true
         },
         duration: {
             type: DataTypes.STRING

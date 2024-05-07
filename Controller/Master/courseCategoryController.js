@@ -1,7 +1,7 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { courseCategoryValidation } = require('../../Middleware/Validate/validateMaster');
-const capitalize = require("../../Util/capitalizeFirstLetter")
+const {capitalizeFirstLetter} = require("../../Util/capitalizeFirstLetter")
 const CourseCategories = db.courseCategory;
 
 exports.createCourseCategory = async (req, res) => {
@@ -12,7 +12,7 @@ exports.createCourseCategory = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         // Check duplicacy
-        const categoryName = capitalize(req.body.categoryName);
+        const categoryName = capitalizeFirstLetter(req.body.categoryName);
         const isPresent = await CourseCategories.findOne({
             where: {
                 categoryName: categoryName

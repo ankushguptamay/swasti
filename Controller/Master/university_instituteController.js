@@ -2,7 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const { university_instituteValidation } = require('../../Middleware/Validate/validateMaster');
 const University_Institute = db.university_institute;
-const capitalize = require("../../Util/capitalizeFirstLetter")
+const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter")
 
 exports.createUniversity_Institute = async (req, res) => {
     try {
@@ -12,7 +12,7 @@ exports.createUniversity_Institute = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         // Check duplicacy
-        const university_institute_name = capitalize(req.body.university_institute_name);
+        const university_institute_name = capitalizeFirstLetter(req.body.university_institute_name);
         const isPresent = await University_Institute.findOne({
             where: {
                 university_institute_name: university_institute_name

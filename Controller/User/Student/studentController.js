@@ -5,6 +5,7 @@ const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const { registerStudent, verifyOTPByLandingPage } = require("../../../Middleware/Validate/validateStudent");
 const { loginInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
+const { capitalizeFirstLetter } = require("../../../Util/capitalizeFirstLetter");
 const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const generateOTP = require("../../../Util/generateOTP");
@@ -71,9 +72,16 @@ exports.register = async (req, res) => {
             let incrementedDigits = parseInt(lastDigits, 10) + 1;
             code = "STUD" + incrementedDigits;
         }
+        // capitalize name
+        let name = null;
+        if (name) {
+            name = capitalizeFirstLetter(req.body.name);
+        }
         // Create student in database
         const student = await Student.create({
-            ...req.body,
+            name: name,
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
             studentCode: code
         });
         // Generate OTP for Email
@@ -725,7 +733,7 @@ exports.verifyOTPByLandingPage = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { email, otp, name, location, phoneNumber } = req.body;
+        const { email, otp, location, phoneNumber } = req.body;
         // Is Email Otp exist
         const isOtp = await EmailOTP.findOne({
             where: {
@@ -752,6 +760,7 @@ exports.verifyOTPByLandingPage = async (req, res) => {
                 message: "This credentials do not exist!"
             });
         }
+        const name = capitalizeFirstLetter(req.body.name);
         await student.update({
             ...student,
             name: name,

@@ -80,7 +80,7 @@ exports.createOrderYogaVolunteerCourse = async (req, res) => {
         const { amount, currency, receipt, couponCode } = req.body; // receipt is id created for this order
         const course = await Course.findOne({
             where: {
-                courseName: "Yoga Volunteer Course"
+                courseCode: "Yoga-Volunteer-Course"
             }
         });
         if (!course) {

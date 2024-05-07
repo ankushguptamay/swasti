@@ -2,6 +2,7 @@ const db = require('../../Models');
 const { Op } = require("sequelize");
 const { courseValidation, contentValidation, contentVideoValidation } = require("../../Middleware/Validate/valiadteCourse");
 const { deleteSingleFile } = require("../../Util/deleteFile")
+const { capitalizeFirstLetter, createCodeForCourse } = require("../../Util/capitalizeFirstLetter");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
@@ -32,8 +33,9 @@ exports.addCourse = async (req, res) => {
             }
             return res.status(400).send(error.details[0].message);
         }
-        const { category, coursePrice, heading, description, level, language, courseName, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
-        // check is this course present
+        const { category, coursePrice, heading, description, level, language, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
+        // Check course name duplicacy
+        const courseName = capitalizeFirstLetter(req.body.courseName);
         const isCourse = await Course.findOne({
             where: {
                 courseName: courseName
@@ -52,6 +54,7 @@ exports.addCourse = async (req, res) => {
                 message: "This course is present!"
             });
         }
+        const courseCode = createCodeForCourse(courseName);
         // Set approvalStatusByAdmin according to creater
         let approvalStatusByAdmin;
         let createrId, creater;
@@ -79,6 +82,7 @@ exports.addCourse = async (req, res) => {
         const course = await Course.create({
             category: category,
             courseName: courseName,
+            courseCode: courseCode,
             coursePrice: coursePrice,
             language: language,
             heading: heading,

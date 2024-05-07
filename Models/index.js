@@ -130,28 +130,14 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("students", "location", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("Location Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("studentProfiles", "deletedThrough", {
-//     type: DataTypes.STRING,
-//     validate: {
-//         isIn: [['Admin', 'Student', 'ByUpdation']]
-//     }
-// }).then((res) => { console.log("DeletedThrough Added!") }).catch((err) => { console.log(err) });
-// queryInterface.changeColumn("students", "name", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("Name Changed!") }).catch((err) => { console.log(err) });
-// queryInterface.changeColumn("students", "phoneNumber", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("phoneNumber Changed!") }).catch((err) => { console.log(err) });
-// queryInterface.removeColumn("students", "password").then((res) => { console.log("Password Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.removeColumn("students", "verified").then((res) => { console.log("verified Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.removeColumn("studentProfiles", "approvalStatusByAdmin").then((res) => { console.log("approvalStatusByAdmin Droped!") }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructors", "isVerify", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("isVerify Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "courseCode", {
+//     type: DataTypes.STRING,
+//     unique: true
+// }).then((res) => { console.log("courseCode Added!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("courses", "courseName", {
+//     type: DataTypes.STRING,
+//     unique: true
+// }).then((res) => { console.log("courseName Changed!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
