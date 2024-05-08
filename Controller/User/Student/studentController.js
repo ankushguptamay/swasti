@@ -144,7 +144,9 @@ exports.register = async (req, res) => {
                                         <table border="0" cellpadding="0" cellspacing="0" width="80%" style="max-width: 400px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                                             <tr>
                                                 <td style="padding: 30px;">
-                                                    <img src="https://affiliate.techastute.in/static/media/swasti-logo.a3eb5cda3f2f3af4a459.jpg" alt="Logo" width="100" style="max-width: 100px; height: auto;">
+                                                    <div style="text-align: center;">
+                                                        <img src="https://affiliate.techastute.in/static/media/swasti-logo.a3eb5cda3f2f3af4a459.jpg" alt="Logo" width="100" style="max-width: 100px; height: auto;">
+                                                    </div>
                                                     <p style="font-size: 14px; font-family: verdana; color: #333; margin: 15px 0;">Hi <span style="font-weight: 600; color: #333;">${req.body.email},</span></p>
                                                     <p style="font-size: 14px; font-family: verdana; color: #333;">Please copy the One Time Password (OTP) below and enter it on the verification page of Swasti.</p>
                                                     <hr style="border-top: 1px solid #ddd; margin: 15px 0;">
@@ -166,7 +168,7 @@ exports.register = async (req, res) => {
                     userName: req.body.name ? req.body.name : "User"
                 }
                 const response = await sendEmail(options);
-                // console.log(response);
+                console.log(response);
                 const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
                 await EmailCredential.update({
                     emailSend: increaseNumber
@@ -274,7 +276,9 @@ exports.login = async (req, res) => {
                                         <table border="0" cellpadding="0" cellspacing="0" width="80%" style="max-width: 400px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                                             <tr>
                                                 <td style="padding: 30px;">
-                                                    <img src="https://affiliate.techastute.in/static/media/swasti-logo.a3eb5cda3f2f3af4a459.jpg" alt="Logo" width="100" style="max-width: 100px; height: auto;">
+                                                    <div style="text-align: center;">
+                                                        <img src="https://affiliate.techastute.in/static/media/swasti-logo.a3eb5cda3f2f3af4a459.jpg" alt="Logo" width="100" style="max-width: 100px; height: auto;">
+                                                    </div>
                                                     <p style="font-size: 14px; font-family: verdana; color: #333; margin: 15px 0;">Hi <span style="font-weight: 600; color: #333;">${req.body.email},</span></p>
                                                     <p style="font-size: 14px; font-family: verdana; color: #333;">Please copy the One Time Password (OTP) below and enter it on the verification page of Swasti.</p>
                                                     <hr style="border-top: 1px solid #ddd; margin: 15px 0;">
@@ -296,7 +300,7 @@ exports.login = async (req, res) => {
                     userName: student.name
                 }
                 const response = await sendEmail(options);
-                // console.log(response);
+                console.log(response);
                 const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
                 console.log(increaseNumber);
                 await EmailCredential.update({
