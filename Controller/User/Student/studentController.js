@@ -3,6 +3,8 @@ const Student = db.student;
 const StudentProfile = db.studentProfile;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
+const CourseReview = db.courseReview;
+const InstructorReview = db.instructorReview;
 const { registerStudent, verifyOTPByLandingPage } = require("../../../Middleware/Validate/validateStudent");
 const { loginInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
 const { capitalizeFirstLetter } = require("../../../Util/capitalizeFirstLetter");
@@ -756,3 +758,38 @@ exports.verifyOTPByLandingPage = async (req, res) => {
         });
     }
 };
+
+exports.hardDeleteStudent = async (req, res) => {
+    try {
+        // Check perticular instructor present in database
+        const student = await Student.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!student) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is not present!"
+            });
+        }
+        //hard delete StudentProfile , picture should be deleted from cloud 
+        await StudentProfile.destroy({ where: { studentId: req.params.id }, force: true });
+        //hard delete instructor reviews
+        await InstructorReview.destroy({ where: { reviewerId: req.params.id }, force: true });
+        //hard delete course reviews
+        await CourseReview.destroy({ where: { reviewerId: req.params.id }, force: true });
+        // hard delete
+        await student.destroy({ force: true });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Student Profile [${student.studentCode}] hard deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}

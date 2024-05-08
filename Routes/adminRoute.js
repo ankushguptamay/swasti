@@ -3,7 +3,7 @@ const { register, login, getAdmin, changePassword } = require('../Controller/Adm
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
 const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin, getQualificationById, getSoftDeletedQualification } = require('../Controller/User/Instructor/instructorQualificationController');
 const { softDeleteExperienceAdmin, restoreExperienceAdmin, getExperienceById, getSoftDeletedExperience } = require('../Controller/User/Instructor/instructorExperienceController');
-const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, getAllDeletedStudent } = require('../Controller/User/Student/studentController');
+const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, getAllDeletedStudent, hardDeleteStudent } = require('../Controller/User/Student/studentController');
 const { deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeContentPublish, changeCoursePublish, changeCourseFilePublish } = require('../Controller/Course/approvalCourseAndContent');
@@ -45,6 +45,7 @@ admin.get("/softDeletedInstructors", verifyAdminJWT, isAdminPresent, getAllSoftD
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
 admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
+admin.delete("/hardDeleteStudent/:id", verifyAdminJWT, isAdminPresent, hardDeleteStudent);
 
 // Instructor Qualification
 admin.get("/softDeletedQualification/:id", verifyAdminJWT, isAdminPresent, getSoftDeletedQualification); // id :instructorId
