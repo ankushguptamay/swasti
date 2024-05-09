@@ -797,3 +797,23 @@ exports.hardDeleteStudent = async (req, res) => {
         });
     }
 }
+
+exports.heartAPI = async (req, res) => {
+    try {
+        await Student.findOne({
+            where: {
+                id: "bsdhabsidjfei"
+            }
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Heart API fired successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}

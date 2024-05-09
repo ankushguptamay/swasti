@@ -46,3 +46,18 @@ exports.university_instituteValidation = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.sendCampaignEmail = (data) => {
+    const schema = joi.object().keys({
+        users: joi.array().required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}
+
+exports.addCampaignEmailCredentials = (data) => {
+    const schema = joi.object().keys({
+        email: joi.string().email().required().label('Email'),
+        apiKey: joi.string().required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}

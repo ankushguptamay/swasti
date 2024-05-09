@@ -54,6 +54,8 @@ db.studentProfile = require('./User/Student/studentProfileModel.js')(sequelize, 
 
 // Notification
 db.createNotification = require('./createNotificationModel.js')(sequelize, Sequelize);
+db.campaignEmail = require('./campaignEmailModel.js')(sequelize, Sequelize);
+db.campaignEmailCredential = require('./campaignEmailCredentialsModel.js')(sequelize, Sequelize);
 
 // Association
 // Student's Association with profile

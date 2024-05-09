@@ -3,7 +3,7 @@ const { register, login, getAdmin, changePassword } = require('../Controller/Adm
 const { getAllInstructor, getInstructorForAdmin, registerInstructor, softDeleteInstructor, restoreInstructor, getAllSoftDeletedInstructor } = require('../Controller/User/Instructor/instructorController');
 const { changeQualificationStatus, softDeleteQualificationAdmin, restoreQualificationAdmin, getQualificationById, getSoftDeletedQualification } = require('../Controller/User/Instructor/instructorQualificationController');
 const { softDeleteExperienceAdmin, restoreExperienceAdmin, getExperienceById, getSoftDeletedExperience } = require('../Controller/User/Instructor/instructorExperienceController');
-const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, getAllDeletedStudent, hardDeleteStudent } = require('../Controller/User/Student/studentController');
+const { getAllStudent, getStudentForAdmin, registerStudent, softDeleteStudent, restoreStudent, getAllDeletedStudent, hardDeleteStudent, heartAPI } = require('../Controller/User/Student/studentController');
 const { deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
 const { changeContentStatus, changeCourseFileStatus, changeCourseStatus, changeContentPublish, changeCoursePublish, changeCourseFilePublish } = require('../Controller/Course/approvalCourseAndContent');
@@ -24,6 +24,7 @@ const { createNotificationForAdmin, getNotificationForAdmin, changeNotificationS
 const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCourse, totalVerifiedCourse, totalStudent, getContentAndFile,
     totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
+const { sendCampaignEmail, addCampaignEmailCredentials } = require('../Controller/campaignEmailController');
 const admin = express.Router();
 
 // middleware
@@ -38,6 +39,8 @@ admin.post("/login", login);
 admin.get("/admin", verifyAdminJWT, isAdminPresent, getAdmin);
 admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
 
+admin.get("/heartAPI", heartAPI);
+
 // Instructor Bio
 admin.get("/instructor", verifyAdminJWT, isAdminPresent, getAllInstructor);
 admin.get("/instructor/:id", verifyAdminJWT, isAdminPresent, getInstructorForAdmin);
@@ -45,7 +48,6 @@ admin.get("/softDeletedInstructors", verifyAdminJWT, isAdminPresent, getAllSoftD
 admin.post("/registerInstructor", verifyAdminJWT, isAdminPresent, registerInstructor);
 admin.put("/restoreInstructor/:id", verifyAdminJWT, isAdminPresent, restoreInstructor);
 admin.delete("/softDeleteInstructor/:id", verifyAdminJWT, isAdminPresent, softDeleteInstructor);
-admin.delete("/hardDeleteStudent/:id", verifyAdminJWT, isAdminPresent, hardDeleteStudent);
 
 // Instructor Qualification
 admin.get("/softDeletedQualification/:id", verifyAdminJWT, isAdminPresent, getSoftDeletedQualification); // id :instructorId
@@ -67,6 +69,7 @@ admin.get("/deletedStudents", verifyAdminJWT, isAdminPresent, getAllDeletedStude
 admin.post("/registerStudent", verifyAdminJWT, isAdminPresent, registerStudent);
 admin.put("/restoreStudent/:id", verifyAdminJWT, isAdminPresent, restoreStudent)
 admin.delete("/softDeleteStudent/:id", verifyAdminJWT, isAdminPresent, softDeleteStudent);
+admin.delete("/hardDeleteStudent/:id", verifyAdminJWT, isAdminPresent, hardDeleteStudent);
 
 admin.delete("/deleteStudentProfile/:id", verifyAdminJWT, isAdminPresent, deleteStudentProfile);
 
@@ -166,5 +169,9 @@ admin.get("/totalVerifiedInstructor", verifyAdminJWT, isAdminPresent, totalVerif
 
 // Payment 
 admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsForAdmin);
+
+// Payment 
+admin.post("/sendCampaignEmail", sendCampaignEmail);
+admin.post("/addCampaignEmailCredentials", addCampaignEmailCredentials);
 
 module.exports = admin;
