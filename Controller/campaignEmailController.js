@@ -35,6 +35,7 @@ exports.sendCampaignEmail = async (req, res) => {
         });
         // Find All emails
         const findAllCampaignEmail = await CampaignEmailCredential.findAll();
+        // Number of email can be sent
         let emailCanSend = 0;
         for (let i = 0; i < findAllCampaignEmail.length; i++) {
             emailCanSend = emailCanSend + (300 - parseInt(findAllCampaignEmail[i].emailSend));
@@ -71,6 +72,10 @@ exports.sendCampaignEmail = async (req, res) => {
                 apiKey: finaliseEmailCredential[i].EMAIL_API_KEY
             }
             const response = await sendBulkEmail(option);
+            // update CampaignEmailCredential
+            await CampaignEmailCredential.update({
+                emailSend: 300
+            }, { where: { id: finaliseEmailCredential[i].id } });
             // store in database
             await CampaignEmail.bulkCreate(userData, { returning: true })
             count1 = count2;

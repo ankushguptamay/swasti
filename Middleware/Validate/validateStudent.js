@@ -6,7 +6,7 @@ exports.registerStudent = (data) => {
         name: joi.string().min(3).max(30).optional(),
         email: joi.string().email().required().label('Email'),
         phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).optional()
-    }).options({ allowUnknown: true });
+    });
     return schema.validate(data);
 }
 
@@ -17,6 +17,16 @@ exports.verifyOTPByLandingPage = (data) => {
         phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
         location: joi.string().min(3).max(30).optional(),
         otp: joi.string().length(6).required()
-    }).options({ allowUnknown: true });
+    });
+    return schema.validate(data);
+}
+
+exports.registerByLandingPage = (data) => {
+    const schema = joi.object().keys({
+        name: joi.string().min(3).max(30).required(),
+        email: joi.string().email().required().label('Email'),
+        phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
+        location: joi.string().min(3).max(30).optional()
+    })//.options({ allowUnknown: true });
     return schema.validate(data);
 }

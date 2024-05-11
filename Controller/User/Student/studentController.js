@@ -5,7 +5,7 @@ const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const CourseReview = db.courseReview;
 const InstructorReview = db.instructorReview;
-const { registerStudent, verifyOTPByLandingPage } = require("../../../Middleware/Validate/validateStudent");
+const { registerStudent, verifyOTPByLandingPage, registerByLandingPage } = require("../../../Middleware/Validate/validateStudent");
 const { loginInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
 const { capitalizeFirstLetter } = require("../../../Util/capitalizeFirstLetter");
 const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
@@ -817,3 +817,84 @@ exports.heartAPI = async (req, res) => {
         });
     }
 }
+
+exports.registerByLandingPage = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = registerByLandingPage(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check in paranoid true
+        const paranoidTrue = await Student.findOne({
+            where: {
+                email: req.body.email
+            }
+        });
+        if (paranoidTrue) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is already present!"
+            });
+        }
+        // Check in paranoid false
+        const paranoidFalse = await Student.findOne({
+            paranoid: false,
+            where: {
+                email: req.body.email
+            }
+        });
+        if (paranoidFalse) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is already present! Please contact to JYAN!"
+            });
+        }
+        // generate employee code
+        let code;
+        const isStudentCode = await Student.findAll({
+            paranoid: false,
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        if (isStudentCode.length == 0) {
+            code = "STUD" + 1000;
+        } else {
+            let lastStudentCode = isStudentCode[isStudentCode.length - 1];
+            let lastDigits = lastStudentCode.studentCode.substring(4);
+            let incrementedDigits = parseInt(lastDigits, 10) + 1;
+            code = "STUD" + incrementedDigits;
+        }
+        // capitalize name
+        const name = capitalizeFirstLetter(req.body.name);
+        // Create student in database
+        const student = await Student.create({
+            name: name,
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+            studentCode: code,
+            location: req.body.location
+        });
+        // generate JWT Token
+        const authToken = jwt.sign(
+            {
+                id: student.id,
+                email: req.body.email
+            },
+            STUDENT_JWT_SECRET_KEY,
+            { expiresIn: JWT_VALIDITY } // five day
+        );
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Student registered successfully!`,
+            authToken: authToken
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
