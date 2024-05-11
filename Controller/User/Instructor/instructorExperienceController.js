@@ -81,7 +81,7 @@ exports.restoreExperienceAdmin = async (req, res) => {
         if (experience.deletedThrough === "Instructor" || experience.deletedThrough === "ByUpdation") {
             return res.status(400).send({
                 success: true,
-                message: "Warning! This experience is not deleted by Vedam!",
+                message: "Warning! This experience is not deleted by Swasti!",
             });
         }
         await experience.update({ ...experience, deletedThrough: null });

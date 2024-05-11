@@ -134,7 +134,7 @@ exports.restoreQualificationAdmin = async (req, res) => {
         if (qualification.deletedThrough === "Instructor" || qualification.deletedThrough === "ByUpdation") {
             return res.status(400).send({
                 success: true,
-                message: "Warning! This qualification is not deleted by Vedam!",
+                message: "Warning! This qualification is not deleted by Swasti!",
             });
         }
         await qualification.update({ ...qualification, deletedThrough: null });

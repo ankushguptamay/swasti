@@ -71,7 +71,7 @@ exports.sendCampaignEmail = async (req, res) => {
                 users: userData,
                 apiKey: finaliseEmailCredential[i].EMAIL_API_KEY
             }
-            const response = await sendBulkEmail(option);
+            await sendBulkEmail(option);
             // update CampaignEmailCredential
             await CampaignEmailCredential.update({
                 emailSend: 300

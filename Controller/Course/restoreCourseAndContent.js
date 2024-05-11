@@ -23,7 +23,7 @@ exports.restoreCourse = async (req, res) => {
         if (course.deletedThrough === "Instructor" || course.deletedThrough === "ByUpdation") {
             return res.status(400).send({
                 success: true,
-                message: "Warning! This Course is not deleted by Swastee!",
+                message: "Warning! This Course is not deleted by Swasti!",
             });
         }
         await course.update({ deletedThrough: null });
@@ -61,7 +61,7 @@ exports.restoreContent = async (req, res) => {
         if (courseContent.deletedThrough === "Instructor" || courseContent.deletedThrough === "ByUpdation") {
             return res.status(400).send({
                 success: true,
-                message: "Warning! This Content is not deleted by Swastee!",
+                message: "Warning! This Content is not deleted by Swasti!",
             });
         }
         await courseContent.update({ deletedThrough: null });
@@ -99,7 +99,7 @@ exports.restoreFile = async (req, res) => {
         if (file.deletedThrough === "Instructor" || file.deletedThrough === "ByUpdation") {
             return res.status(400).send({
                 success: true,
-                message: "Warning! This File is not deleted by Swastee!",
+                message: "Warning! This File is not deleted by Swasti!",
             });
         }
         await file.update({ deletedThrough: null });

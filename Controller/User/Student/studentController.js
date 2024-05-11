@@ -55,7 +55,7 @@ exports.register = async (req, res) => {
         if (paranoidFalse) {
             return res.status(400).send({
                 success: false,
-                message: "Student is already present! Please contact to JYAN!"
+                message: "This student is blocked! Please contact to Swasti!"
             });
         }
         // generate employee code
@@ -826,65 +826,72 @@ exports.registerByLandingPage = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         // Check in paranoid true
-        const paranoidTrue = await Student.findOne({
+        const isStudent = await Student.findOne({
             where: {
                 email: req.body.email
             }
         });
-        if (paranoidTrue) {
-            return res.status(400).send({
-                success: false,
-                message: "Student is already present!"
-            });
-        }
-        // Check in paranoid false
-        const paranoidFalse = await Student.findOne({
-            paranoid: false,
-            where: {
-                email: req.body.email
-            }
-        });
-        if (paranoidFalse) {
-            return res.status(400).send({
-                success: false,
-                message: "Student is already present! Please contact to JYAN!"
-            });
-        }
-        // generate employee code
-        let code;
-        const isStudentCode = await Student.findAll({
-            paranoid: false,
-            order: [
-                ['createdAt', 'ASC']
-            ]
-        });
-        if (isStudentCode.length == 0) {
-            code = "STUD" + 1000;
+        let authToken;
+        if (isStudent) {
+            // generate JWT Token
+            authToken = jwt.sign(
+                {
+                    id: isStudent.id,
+                    email: req.body.email
+                },
+                STUDENT_JWT_SECRET_KEY,
+                { expiresIn: JWT_VALIDITY } // five day
+            );
         } else {
-            let lastStudentCode = isStudentCode[isStudentCode.length - 1];
-            let lastDigits = lastStudentCode.studentCode.substring(4);
-            let incrementedDigits = parseInt(lastDigits, 10) + 1;
-            code = "STUD" + incrementedDigits;
+            // Check in paranoid false
+            const paranoidFalse = await Student.findOne({
+                paranoid: false,
+                where: {
+                    email: req.body.email
+                }
+            });
+            if (paranoidFalse) {
+                return res.status(400).send({
+                    success: false,
+                    message: "This student is blocked! Please contact to Swasti!"
+                });
+            }
+            // generate employee code
+            let code;
+            const isStudentCode = await Student.findAll({
+                paranoid: false,
+                order: [
+                    ['createdAt', 'ASC']
+                ]
+            });
+            if (isStudentCode.length == 0) {
+                code = "STUD" + 1000;
+            } else {
+                let lastStudentCode = isStudentCode[isStudentCode.length - 1];
+                let lastDigits = lastStudentCode.studentCode.substring(4);
+                let incrementedDigits = parseInt(lastDigits, 10) + 1;
+                code = "STUD" + incrementedDigits;
+            }
+            // capitalize name
+            const name = capitalizeFirstLetter(req.body.name);
+            // Create student in database
+            const student = await Student.create({
+                name: name,
+                email: req.body.email,
+                phoneNumber: req.body.phoneNumber,
+                studentCode: code,
+                location: req.body.location
+            });
+            // generate JWT Token
+            authToken = jwt.sign(
+                {
+                    id: student.id,
+                    email: req.body.email
+                },
+                STUDENT_JWT_SECRET_KEY,
+                { expiresIn: JWT_VALIDITY } // five day
+            );
         }
-        // capitalize name
-        const name = capitalizeFirstLetter(req.body.name);
-        // Create student in database
-        const student = await Student.create({
-            name: name,
-            email: req.body.email,
-            phoneNumber: req.body.phoneNumber,
-            studentCode: code,
-            location: req.body.location
-        });
-        // generate JWT Token
-        const authToken = jwt.sign(
-            {
-                id: student.id,
-                email: req.body.email
-            },
-            STUDENT_JWT_SECRET_KEY,
-            { expiresIn: JWT_VALIDITY } // five day
-        );
         // Send final success response
         res.status(200).send({
             success: true,
