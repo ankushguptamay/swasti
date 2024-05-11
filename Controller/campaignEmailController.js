@@ -61,7 +61,9 @@ exports.sendCampaignEmail = async (req, res) => {
             count2 = count2 + emailCanBeSend;
             const userData = [];
             for (j = count1; j < count2; j++) {
-                userData.push(users[j]);
+                if (users[j]) {
+                    userData.push(users[j]);
+                }
             }
             const option = {
                 senderName: "Swasti",
@@ -73,12 +75,16 @@ exports.sendCampaignEmail = async (req, res) => {
             }
             await sendBulkEmail(option);
             // update CampaignEmailCredential
+            const emailSend = parseInt(finaliseEmailCredential[i].emailSend) + userData.length;
             await CampaignEmailCredential.update({
-                emailSend: 300
+                emailSend: emailSend
             }, { where: { id: finaliseEmailCredential[i].id } });
             // store in database
             await CampaignEmail.bulkCreate(userData, { returning: true })
             count1 = count2;
+            if (count1 >= users.length) {
+                break;
+            }
         }
         res.status(200).send({
             success: true,
