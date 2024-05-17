@@ -8,6 +8,13 @@ exports.loginInstructor = (data) => {
     return schema.validate(data);
 }
 
+exports.loginInstructorByNumber = (data) => {
+    const schema = joi.object().keys({
+        phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required()
+    });
+    return schema.validate(data);
+}
+
 exports.registerInstructor = (data) => {
     const schema = joi.object().keys({
         name: joi.string().min(3).max(30).required(),
@@ -50,6 +57,14 @@ exports.addQualification = (data) => {
 exports.verifyOTP = (data) => {
     const schema = joi.object().keys({
         email: joi.string().email().required().label('Email'),
+        otp: joi.string().length(6).required(),
+    });
+    return schema.validate(data);
+}
+
+exports.verifyNumberOTP = (data) => {
+    const schema = joi.object().keys({
+        phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
         otp: joi.string().length(6).required(),
     });
     return schema.validate(data);

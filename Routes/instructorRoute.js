@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getInstructor, verifyOTP, updateInstructor } = require('../Controller/User/Instructor/instructorController');
+const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -30,6 +30,9 @@ const uploadPDF = require('../Middleware/uploadFile/pdf');
 instructor.post("/register", register);
 instructor.post("/login", login);
 instructor.post("/verifyOTP", verifyOTP);
+instructor.post("/registerByNumber", registerByNumber);
+instructor.post("/loginByNumber", loginByNumber);
+instructor.post("/verifyNumberOTP", verifyNumberOTP);
 instructor.get("/instructor", verifyInstructorJWT, getInstructor);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
 

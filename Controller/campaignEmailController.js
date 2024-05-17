@@ -80,7 +80,7 @@ exports.sendCampaignEmail = async (req, res) => {
                 emailSend: emailSend
             }, { where: { id: finaliseEmailCredential[i].id } });
             // store in database
-            await CampaignEmail.bulkCreate(userData, { returning: true })
+            await CampaignEmail.bulkCreate(userData, { returning: true });
             count1 = count2;
             if (count1 >= users.length) {
                 break;

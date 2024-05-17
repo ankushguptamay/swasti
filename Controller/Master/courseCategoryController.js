@@ -1,7 +1,7 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { courseCategoryValidation } = require('../../Middleware/Validate/validateMaster');
-const {capitalizeFirstLetter} = require("../../Util/capitalizeFirstLetter")
+const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter");
 const CourseCategories = db.courseCategory;
 
 exports.createCourseCategory = async (req, res) => {

@@ -5,13 +5,15 @@ const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
-const { loginInstructor, registerInstructor, updateInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
+const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 const { deleteMultiFile, deleteSingleFile } = require("../../../Util/deleteFile");
+const { capitalizeFirstLetter } = require("../../../Util/capitalizeFirstLetter");
 const generateOTP = require("../../../Util/generateOTP");
 const { sendEmail } = require("../../../Util/sendEmail");
+const { sendOTPToNumber } = require('../../../Util/sendOTPToMobileNumber');
 const SALT = 10;
 
 // register
@@ -38,13 +40,16 @@ exports.register = async (req, res) => {
         const isInstructor = await Instructor.findOne({
             paranoid: false,
             where: {
-                email: req.body.email
+                [Op.or]: [
+                    { email: req.body.email },
+                    { phoneNumber: req.body.phoneNumber }
+                ]
             }
         });
         if (isInstructor) {
             return res.status(400).send({
                 success: false,
-                message: "Instructor is already present!"
+                message: "This credentials already exist!"
             });
         }
         // generate employee code
@@ -63,9 +68,12 @@ exports.register = async (req, res) => {
             let incrementedDigits = parseInt(lastDigits, 10) + 1;
             code = "INST" + incrementedDigits;
         }
+        const name = capitalizeFirstLetter(req.body.name);
         // Create instructor in database
         const instructor = await Instructor.create({
-            ...req.body,
+            email: req.body.email,
+            name: name,
+            phoneNumber: req.body.phoneNumber,
             instructorCode: code
         });
         // Generate OTP for Email
@@ -722,7 +730,8 @@ exports.updateInstructor = async (req, res) => {
                 message: "Instructor is not present!"
             });
         }
-        const { bio, name, socialMediaLink, location, twitter_x, facebook, instagram, linkedIn, languages, dateOfBirth } = req.body;
+        const { bio, socialMediaLink, location, twitter_x, facebook, instagram, linkedIn, languages, dateOfBirth } = req.body;
+        const name = capitalizeFirstLetter(req.body.name);
         // store current data in history
         await InstructorHistory.create({
             name: instructor.name,
@@ -779,3 +788,175 @@ exports.updateInstructor = async (req, res) => {
         });
     }
 }
+
+exports.registerByNumber = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = registerInstructor(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check is present 
+        const isInstructor = await Instructor.findOne({
+            paranoid: false,
+            where: {
+                [Op.or]: [
+                    { email: req.body.email },
+                    { phoneNumber: req.body.phoneNumber }
+                ]
+            }
+        });
+        if (isInstructor) {
+            return res.status(400).send({
+                success: false,
+                message: "This credentials already exist!!"
+            });
+        }
+        // generate employee code
+        let code;
+        const isInstructorCode = await Instructor.findAll({
+            paranoid: false,
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        if (isInstructorCode.length == 0) {
+            code = "INST" + 1000;
+        } else {
+            let lastInstructorCode = isInstructorCode[isInstructorCode.length - 1];
+            let lastDigits = lastInstructorCode.instructorCode.substring(4);
+            let incrementedDigits = parseInt(lastDigits, 10) + 1;
+            code = "INST" + incrementedDigits;
+        }
+        const name = capitalizeFirstLetter(req.body.name);
+        // Create instructor in database
+        await Instructor.create({
+            email: req.body.email,
+            name: name,
+            phoneNumber: req.body.phoneNumber,
+            instructorCode: code
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Registerd successfully!`,
+            data: { phoneNumber: req.body.phoneNumber }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.loginByNumber = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = loginInstructorByNumber(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check is present 
+        const isInstructor = await Instructor.findOne({
+            where: {
+                phoneNumber: req.body.phoneNumber
+            }
+        });
+        if (!isInstructor) {
+            return res.status(400).send({
+                success: false,
+                message: "Not register!"
+            });
+        }
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Sending OTP to mobile number
+        await sendOTPToNumber(req.body.phoneNumber, otp);
+        //  Store OTP
+        await EmailOTP.create({
+            vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+            otp: otp,
+            receiverId: isInstructor.id
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `OTP send successfully! Valid for ${OTP_VALIDITY_IN_MILLISECONDS / (60 * 1000)} minutes!`,
+            data: { phoneNumber: req.body.phoneNumber }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.verifyNumberOTP = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = verifyNumberOTP(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { phoneNumber, otp } = req.body;
+        // Is Email Otp exist
+        const isOtp = await EmailOTP.findOne({
+            where: {
+                otp: otp
+            }
+        });
+        if (!isOtp) {
+            return res.status(400).send({
+                success: false,
+                message: `Invalid OTP!`
+            });
+        }
+        // Checking is user present or not
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { phoneNumber: phoneNumber }, { id: isOtp.receiverId }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.status(400).send({
+                success: false,
+                message: "No Details Found. Register Now!"
+            });
+        }
+        // is email otp expired?
+        const isOtpExpired = new Date().getTime() > parseInt(isOtp.vallidTill);
+        if (isOtpExpired) {
+            await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+            return res.status(400).send({
+                success: false,
+                message: `OTP expired!`
+            });
+        }
+        await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // generate JWT Token
+        const authToken = jwt.sign(
+            {
+                id: instructor.id,
+                email: instructor.email,
+                instructorType: instructor.instructorType
+            },
+            INSTRUCTOR_JWT_SECRET_KEY,
+            { expiresIn: JWT_VALIDITY } // five day
+        );
+        res.status(201).send({
+            success: true,
+            message: `Verified successfully!`,
+            authToken: authToken
+        });
+    }
+    catch (err) {
+        res.status(500).send({
+            success: false,
+            err: err.message
+        });
+    }
+};
