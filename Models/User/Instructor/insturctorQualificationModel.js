@@ -29,6 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         documentOriginalName: {
             type: DataTypes.STRING
         },
+        cloudinaryFileId: {
+            type: DataTypes.STRING
+        },
         documentPath: {
             type: DataTypes.STRING(1234)
         },

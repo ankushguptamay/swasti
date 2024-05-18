@@ -16,6 +16,14 @@ const { sendEmail } = require("../../../Util/sendEmail");
 const { sendOTPToNumber } = require('../../../Util/sendOTPToMobileNumber');
 const SALT = 10;
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 // register
 // login
 // changePassword
@@ -736,6 +744,7 @@ exports.updateInstructor = async (req, res) => {
         await InstructorHistory.create({
             name: instructor.name,
             email: instructor.email,
+            cloudinaryFileId: instructor.cloudinaryFileId,
             phoneNumber: instructor.phoneNumber,
             instructorType: instructor.instructorType,
             bio: instructor.bio,
@@ -752,11 +761,17 @@ exports.updateInstructor = async (req, res) => {
             languages: instructor.languages,
             dateOfBirth: instructor.dateOfBirth
         });
-        let imagePath = instructor.imagePath,
+        let image_Path = instructor.imagePath,
             imageFileName = instructor.imageFileName,
-            imageOriginalName = instructor.imageOriginalName;
+            imageOriginalName = instructor.imageOriginalName,
+            cloudinaryFileId = instructor.cloudinaryFileId;
         if (req.file) {
-            imagePath = req.file.path;
+            const imagePath = `./Resource/${req.file.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
+            cloudinaryFileId = response.public_id;
+            image_Path = response.secure_url;
             imageFileName = req.file.filename;
             imageOriginalName = req.file.originalname
         }
@@ -764,9 +779,10 @@ exports.updateInstructor = async (req, res) => {
         await instructor.update({
             name: name,
             bio: bio,
+            cloudinaryFileId: cloudinaryFileId,
             socialMediaLink: socialMediaLink,
             location: location,
-            imagePath: imagePath,
+            imagePath: image_Path,
             imageFileName: imageFileName,
             imageOriginalName: imageOriginalName,
             twitter_x: twitter_x,

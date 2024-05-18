@@ -7,6 +7,15 @@ const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+
 // For Admin And Instructor
 exports.addCourse = async (req, res) => {
     try {
@@ -98,9 +107,14 @@ exports.addCourse = async (req, res) => {
             approvalStatusByAdmin: approvalStatusByAdmin
         });
         if (courseImage) {
+            const imagePath = `./Resource/${courseImage.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(courseImage.path);
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: courseImage.originalname,
-                linkOrPath: courseImage.path,
+                linkOrPath: response.secure_url,
                 mimeType: courseImage.mimetype,
                 fileName: courseImage.filename,
                 fieldName: courseImage.fieldname,
@@ -111,9 +125,14 @@ exports.addCourse = async (req, res) => {
             });
         }
         if (teacherImage) {
+            const imagePath = `./Resource/${teacherImage.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(teacherImage.path);
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: teacherImage.originalname,
-                linkOrPath: teacherImage.path,
+                linkOrPath: response.secure_url,
                 mimeType: teacherImage.mimetype,
                 fileName: teacherImage.filename,
                 fieldName: teacherImage.fieldname,
@@ -147,6 +166,10 @@ exports.addCourseImage = async (req, res) => {
         }
         // Find in database
         if (req.instructor) {
+            const imagePath = `./Resource/${req.file.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
             const courseImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
@@ -160,8 +183,9 @@ exports.addCourseImage = async (req, res) => {
                 }
             }
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -176,6 +200,10 @@ exports.addCourseImage = async (req, res) => {
                 message: "Course Image added successfully!"
             });
         } else if (req.admin) {
+            const imagePath = `./Resource/${req.file.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
             const courseImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
@@ -188,8 +216,9 @@ exports.addCourseImage = async (req, res) => {
                 }
             }
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -204,7 +233,7 @@ exports.addCourseImage = async (req, res) => {
                 message: "Course Image added successfully!"
             });
         } else {
-            // Final response
+            deleteSingleFile(req.file.path);
             res.status(400).send({
                 success: false,
                 message: "You can not add course image!"
@@ -229,6 +258,10 @@ exports.addTeacherImage = async (req, res) => {
         }
         // Find in database
         if (req.instructor) {
+            const imagePath = `./Resource/${req.file.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
             const teacherImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
@@ -242,8 +275,9 @@ exports.addTeacherImage = async (req, res) => {
                 }
             }
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -258,6 +292,10 @@ exports.addTeacherImage = async (req, res) => {
                 message: "Teacher Image added successfully!"
             });
         } else if (req.admin) {
+            const imagePath = `./Resource/${req.file.filename}`;
+            const response = await cloudinary.uploader.upload(imagePath);
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
             const teacherImage = await CourseAndContentFile.findAll({
                 where: {
                     courseId: req.params.id,
@@ -270,8 +308,9 @@ exports.addTeacherImage = async (req, res) => {
                 }
             }
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -286,7 +325,8 @@ exports.addTeacherImage = async (req, res) => {
                 message: "Teacher Image added successfully!"
             });
         } else {
-            // Final response
+            // delete file from resource/servere
+            deleteSingleFile(req.file.path);
             res.status(400).send({
                 success: false,
                 message: "You can not add teacher image!"
@@ -444,10 +484,15 @@ exports.addContentFile = async (req, res) => {
                 message: "Content is not present!"
             });
         }
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
         if (req.instructor) {
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -464,8 +509,9 @@ exports.addContentFile = async (req, res) => {
             });
         } else if (req.admin) {
             await CourseAndContentFile.create({
+                cloudinaryFileId: response.public_id,
                 titleOrOriginalName: req.file.originalname,
-                linkOrPath: req.file.path,
+                linkOrPath: response.secure_url,
                 mimeType: req.file.mimetype,
                 fileName: req.file.filename,
                 fieldName: req.file.fieldname,
@@ -481,7 +527,7 @@ exports.addContentFile = async (req, res) => {
                 message: "File added successfully!"
             });
         } else {
-            // Final response
+            await cloudinary.uploader.destroy(response.public_id);
             res.status(400).send({
                 success: false,
                 message: "You can not add file!"

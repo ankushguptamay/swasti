@@ -4,6 +4,14 @@ const { } = require("../../../Middleware/Validate/validateStudent");
 const { deleteSingleFile } = require("../../../Util/deleteFile")
 const StudentProfile = db.studentProfile;
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 exports.addUpdateStudentProfile = async (req, res) => {
     try {
         // File should be exist
@@ -13,6 +21,10 @@ exports.addUpdateStudentProfile = async (req, res) => {
                 message: "Please..upload profile photo!"
             });
         }
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
         const profile = await StudentProfile.findOne({
             where: {
                 studentId: req.student.id
@@ -20,8 +32,9 @@ exports.addUpdateStudentProfile = async (req, res) => {
         });
         if (!profile) {
             await StudentProfile.create({
+                cloudinaryFileId: response.public_id,
                 originalName: req.file.originalname,
-                path: req.file.path,
+                path: response.secure_url,
                 fileName: req.file.filename,
                 studentId: req.student.id
             });
@@ -35,8 +48,9 @@ exports.addUpdateStudentProfile = async (req, res) => {
             await profile.destroy();
             // create new profile pic
             await StudentProfile.create({
+                cloudinaryFileId: response.public_id,
                 originalName: req.file.originalname,
-                path: req.file.path,
+                path: response.secure_url,
                 fileName: req.file.filename,
                 studentId: req.student.id
             });

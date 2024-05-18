@@ -4,6 +4,13 @@ const { addQualification, changeQualificationStatus } = require("../../../Middle
 const { deleteSingleFile } = require("../../../Util/deleteFile")
 const InstructorQualification = db.insturctorQualification;
 const Instructor = db.instructor;
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 exports.addQualification = async (req, res) => {
     try {
@@ -21,8 +28,13 @@ exports.addQualification = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber } = req.body;
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
         // Find in database
         await InstructorQualification.create({
+            cloudinaryFileId: response.public_id,
             courseType: courseType,
             course: course,
             university_institute_name: university_institute_name,
@@ -31,7 +43,7 @@ exports.addQualification = async (req, res) => {
             marks: marks,
             certificationNumber: certificationNumber,
             documentOriginalName: req.file.originalname,
-            documentPath: req.file.path,
+            documentPath: response.secure_url,
             documentFileName: req.file.filename,
             instructorId: req.instructor.id,
             approvalStatusByAdmin: "Pending"
@@ -183,7 +195,12 @@ exports.updateQualification = async (req, res) => {
                 message: "This qualification is not present!",
             });
         }
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
         await InstructorQualification.create({
+            cloudinaryFileId: response.public_id,
             courseType: courseType,
             course: course,
             university_institute_name: university_institute_name,
@@ -192,7 +209,7 @@ exports.updateQualification = async (req, res) => {
             marks: marks,
             certificationNumber: certificationNumber,
             documentOriginalName: req.file.originalname,
-            documentPath: req.file.path,
+            documentPath: response.secure_url,
             documentFileName: req.file.filename,
             instructorId: req.instructor.id,
             createdAt: qualification.createdAt,

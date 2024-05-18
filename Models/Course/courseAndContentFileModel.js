@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
         titleOrOriginalName: {
             type: DataTypes.STRING
         },
+        cloudinaryFileId: {
+            type: DataTypes.STRING
+        },
         linkOrPath: {
             type: DataTypes.STRING(1234)
         },
