@@ -136,6 +136,6 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 // queryInterface.addColumn("courseAndContentFiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("instructorHistorys", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("instructors", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructorQualifications", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("studentProfiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("5cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorQualifications", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("studentProfiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("5cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 module.exports = db;
