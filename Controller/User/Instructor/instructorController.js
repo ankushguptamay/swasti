@@ -410,7 +410,7 @@ exports.verifyOTP = async (req, res) => {
             {
                 id: instructor.id,
                 email: email,
-                instructorType: instructor.instructorType
+                phoneNumber: instructor.phoneNumber
             },
             INSTRUCTOR_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -434,7 +434,7 @@ exports.getInstructor = async (req, res) => {
         const instructor = await Instructor.findOne({
             where: {
                 [Op.and]: [
-                    { id: req.instructor.id }, { email: req.instructor.email }, { instructorType: req.instructor.instructorType }
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
                 ]
             },
             include: [{
@@ -728,7 +728,7 @@ exports.updateInstructor = async (req, res) => {
         const instructor = await Instructor.findOne({
             where: {
                 [Op.and]: [
-                    { id: req.instructor.id }, { email: req.instructor.email }, { instructorType: req.instructor.instructorType }
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
                 ]
             }
         });
@@ -958,7 +958,7 @@ exports.verifyNumberOTP = async (req, res) => {
             {
                 id: instructor.id,
                 email: instructor.email,
-                instructorType: instructor.instructorType
+                phoneNumber: phoneNumber
             },
             INSTRUCTOR_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day

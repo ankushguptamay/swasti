@@ -29,7 +29,7 @@ exports.isInstructorPresent = async (req, res, next) => {
         const instructor = await Instructor.findOne({
             where: {
                 [Op.and]: [
-                    { id: req.instructor.id }, { email: req.instructor.email }
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
                 ]
             }
         });
@@ -49,7 +49,7 @@ exports.isInstructorProfileComplete = async (req, res, next) => {
         const instructor = await Instructor.findOne({
             where: {
                 [Op.and]: [
-                    { id: req.instructor.id }, { email: req.instructor.email }
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
                 ]
             }
         });
