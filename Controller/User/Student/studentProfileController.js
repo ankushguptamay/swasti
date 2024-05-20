@@ -58,7 +58,7 @@ exports.addUpdateStudentProfile = async (req, res) => {
         // Final response
         res.status(200).send({
             success: true,
-            message: "Student Image added successfully! Wait For Admin Approval!"
+            message: "Student Image added successfully!"
         });
     } catch (err) {
         res.status(500).send({

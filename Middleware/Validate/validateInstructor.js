@@ -10,6 +10,7 @@ exports.loginInstructor = (data) => {
 
 exports.loginInstructorByNumber = (data) => {
     const schema = joi.object().keys({
+        name: joi.string().min(3).max(30).required(),
         phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required()
     });
     return schema.validate(data);
@@ -20,7 +21,7 @@ exports.registerInstructor = (data) => {
         name: joi.string().min(3).max(30).required(),
         email: joi.string().email().required().label('Email'),
         phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
-        instructorType: joi.string().valid('Instructor', 'Teacher', 'Coach', 'Trainer').required()
+        // instructorType: joi.string().valid('Instructor', 'Teacher', 'Coach', 'Trainer').required()
     });
     return schema.validate(data);
 }
