@@ -45,6 +45,13 @@ db.insturctorQualification = require('./User/Instructor/insturctorQualificationM
 db.instructorExperience = require('./User/Instructor/instructorExperienceModel.js')(sequelize, Sequelize);
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 
+// YogaStudio
+db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);
+db.yogaStudioContact = require('./YogaStudio/yogaStudioContactModel.js')(sequelize, Sequelize);
+db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, Sequelize);
+db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
+db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
+
 // Instructor History
 db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);
 
@@ -96,6 +103,13 @@ db.course.hasMany(db.courseReview, { foreignKey: 'courseId', as: 'review' });
 // Student Association with courseReview
 db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 
+// YogaStudio
+db.yogaStudioBusiness.hasOne(db.yogaStudioContact, { foreignKey: 'businessId', as: 'contacts' });
+db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', as: 'timings' });
+db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
+
+db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
+
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(
 //     db.userInformation, {
@@ -138,4 +152,5 @@ db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 // queryInterface.addColumn("instructors", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("instructorQualifications", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("studentProfiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("5cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+
 module.exports = db;

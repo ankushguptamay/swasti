@@ -25,6 +25,10 @@ const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCours
     totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const { sendCampaignEmail, addCampaignEmailCredentials } = require('../Controller/campaignEmailController');
+const { createYogaStudioBusiness, getMyYogaStudio } = require('../Controller/YogaStudio/businessController');
+const { createYogaStudioContact } = require('../Controller/YogaStudio/contactController');
+const { createYogaStudioImage } = require('../Controller/YogaStudio/imageController');
+const { createYogaStudioTiming } = require('../Controller/YogaStudio/timingController');
 const admin = express.Router();
 
 // middleware
@@ -173,5 +177,13 @@ admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsFo
 // Payment 
 admin.post("/sendCampaignEmail", sendCampaignEmail);
 admin.post("/addCampaignEmailCredentials", addCampaignEmailCredentials);
+
+
+// YogaStudio
+admin.post("/createYogaStudioBusiness", verifyAdminJWT, isAdminPresent, createYogaStudioBusiness);
+admin.get("/myYogaStudios", verifyAdminJWT, isAdminPresent, getMyYogaStudio);
+admin.post("/createYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, createYogaStudioContact);
+admin.post("/createYogaStudioImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.array('studioImages', 10), createYogaStudioImage);
+admin.post("/createYogaStudioTiming/:id", verifyAdminJWT, isAdminPresent, createYogaStudioTiming);
 
 module.exports = admin;
