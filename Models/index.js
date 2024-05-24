@@ -147,7 +147,7 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.changeColumn("yogaStudioContacts", "email", { type: DataTypes.JSON }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("yogaStudioContacts", "email", { type: DataTypes.JSON }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.changeColumn("yogaStudioContacts", "whatsAppNumber", { type: DataTypes.JSON }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 // queryInterface.changeColumn("yogaStudioContacts", "landLineNumber", { type: DataTypes.JSON }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 

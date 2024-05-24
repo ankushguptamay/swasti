@@ -13,12 +13,33 @@ const YogaStudioContact = db.yogaStudioContact;
 
 exports.createYogaStudioTiming = async (req, res) => {
     try {
+        // const timings = [{
+        //     openAt: 'bkhjl',
+        //     closeAt: "vhohoho",
+        //     isSat: true,
+        //     isSun: true,
+        //     isMon: false,
+        //     isTue: true,
+        //     isThu: false,
+        //     isFri: true,
+        //     isWed: false
+        // }, {
+        //     openAt: 'bkhjl',
+        //     closeAt: "vhohoho",
+        //     isSat: true,
+        //     isSun: true,
+        //     isMon: false,
+        //     isTue: true,
+        //     isThu: false,
+        //     isFri: true,
+        //     isWed: false
+        // }]
         // Validate Body
         const { error } = createTiming(req.body);
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { openAt, closeAt, isSun, isMon, isTue, isWed, isThu, isFri, isSat } = req.body;
+        const { timings } = req.body;
 
         let createrId, creater, approvalStatusByAdmin;
         if (req.instructor) {
@@ -35,21 +56,23 @@ exports.createYogaStudioTiming = async (req, res) => {
                 message: "You can not created Yoga studio!"
             });
         }
-        await YogaStudioTime.create({
-            openAt: openAt,
-            closeAt: closeAt,
-            isFri: isFri,
-            isMon: isMon,
-            isSat: isSat,
-            isSun: isSun,
-            isThu: isThu,
-            isTue: isTue,
-            isWed: isWed,
-            createrId: createrId,
-            creater: creater,
-            businessId: req.params.id,
-            approvalStatusByAdmin: approvalStatusByAdmin
-        });
+        for (let i = 0; i < timings.length; i++) {
+            await YogaStudioTime.create({
+                openAt: timings[i].openAt,
+                closeAt: timings[i].closeAt,
+                isFri: timings[i].isFri,
+                isMon: timings[i].isMon,
+                isSat: timings[i].isSat,
+                isSun: timings[i].isSun,
+                isThu: timings[i].isThu,
+                isTue: timings[i].isTue,
+                isWed: timings[i].isWed,
+                createrId: createrId,
+                creater: creater,
+                businessId: req.params.id,
+                approvalStatusByAdmin: approvalStatusByAdmin
+            });
+        }
         // update YogaStudioBusiness anyUpdateRequest
         if (req.instructor) {
             await YogaStudioBusiness.update({ anyUpdateRequest: true }, { where: { id: req.params.id } });

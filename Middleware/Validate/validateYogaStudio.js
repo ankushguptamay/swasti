@@ -28,15 +28,7 @@ exports.createContact = (data) => {
 
 exports.createTiming = (data) => {
     const schema = joi.object().keys({
-        isSun: joi.boolean().required(),
-        isMon: joi.boolean().required(),
-        isTue: joi.boolean().required(),
-        isWed: joi.boolean().required(),
-        isThu: joi.boolean().required(),
-        isFri: joi.boolean().required(),
-        isSat: joi.boolean().required(),
-        openAt: joi.string().required(),
-        closeAt: joi.string().required()
+        timings: joi.array().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
