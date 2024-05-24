@@ -17,10 +17,10 @@ const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, a
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
 const { getPaymentDetailsForInstructor } = require('../Controller/User/Student/purchaseCourseController');
-const { createYogaStudioBusiness, getMyYogaStudio } = require('../Controller/YogaStudio/businessController');
-const { createYogaStudioContact } = require('../Controller/YogaStudio/contactController');
+const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioById, updateYogaStudioBusinessForInstructor } = require('../Controller/YogaStudio/businessController');
+const { createYogaStudioContact, updateYogaStudioContactForInstructor } = require('../Controller/YogaStudio/contactController');
 const { createYogaStudioImage } = require('../Controller/YogaStudio/imageController');
-const { createYogaStudioTiming } = require('../Controller/YogaStudio/timingController');
+const { createYogaStudioTiming, updateYogaStudioTimeForInstructor } = require('../Controller/YogaStudio/timingController');
 const instructor = express.Router();
 
 // middleware
@@ -124,9 +124,15 @@ instructor.get("/paymentDetails", verifyInstructorJWT, isInstructorPresent, getP
 
 // YogaStudio
 instructor.post("/createYogaStudioBusiness", verifyInstructorJWT, isInstructorPresent, createYogaStudioBusiness);
-instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorPresent, getMyYogaStudio);
 instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructorPresent, createYogaStudioContact);
 instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.array('studioImages', 10), createYogaStudioImage);
 instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorPresent, createYogaStudioTiming);
+
+instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorPresent, getMyYogaStudio);
+instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorPresent, getYogaStudioById);
+
+instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioContactForInstructor);
+instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioBusinessForInstructor);
+instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioTimeForInstructor);
 
 module.exports = instructor;

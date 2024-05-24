@@ -134,23 +134,21 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 
 // db.emailCredential.findOne({
 //     where: {
-//         email: "morarjidesai19@gmail.com"
+//         email: process.env.EMAIL
 //     }
 // }).then((res) => {
 //     console.log(res);
 //     if (!res) {
 //         db.emailCredential.create({
-//             email: "morarjidesai19@gmail.com",
+//             email:process.env.EMAIL,
 //             plateForm: "BREVO",
 //             EMAIL_API_KEY: process.env.EMAIL_API_KEY
 //         });
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("courseAndContentFiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorHistorys", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorQualifications", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("studentProfiles", "cloudinaryFileId", { type: DataTypes.STRING }).then((res) => { console.log("5cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("yogaStudioContacts", "mobileNumber", { type: DataTypes.JSON }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("yogaStudioContacts", "whatsAppNumber", { type: DataTypes.JSON }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.changeColumn("yogaStudioContacts", "landLineNumber", { type: DataTypes.JSON }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

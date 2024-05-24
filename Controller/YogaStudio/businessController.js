@@ -1,12 +1,12 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { createBusiness } = require('../../Middleware/Validate/validateYogaStudio');
+const { changeQualificationStatus } = require("../../Middleware/Validate/validateInstructor");
 const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter");
-const { required } = require('joi');
 const YogaStudioBusiness = db.yogaStudioBusiness;
 const YogaStudioContact = db.yogaStudioContact;
+const YogaStudioTime = db.yogaStudioTiming;
 const YogaStudioImage = db.yogaStudioImage;
-const YogaStudioTime = db.yogaStudioTiming
 const YSBusinessHistory = db.ySBusinessHistory;
 
 // createYogaStudioBusiness
@@ -16,6 +16,7 @@ const YSBusinessHistory = db.ySBusinessHistory;
 // getYogaStudioForUser
 // getYogaStudioByIdUser
 // updateYogaStudio
+// changeYogaStudioBusinessStatus
 
 exports.createYogaStudioBusiness = async (req, res) => {
     try {
@@ -307,41 +308,48 @@ exports.getYogaStudioForUser = async (req, res) => {
 
 exports.getYogaStudioByIdUser = async (req, res) => {
     try {
-        const condition = {
+        const condition1 = {
             approvalStatusByAdmin: "Approved",
-            [Op.or]: [
-                { deletedThrough: null },
-                { deletedThrough: "ByUpdation" }
-            ]
+            deletedThrough: null
+        };
+        const condition2 = {
+            approvalStatusByAdmin: "Approved",
+            deletedThrough: "ByUpdation"
+
         };
         const yogaStudio = await YogaStudioBusiness.findOne({
             where: {
                 id: req.params.id,
-                approvalStatusByAdmin: "Approved"
-            },
-            include: [{
-                model: YogaStudioContact,
-                as: 'contacts',
-                where: condition,
-                required: false
-            }, {
-                model: YogaStudioImage,
-                as: 'images',
-                where: condition,
-                required: false
-            },
-            {
-                model: YogaStudioTime,
-                as: 'timings',
-                where: condition,
-                required: false
-            }]
-        })
+                approvalStatusByAdmin: "Approved",
+                deletedThrough: null
+            }
+        });
+        if (!yogaStudio) {
+            return res.status(400).send({
+                success: false,
+                message: "This yoga studio is not present!"
+            });
+        }
+        // Add condition
+        let contacts = await YogaStudioContact.findOne({ where: condition1 });
+        if (!contacts) {
+            contacts = await YogaStudioContact.findOne({ where: condition2 });
+        }
+        console.log(typeof contacts.mobileNumber)
+        const image = await YogaStudioImage.findOne({ where: condition1 });
+        const time = await YogaStudioTime.findOne({ where: condition1 });
+
+        const newYogaStudio = {
+            ...yogaStudio.dataValues,
+            contacts: contacts,
+            images: image,
+            times: time
+        };
         // Final Response
         res.status(200).send({
             success: true,
             message: "Fetched successfully!",
-            data: yogaStudio
+            data: newYogaStudio
         });
     } catch (err) {
         res.status(500).send({
@@ -351,7 +359,7 @@ exports.getYogaStudioByIdUser = async (req, res) => {
     }
 };
 
-exports.updateYogaStudioForInstructor = async (req, res) => {
+exports.updateYogaStudioBusinessForInstructor = async (req, res) => {
     try {
         // Validate Body
         const { error } = createBusiness(req.body);
@@ -391,7 +399,7 @@ exports.updateYogaStudioForInstructor = async (req, res) => {
             });
             const history = await YSBusinessHistory.findOne({
                 where: {
-                    contactId: req.params.id,
+                    businessId: req.params.id,
                     createrId: req.instructor.id,
                     creater: "Instructor",
                     updationStatus: "Pending"
@@ -452,7 +460,7 @@ exports.updateYogaStudioForInstructor = async (req, res) => {
     }
 };
 
-exports.updateYogaStudioForAdmin = async (req, res) => {
+exports.updateYogaStudioBusinessForAdmin = async (req, res) => {
     try {
         // Validate Body
         const { error } = createBusiness(req.body);
@@ -525,6 +533,58 @@ exports.updateYogaStudioForAdmin = async (req, res) => {
         res.status(200).send({
             success: true,
             message: message
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeYogaStudioBusinessStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find business In Database
+        const business = await YogaStudioBusiness.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!business) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        // Any updation
+        const anyContatct = await YogaStudioContact.findOne({ where: { anyUpdateRequest: true, deletedThrough: null } });
+        const anyImage = await YogaStudioImage.findOne({ where: { anyUpdateRequest: true, deletedThrough: null } });
+        const anyTime = await YogaStudioTime.findOne({ where: { anyUpdateRequest: true, deletedThrough: null } });
+        if (anyContatct || anyImage || anyTime) {
+            // Update business
+            await business.update({
+                ...business,
+                anyUpdateRequest: true,
+                approvalStatusByAdmin: approvalStatusByAdmin
+            });
+        } else {
+            // Update business
+            await business.update({
+                ...business,
+                anyUpdateRequest: false,
+                approvalStatusByAdmin: approvalStatusByAdmin
+            });
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio business ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({

@@ -6,6 +6,7 @@ const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating
 const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { applyCouponToCourse } = require('../Controller/Master/couponController');
 const { createOrder, verifyPayment, createOrderYogaVolunteerCourse } = require('../Controller/User/Student/purchaseCourseController');
+const { getYogaStudioByIdUser, getYogaStudioForUser } = require('../Controller/YogaStudio/businessController');
 const student = express.Router();
 
 // middleware
@@ -46,5 +47,8 @@ student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCou
 student.post("/createOrder", verifyStudentJWT, isStudentPresent, createOrder);
 student.post("/createOrderYogaVolunteerCourse", verifyStudentJWT, isStudentPresent, createOrderYogaVolunteerCourse);
 student.post("/verifyPayment", verifyPayment);
+
+student.get("/yogaStudios", verifyStudentJWT, isStudentPresent, getYogaStudioForUser);
+student.get("/yogaStudios/:id", verifyStudentJWT, isStudentPresent, getYogaStudioByIdUser);
 
 module.exports = student;

@@ -168,7 +168,7 @@ exports.register = async (req, res) => {
                     userName: req.body.name ? req.body.name : "User"
                 }
                 const response = await sendEmail(options);
-                console.log(response);
+                // console.log(response);
                 const increaseNumber = parseInt(finaliseEmailCredential.emailSend) + 1;
                 await EmailCredential.update({
                     emailSend: increaseNumber

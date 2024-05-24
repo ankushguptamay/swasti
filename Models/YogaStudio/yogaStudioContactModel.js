@@ -12,13 +12,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         mobileNumber: {
-            type: DataTypes.STRING
+            type: DataTypes.JSON
         },
         whatsAppNumber: {
-            type: DataTypes.STRING
+            type: DataTypes.JSON
         },
         landLineNumber: {
-            type: DataTypes.STRING
+            type: DataTypes.JSON
         },
         email: {
             type: DataTypes.STRING
@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         createrId: {
             type: DataTypes.STRING
+        },
+        anyUpdateRequest: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, {
         paranoid: true

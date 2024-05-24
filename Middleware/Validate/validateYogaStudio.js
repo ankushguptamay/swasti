@@ -18,9 +18,9 @@ exports.createContact = (data) => {
     const schema = joi.object().keys({
         title: joi.string().required(),
         person: joi.string().required(),
-        mobileNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
-        whatsAppNumber: joi.string().length(10).pattern(/^[0-9]+$/).optional(),
-        landLineNumber: joi.string().optional(),
+        mobileNumber: joi.array().required(),
+        whatsAppNumber: joi.array().optional(),
+        landLineNumber: joi.array().optional(),
         email: joi.string().email().required().label('Email')
     }) // .options({ allowUnknown: true });
     return schema.validate(data);

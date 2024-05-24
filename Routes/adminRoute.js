@@ -25,10 +25,10 @@ const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCours
     totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const { sendCampaignEmail, addCampaignEmailCredentials } = require('../Controller/campaignEmailController');
-const { createYogaStudioBusiness, getMyYogaStudio } = require('../Controller/YogaStudio/businessController');
-const { createYogaStudioContact } = require('../Controller/YogaStudio/contactController');
-const { createYogaStudioImage } = require('../Controller/YogaStudio/imageController');
-const { createYogaStudioTiming } = require('../Controller/YogaStudio/timingController');
+const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioById, updateYogaStudioBusinessForAdmin, changeYogaStudioBusinessStatus, getYogaStudioForAdmin } = require('../Controller/YogaStudio/businessController');
+const { createYogaStudioContact, updateYogaStudioContactForAdmin, changeYogaStudioContactStatus } = require('../Controller/YogaStudio/contactController');
+const { createYogaStudioImage, changeYogaStudioImageStatus } = require('../Controller/YogaStudio/imageController');
+const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus } = require('../Controller/YogaStudio/timingController');
 const admin = express.Router();
 
 // middleware
@@ -39,6 +39,7 @@ const uploadImage = require('../Middleware/uploadFile/image');
 const uploadPDF = require('../Middleware/uploadFile/pdf');
 
 // Admin
+admin.post("/register", register);
 admin.post("/login", login);
 admin.get("/admin", verifyAdminJWT, isAdminPresent, getAdmin);
 admin.put("/changePassword", verifyAdminJWT, isAdminPresent, changePassword);
@@ -181,9 +182,21 @@ admin.post("/addCampaignEmailCredentials", addCampaignEmailCredentials);
 
 // YogaStudio
 admin.post("/createYogaStudioBusiness", verifyAdminJWT, isAdminPresent, createYogaStudioBusiness);
-admin.get("/myYogaStudios", verifyAdminJWT, isAdminPresent, getMyYogaStudio);
 admin.post("/createYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, createYogaStudioContact);
 admin.post("/createYogaStudioImage/:id", verifyAdminJWT, isAdminPresent, uploadImage.array('studioImages', 10), createYogaStudioImage);
 admin.post("/createYogaStudioTiming/:id", verifyAdminJWT, isAdminPresent, createYogaStudioTiming);
+
+admin.get("/myYogaStudios", verifyAdminJWT, isAdminPresent, getMyYogaStudio);
+admin.get("/yogaStudios", verifyAdminJWT, isAdminPresent, getYogaStudioForAdmin);
+admin.get("/yogaStudios/:id", verifyAdminJWT, isAdminPresent, getYogaStudioById);
+
+admin.put("/updateYogaStudioBusiness/:id", verifyAdminJWT, isAdminPresent, updateYogaStudioBusinessForAdmin);
+admin.put("/updateYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, updateYogaStudioContactForAdmin);
+admin.put("/updateYogaStudioTime/:id", verifyAdminJWT, isAdminPresent, updateYogaStudioTimeForAdmin);
+
+admin.put("/changeYogaStudioBusiness/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioBusinessStatus);
+admin.put("/changeYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioContactStatus);
+admin.put("/changeYogaStudioImage/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioImageStatus);
+admin.put("/changeYogaStudioTime/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioTimeStatus);
 
 module.exports = admin;

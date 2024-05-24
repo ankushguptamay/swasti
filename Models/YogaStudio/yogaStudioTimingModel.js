@@ -59,6 +59,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         createrId: {
             type: DataTypes.STRING
+        },
+        anyUpdateRequest: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, {
         paranoid: true

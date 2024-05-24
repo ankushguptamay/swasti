@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const YogaStudioBusiness = sequelize.define("yogaStudioBusiness", {
+    const YogaStudioBusiness = sequelize.define("yogaStudioBusinesses", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
