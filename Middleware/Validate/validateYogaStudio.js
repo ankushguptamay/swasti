@@ -21,7 +21,7 @@ exports.createContact = (data) => {
         mobileNumber: joi.array().required(),
         whatsAppNumber: joi.array().optional(),
         landLineNumber: joi.array().optional(),
-        email: joi.string().email().required().label('Email')
+        email: joi.array().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }

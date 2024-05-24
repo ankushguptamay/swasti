@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSON
         },
         email: {
-            type: DataTypes.STRING
+            type: DataTypes.JSON
         },
         deletedThrough: {
             type: DataTypes.STRING,
