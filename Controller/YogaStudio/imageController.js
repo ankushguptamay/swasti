@@ -63,7 +63,7 @@ exports.createYogaStudioImage = async (req, res) => {
         }
         // update YogaStudioBusiness anyUpdateRequest
         if (req.instructor) {
-            await YogaStudioBusiness.update({ anyUpdateRequest: true },{ where: { id: req.params.id } });
+            await YogaStudioBusiness.update({ anyUpdateRequest: true }, { where: { id: req.params.id } });
         }
         // Final Response
         res.status(200).send({
@@ -143,6 +143,127 @@ exports.changeYogaStudioImageStatus = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Yoga studio image ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.softDeleteYogaStudioImage = async (req, res) => {
+    try {
+        let deletedThrough = "Admin";
+        let condition = {
+            id: req.params.id
+        };
+        if (req.instructor) {
+            condition = {
+                id: req.params.id,
+                creater: "Instructor",
+                createrId: req.instructor.id
+            };
+            deletedThrough = "Instructor";
+        }
+        // Find image In Database
+        const image = await YogaStudioImage.findOne({
+            where: condition
+        });
+        if (!image) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio image is not present!"
+            });
+        }
+        // update image
+        await image.update({
+            ...image,
+            deletedThrough: deletedThrough
+        });
+        // soft delete image
+        await image.destroy();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio image deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreYogaStudioImage = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        };
+        // Find image In Database
+        const image = await YogaStudioImage.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!image) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio image is not present!"
+            });
+        }
+        if (image.deletedThrough === "Instructor" || image.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: false,
+                message: `Can not restore this image successfully!`
+            });
+        }
+        // update image
+        await image.update({
+            ...image,
+            deletedThrough: null
+        });
+        // restore image
+        await image.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio image restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.hardDeleteYogaStudioImage = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id
+        };
+        // Find image In Database
+        const image = await YogaStudioImage.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!image) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio image is not present!"
+            });
+        }
+        if (image.cloudinaryFileId) {
+            await cloudinary.uploader.destroy(image.cloudinaryFileId);
+        }
+        // destroy image
+        await image.destroy({ force: true });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio image hard deleted successfully!`
         });
     } catch (err) {
         res.status(500).send({

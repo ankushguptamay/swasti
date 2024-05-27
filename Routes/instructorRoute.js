@@ -17,10 +17,10 @@ const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, a
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
 const { getPaymentDetailsForInstructor } = require('../Controller/User/Student/purchaseCourseController');
-const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioById, updateYogaStudioBusinessForInstructor } = require('../Controller/YogaStudio/businessController');
-const { createYogaStudioContact, updateYogaStudioContactForInstructor } = require('../Controller/YogaStudio/contactController');
-const { createYogaStudioImage } = require('../Controller/YogaStudio/imageController');
-const { createYogaStudioTiming, updateYogaStudioTimeForInstructor } = require('../Controller/YogaStudio/timingController');
+const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdInstructor, updateYogaStudioBusinessForInstructor, softDeleteYogaStudioBusiness } = require('../Controller/YogaStudio/businessController');
+const { createYogaStudioContact, updateYogaStudioContactForInstructor, softDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
+const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
+const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const instructor = express.Router();
 
 // middleware
@@ -129,10 +129,15 @@ instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorP
 instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorPresent, createYogaStudioTiming);
 
 instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorPresent, getMyYogaStudio);
-instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorPresent, getYogaStudioById);
+instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorPresent, getYogaStudioByIdInstructor);
 
 instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioContactForInstructor);
 instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioBusinessForInstructor);
 instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioTimeForInstructor);
+
+instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioBusiness);
+instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioContact);
+instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioImage);
+instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioTime);
 
 module.exports = instructor;

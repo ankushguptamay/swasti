@@ -25,10 +25,11 @@ const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCours
     totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const { sendCampaignEmail, addCampaignEmailCredentials } = require('../Controller/campaignEmailController');
-const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioById, updateYogaStudioBusinessForAdmin, changeYogaStudioBusinessStatus, getYogaStudioForAdmin } = require('../Controller/YogaStudio/businessController');
-const { createYogaStudioContact, updateYogaStudioContactForAdmin, changeYogaStudioContactStatus } = require('../Controller/YogaStudio/contactController');
-const { createYogaStudioImage, changeYogaStudioImageStatus } = require('../Controller/YogaStudio/imageController');
-const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus } = require('../Controller/YogaStudio/timingController');
+const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdAdmin, updateYogaStudioBusinessForAdmin, changeYogaStudioBusinessStatus, getYogaStudioForAdmin,
+    restoreYogaStudioBusiness, softDeleteYogaStudioBusiness, hardDeleteYogaStudioBusiness } = require('../Controller/YogaStudio/businessController');
+const { createYogaStudioContact, updateYogaStudioContactForAdmin, changeYogaStudioContactStatus, restoreYogaStudioContact, softDeleteYogaStudioContact, hardDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
+const { createYogaStudioImage, changeYogaStudioImageStatus, restoreYogaStudioImage, softDeleteYogaStudioImage, hardDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
+const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus, restoreYogaStudioTime, softDeleteYogaStudioTime, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const admin = express.Router();
 
 // middleware
@@ -188,7 +189,7 @@ admin.post("/createYogaStudioTiming/:id", verifyAdminJWT, isAdminPresent, create
 
 admin.get("/myYogaStudios", verifyAdminJWT, isAdminPresent, getMyYogaStudio);
 admin.get("/yogaStudios", verifyAdminJWT, isAdminPresent, getYogaStudioForAdmin);
-admin.get("/yogaStudios/:id", verifyAdminJWT, isAdminPresent, getYogaStudioById);
+admin.get("/yogaStudios/:id", verifyAdminJWT, isAdminPresent, getYogaStudioByIdAdmin);
 
 admin.put("/updateYogaStudioBusiness/:id", verifyAdminJWT, isAdminPresent, updateYogaStudioBusinessForAdmin);
 admin.put("/updateYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, updateYogaStudioContactForAdmin);
@@ -198,5 +199,20 @@ admin.put("/changeYogaStudioBusiness/:id", verifyAdminJWT, isAdminPresent, chang
 admin.put("/changeYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioContactStatus);
 admin.put("/changeYogaStudioImage/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioImageStatus);
 admin.put("/changeYogaStudioTime/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioTimeStatus);
+
+admin.put("/restoreYSBusiness/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioBusiness);
+admin.put("/restoreYSContact/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioContact);
+admin.put("/restoreYSImage/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioImage);
+admin.put("/restoreYSTime/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioTime);
+
+admin.delete("/softDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioBusiness);
+admin.delete("/softDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioContact);
+admin.delete("/softDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioImage);
+admin.delete("/softDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioTime);
+
+admin.delete("/hardDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioBusiness);
+admin.delete("/hardDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioContact);
+admin.delete("/hardDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioImage);
+admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioTime);
 
 module.exports = admin;

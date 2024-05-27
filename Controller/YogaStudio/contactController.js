@@ -263,3 +263,121 @@ exports.changeYogaStudioContactStatus = async (req, res) => {
         });
     }
 };
+
+exports.softDeleteYogaStudioContact = async (req, res) => {
+    try {
+        let deletedThrough = "Admin";
+        let condition = {
+            id: req.params.id
+        };
+        if (req.instructor) {
+            condition = {
+                id: req.params.id,
+                creater: "Instructor",
+                createrId: req.instructor.id
+            };
+            deletedThrough = "Instructor";
+        }
+        // Find contact In Database
+        const contact = await YogaStudioContact.findOne({
+            where: condition
+        });
+        if (!contact) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        // update contact
+        await contact.update({
+            ...contact,
+            deletedThrough: deletedThrough
+        });
+        // Soft contact
+        await contact.destroy();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio contact deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreYogaStudioContact = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        };
+        // Find contact In Database
+        const contact = await YogaStudioContact.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!contact) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        if (contact.deletedThrough === "Instructor" || contact.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: false,
+                message: `Can not restore this contact successfully!`
+            });
+        }
+        // update contact
+        await contact.update({
+            ...contact,
+            deletedThrough: null
+        });
+        // restore business
+        await contact.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio contact restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.hardDeleteYogaStudioContact = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id
+        };
+        // Find contact In Database
+        const contact = await YogaStudioContact.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!contact) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        // hard delete business
+        await contact.destroy({ force: true });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio contact hard deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

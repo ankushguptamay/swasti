@@ -286,3 +286,121 @@ exports.changeYogaStudioTimeStatus = async (req, res) => {
         });
     }
 };
+
+exports.softDeleteYogaStudioTime = async (req, res) => {
+    try {
+        let deletedThrough = "Admin";
+        let condition = {
+            id: req.params.id
+        };
+        if (req.instructor) {
+            condition = {
+                id: req.params.id,
+                creater: "Instructor",
+                createrId: req.instructor.id
+            };
+            deletedThrough = "Instructor";
+        }
+        // Find time In Database
+        const time = await YogaStudioTime.findOne({
+            where: condition
+        });
+        if (!time) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio time is not present!"
+            });
+        }
+        // update time
+        await time.update({
+            ...time,
+            deletedThrough: deletedThrough
+        });
+        // soft delete time
+        await time.destroy();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio time deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreYogaStudioTime = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        };
+        // Find time In Database
+        const time = await YogaStudioTime.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!time) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio time is not present!"
+            });
+        }
+        if (time.deletedThrough === "Instructor" || time.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: false,
+                message: `Can not restore this time successfully!`
+            });
+        }
+        // update time
+        await time.update({
+            ...time,
+            deletedThrough: null
+        });
+        // restore business
+        await time.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio time restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.hardDeleteYogaStudioTime = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id
+        };
+        // Find time In Database
+        const time = await YogaStudioTime.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!time) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio time is not present!"
+            });
+        }
+        // hard delete business
+        await time.destroy({ force: true });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio time hard deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

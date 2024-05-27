@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         deletedThrough: {
             type: DataTypes.STRING,
             validate: {
-                isIn: [['Admin', 'Student', 'ByUpdation']]
+                isIn: [['Admin', 'Instructor', 'ByUpdation']]
             }
         },
         approvalStatusByAdmin: {

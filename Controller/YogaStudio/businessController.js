@@ -9,6 +9,14 @@ const YogaStudioTime = db.yogaStudioTiming;
 const YogaStudioImage = db.yogaStudioImage;
 const YSBusinessHistory = db.ySBusinessHistory;
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 // createYogaStudioBusiness
 // getMyYogaStudio for instructor/admin
 // getYogaStudioForAdmin
@@ -203,12 +211,44 @@ exports.getYogaStudioForAdmin = async (req, res) => {
     }
 };
 
-// For Instructor and admin
-exports.getYogaStudioById = async (req, res) => {
+exports.getYogaStudioByIdAdmin = async (req, res) => {
     try {
         const yogaStudio = await YogaStudioBusiness.findOne({
             where: {
                 id: req.params.id
+            },
+            include: [{
+                model: YogaStudioContact,
+                as: 'contacts'
+            }, {
+                model: YogaStudioImage,
+                as: 'images'
+            },
+            {
+                model: YogaStudioTime,
+                as: 'timings'
+            }]
+        })
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Fetched successfully!",
+            data: yogaStudio
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getYogaStudioByIdInstructor = async (req, res) => {
+    try {
+        const yogaStudio = await YogaStudioBusiness.findOne({
+            where: {
+                id: req.params.id,
+                createrId: req.instructor.id
             },
             include: [{
                 model: YogaStudioContact,
@@ -247,6 +287,7 @@ exports.getYogaStudioById = async (req, res) => {
         });
     }
 };
+
 
 exports.getYogaStudioForUser = async (req, res) => {
     try {
@@ -483,7 +524,26 @@ exports.updateYogaStudioBusinessForAdmin = async (req, res) => {
             });
         }
         if (yogaStudio.approvalStatusByAdmin === "Pending") {
-
+            const history = await YSBusinessHistory.findOne({
+                where: {
+                    businessId: req.params.id,
+                    updationStatus: "Pending"
+                }
+            });
+            if (history) {
+                await history.update({
+                    ...history,
+                    businessName: businessName,
+                    block_building: block_building,
+                    street_colony: street_colony,
+                    pincode: pincode,
+                    state: state,
+                    city: city,
+                    landmark: landmark,
+                    area: area,
+                    updationStatus: "Approved"
+                });
+            }
         } else {
             // Hard delete any updation request which status is pending
             await YSBusinessHistory.destroy({
@@ -507,19 +567,20 @@ exports.updateYogaStudioBusinessForAdmin = async (req, res) => {
                 updationStatus: "Approved",
                 businessId: req.params.id
             });
-            // update YogaStudioBusiness also
-            await yogaStudio.update({
-                businessName: businessName,
-                block_building: block_building,
-                street_colony: street_colony,
-                pincode: pincode,
-                state: state,
-                city: city,
-                landmark: landmark,
-                area: area,
-                approvalStatusByAdmin: "Approved"
-            });
         }
+        // update YogaStudioBusiness also
+        await yogaStudio.update({
+            ...yogaStudio,
+            businessName: businessName,
+            block_building: block_building,
+            street_colony: street_colony,
+            pincode: pincode,
+            state: state,
+            city: city,
+            landmark: landmark,
+            area: area,
+            approvalStatusByAdmin: "Approved"
+        });
         // update YogaStudioContact anyUpdateRequest
         const anyContact = await YogaStudioContact.findOne({ where: { businessId: contact.businessId, anyUpdateRequest: true } });
         const anyTime = await YogaStudioTime.findOne({ where: { businessId: contact.businessId, anyUpdateRequest: true } });
@@ -585,6 +646,138 @@ exports.changeYogaStudioBusinessStatus = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Yoga studio business ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.softDeleteYogaStudioBusiness = async (req, res) => {
+    try {
+        let deletedThrough = "Admin";
+        let condition = {
+            id: req.params.id
+        };
+        if (req.instructor) {
+            condition = {
+                id: req.params.id,
+                creater: "Instructor",
+                createrId: req.instructor.id,
+            };
+            deletedThrough = "Instructor";
+        }
+        // Find business In Database
+        const business = await YogaStudioBusiness.findOne({
+            where: condition
+        });
+        if (!business) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        // update business
+        await business.update({
+            ...business,
+            deletedThrough: deletedThrough
+        });
+        // soft delete business
+        await business.destroy();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio business deleted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreYogaStudioBusiness = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        };
+        // Find business In Database
+        const business = await YogaStudioBusiness.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!business) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        if (business.deletedThrough === "Instructor" || business.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: false,
+                message: `Can not restore this business successfully!`
+            });
+        }
+        // update business
+        await business.update({
+            ...business,
+            deletedThrough: null
+        });
+        // restore business
+        await business.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio business restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.hardDeleteYogaStudioBusiness = async (req, res) => {
+    try {
+        let condition = {
+            id: req.params.id
+        };
+        // Find business In Database
+        const business = await YogaStudioBusiness.findOne({
+            where: condition,
+            paranoid: false
+        });
+        if (!business) {
+            return res.status(400).send({
+                success: false,
+                message: "This studio is not present!"
+            });
+        }
+        // hard delete Contact
+        await YogaStudioContact.destroy({ where: { businessId: req.params.id }, force: true });
+        // hard delete Times
+        await YogaStudioTime.destroy({ where: { businessId: req.params.id }, force: true });
+        // hard delete business history
+        await YSBusinessHistory.destroy({ where: { businessId: req.params.id }, force: true });
+        // hard delete business images
+        const images = await YogaStudioImage.findAll({ where: { businessId: req.params.id }, force: true });
+        for (let i = 0; i < images.length; i++) {
+            if (images[i].cloudinaryFileId) {
+                await cloudinary.uploader.destroy(images[i].cloudinaryFileId);
+            }
+        }
+        await YogaStudioImage.destroy({ where: { businessId: req.params.id }, force: true });
+        // hard delete business
+        await business.destroy({ force: true });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio business hard deleted successfully!`
         });
     } catch (err) {
         res.status(500).send({
