@@ -147,10 +147,10 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.dropTable("yogaStudioContacts").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.dropTable("yogaStudioTimes").then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("yogaStudioContacts").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("yogaStudioTimes").then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
