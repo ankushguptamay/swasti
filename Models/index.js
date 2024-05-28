@@ -32,6 +32,7 @@ db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
 db.coupon = require('./Master/couponModel.js')(sequelize, Sequelize);
 db.courseCategory = require('./Master/courseCategoryModel.js')(sequelize, Sequelize);
 db.courseDuration = require('./Master/courseDurationModel.js')(sequelize, Sequelize);
+db.courseDurationType = require('./Master/courseDurationTypeModel.js')(sequelize, Sequelize);
 db.courseType = require('./Master/courseTypeModel.js')(sequelize, Sequelize);
 db.university_institute = require('./Master/university_institute_nameModel.js')(sequelize, Sequelize);
 

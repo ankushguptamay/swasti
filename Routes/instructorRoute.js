@@ -21,6 +21,7 @@ const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdInstructor, 
 const { createYogaStudioContact, updateYogaStudioContactForInstructor, softDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
 const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
 const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
+const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
 const instructor = express.Router();
 
 // middleware
@@ -87,6 +88,7 @@ instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, ge
 instructor.get("/courseDurations", verifyInstructorJWT, isInstructorPresent, getAllCourseDuration);
 instructor.get("/courseTypes", verifyInstructorJWT, isInstructorPresent, getAllCourseType);
 instructor.get("/university_institutes", verifyInstructorJWT, isInstructorPresent, getAllUniversity_Institute);
+instructor.get("/courseDurationTypes/:type", verifyInstructorJWT, isInstructorPresent, getAllCourseByType);
 
 // 2. Coupon
 instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, createCoupon);
