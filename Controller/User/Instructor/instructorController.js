@@ -846,11 +846,21 @@ exports.registerByNumber = async (req, res) => {
         }
         const name = capitalizeFirstLetter(req.body.name);
         // Create instructor in database
-        await Instructor.create({
+        const instructor = await Instructor.create({
             email: req.body.email,
             name: name,
             phoneNumber: req.body.phoneNumber,
             instructorCode: code
+        });
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Sending OTP to mobile number
+        await sendOTPToNumber(req.body.phoneNumber, otp);
+        //  Store OTP
+        await EmailOTP.create({
+            vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+            otp: otp,
+            receiverId: instructor.id
         });
         // Send final success response
         res.status(200).send({
