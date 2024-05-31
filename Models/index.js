@@ -155,8 +155,8 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("courses", "startingTime", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("courses", "endingTime", { type: DataTypes.STRING }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("courses", "startingDate", { type: DataTypes.DATEONLY }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "startingTime", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "endingTime", { type: DataTypes.STRING }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "startingDate", { type: DataTypes.DATEONLY }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
