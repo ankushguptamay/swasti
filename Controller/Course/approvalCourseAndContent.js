@@ -4,6 +4,7 @@ const { changeQualificationStatus, changePublish } = require("../../Middleware/V
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Video = db.videos;
 
 exports.changeCourseStatus = async (req, res) => {
     try {
@@ -110,6 +111,44 @@ exports.changeCourseFileStatus = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `${file.fieldName} ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeVideoStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find Course In Database
+        const video = await Video.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!video) {
+            return res.status(400).send({
+                success: false,
+                message: "This video is not present!"
+            });
+        }
+        // Update video
+        await video.update({
+            ...video,
+            approvalStatusByAdmin: approvalStatusByAdmin
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Video ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({
@@ -306,6 +345,68 @@ exports.changeCourseFilePublish = async (req, res) => {
     }
 };
 
+exports.changeVideoPublish = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changePublish(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { isPublish } = req.body;
+        // Change message
+        let message = "Unpublish";
+        if (isPublish === true) {
+            message = "Publish";
+        }
+        let createrId;
+        if (req.instructor) {
+            createrId = req.instructor.id;
+        } else if (req.admin) {
+            createrId = req.admin.id;
+        } else {
+            return res.status(400).send({
+                success: false,
+                message: `You can not ${message} this file!`
+            });
+        }
+        // Find Video In Database
+        const video = await Video.findOne({
+            where: {
+                id: req.params.id,
+                createrId: createrId
+            }
+        });
+        if (!video) {
+            return res.status(400).send({
+                success: false,
+                message: "This video is not present!"
+            });
+        }
+        if (video.approvalStatusByAdmin === "Approved") {
+            // Update video
+            await video.update({
+                ...video,
+                isPublish: isPublish
+            });
+            // Final Response
+            res.status(200).send({
+                success: true,
+                message: `Video ${message} successfully!`
+            });
+        } else {
+            res.status(400).send({
+                success: false,
+                message: `This video is not approved!`
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
 exports.submitCourseForApproval = async (req, res) => {
     try {
         const createrId = req.instructor.id;
@@ -336,6 +437,16 @@ exports.submitCourseForApproval = async (req, res) => {
         });
         // Change all file approvalStatusByAdmin Pending
         await CourseAndContentFile.update({
+            approvalStatusByAdmin: "Pending"
+        }, {
+            where: {
+                courseId: req.params.id,
+                approvalStatusByAdmin: null,
+                createrId: createrId
+            }
+        });
+        // Change all video approvalStatusByAdmin Pending
+        await Video.update({
             approvalStatusByAdmin: "Pending"
         }, {
             where: {
@@ -390,6 +501,16 @@ exports.submitContentForApproval = async (req, res) => {
                 createrId: createrId
             }
         });
+        // Change all video approvalStatusByAdmin Pending
+        await Video.update({
+            approvalStatusByAdmin: "Pending"
+        }, {
+            where: {
+                contentId: req.params.id,
+                approvalStatusByAdmin: null,
+                createrId: createrId
+            }
+        })
         // Update content
         await content.update({
             ...content,
@@ -437,6 +558,44 @@ exports.submitFileForApproval = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `File successfully submit for approval!`
+        });
+
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.submitVideoForApproval = async (req, res) => {
+    try {
+        const createrId = req.instructor.id;
+
+        // Find video In Database
+        const video = await Video.findOne({
+            where: {
+                id: req.params.id,
+                createrId: createrId,
+                approvalStatusByAdmin: null
+            }
+        });
+        if (!video) {
+            return res.status(400).send({
+                success: false,
+                message: "This video is not present!"
+            });
+        }
+
+        // Update video
+        await video.update({
+            ...video,
+            approvalStatusByAdmin: "Pending"
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Video successfully submit for approval!`
         });
 
     } catch (err) {

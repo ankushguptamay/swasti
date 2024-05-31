@@ -6,6 +6,7 @@ const CourseAndContentFile = db.courseAndContentFile;
 const Course_Student = db.course_Student;
 const Course_Coupon = db.course_Coupon;
 const Coupon = db.coupon;
+const Video = db.videos;
 
 // For Admin and instructor
 exports.getAllCourse = async (req, res) => {
@@ -104,6 +105,10 @@ exports.getCourseByIdForAdmin = async (req, res) => {
                     },
                     required: false,
                     paranoid: false
+                }, {
+                    model: Video,
+                    as: 'videos',
+                    paranoid: false
                 }]
             }, {
                 model: CourseAndContentFile,
@@ -167,6 +172,9 @@ exports.getCourseByIdForInstructor = async (req, res) => {
                         fieldName: 'ContentFile'
                     },
                     required: false
+                }, {
+                    model: Video,
+                    as: 'videos'
                 }]
             }, {
                 model: CourseAndContentFile,
@@ -341,6 +349,14 @@ exports.getCourseByIdForPublicStudent = async (req, res) => {
                 },
                 required: false
             }, {
+                model: CourseContent,
+                as: 'contents',
+                where: {
+                    approvalStatusByAdmin: "Approved",
+                    isPublish: true
+                },
+                required: false
+            },{
                 model: Course_Coupon,
                 as: 'course_coupon',
                 include: [{
@@ -406,6 +422,14 @@ exports.myCourseByIdForStudent = async (req, res) => {
                     as: 'files',
                     where: {
                         fieldName: 'ContentFile',
+                        approvalStatusByAdmin: "Approved",
+                        isPublish: true
+                    },
+                    required: false
+                }, {
+                    model: Video,
+                    as: 'videos',
+                    where: {
                         approvalStatusByAdmin: "Approved",
                         isPublish: true
                     },
@@ -539,7 +563,14 @@ exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
                 as: 'files',
                 where: {
                     fieldName: 'ContentFile',
-                    approvalStatusByAdmin: "Approved",
+                    deletedAt: { [Op.ne]: null }
+                },
+                required: false,
+                paranoid: false
+            }, {
+                model: Video,
+                as: 'videos',
+                where: {
                     deletedAt: { [Op.ne]: null }
                 },
                 required: false,
@@ -548,7 +579,8 @@ exports.getAllSoftDeletedContentByCourseId = async (req, res) => {
             paranoid: false,
             order: [
                 ["createdAt", "ASC"],
-                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+                [{ model: Video, as: "videos" }, 'createdAt', 'ASC']
             ]
         });
         // Final response
@@ -582,11 +614,19 @@ exports.getSoftDeletdContentByContentId = async (req, res) => {
                 },
                 required: false,
                 paranoid: false
+            }, {
+                model: Video,
+                as: 'videos',
+                where: {
+                    deletedAt: { [Op.ne]: null }
+                },
+                required: false,
+                paranoid: false
             }],
             paranoid: false,
             order: [
-                ["createdAt", "ASC"],
-                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC'],
+                [{ model: Video, as: "videos" }, 'createdAt', 'ASC']
             ]
         });
         // Final response
@@ -606,28 +646,45 @@ exports.getSoftDeletdContentByContentId = async (req, res) => {
 exports.getFileByContentId = async (req, res) => {
     try {
         // Get All File
-        const courseContent = await CourseContent.findOne({
+        const file = await CourseAndContentFile.findOne({
             where: {
-                id: req.params.id
+                contentId: req.params.id,
+                fieldName: 'ContentFile'
             },
-            include: [{
-                model: CourseAndContentFile,
-                as: 'files',
-                where: {
-                    fieldName: 'ContentFile'
-                },
-                required: false
-            }],
             order: [
-                ["createdAt", "ASC"],
-                [{ model: CourseAndContentFile, as: "files" }, 'createdAt', 'ASC']
+                ["createdAt", "ASC"]
             ]
         });
         // Final response
         res.status(200).send({
             success: true,
             message: "All Files fetched successfully!",
-            data: courseContent
+            data: file
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getVideoByContentId = async (req, res) => {
+    try {
+        // Get All File
+        const video = await Video.findOne({
+            where: {
+                contentId: req.params.id
+            },
+            order: [
+                ["createdAt", "ASC"]
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "All Files fetched successfully!",
+            data: video
         });
     } catch (err) {
         res.status(500).send({

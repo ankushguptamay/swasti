@@ -1,11 +1,12 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
-const { courseValidation, contentValidation, contentVideoValidation } = require("../../Middleware/Validate/valiadteCourse");
+const { courseValidation, contentValidation, addRecordedVideo } = require("../../Middleware/Validate/valiadteCourse");
 const { deleteSingleFile } = require("../../Util/deleteFile")
 const { capitalizeFirstLetter, createCodeForCourse } = require("../../Util/capitalizeFirstLetter");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Video = db.videos;
 
 const cloudinary = require("cloudinary").v2;
 
@@ -42,7 +43,7 @@ exports.addCourse = async (req, res) => {
             }
             return res.status(400).send(error.details[0].message);
         }
-        const { category, coursePrice, heading, description, level, language, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute } = req.body;
+        const { category, coursePrice, heading, description, level, language, duration, introVideoLink, teacherName, certificationType, certificationFromInstitute, startingTime, endingTime, startingDate } = req.body;
         // Check course name duplicacy
         const courseName = capitalizeFirstLetter(req.body.courseName);
         const isCourse = await Course.findOne({
@@ -89,6 +90,9 @@ exports.addCourse = async (req, res) => {
         }
         // store in database
         const course = await Course.create({
+            startingDate: startingDate,
+            endingTime: endingTime,
+            startingTime: startingTime,
             category: category,
             courseName: courseName,
             courseCode: courseCode,
@@ -164,74 +168,24 @@ exports.addCourseImage = async (req, res) => {
                 message: "Please..Upload course image!"
             });
         }
-        // Find in database
+        let creater, createrId, approvalStatusByAdmin, condition;
         if (req.instructor) {
-            const imagePath = `./Resource/${req.file.filename}`;
-            const response = await cloudinary.uploader.upload(imagePath);
-            // delete file from resource/servere
-            deleteSingleFile(req.file.path);
-            const courseImage = await CourseAndContentFile.findAll({
-                where: {
-                    courseId: req.params.id,
-                    createrId: req.instructor.id,
-                    fieldName: "CourseImage"
-                }
-            });
-            if (courseImage.length > 0) {
-                for (let i = 0; i < courseImage.length; i++) {
-                    await courseImage[i].destroy();
-                }
-            }
-            await CourseAndContentFile.create({
-                cloudinaryFileId: response.public_id,
-                titleOrOriginalName: req.file.originalname,
-                linkOrPath: response.secure_url,
-                mimeType: req.file.mimetype,
-                fileName: req.file.filename,
-                fieldName: req.file.fieldname,
+            condition = {
+                courseId: req.params.id,
                 createrId: req.instructor.id,
-                creater: "Instructor",
-                courseId: req.params.id,
-                approvalStatusByAdmin: null
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Course Image added successfully!"
-            });
+                fieldName: "CourseImage"
+            };
+            createrId = req.instructor.id;
+            creater = "Instructor";
+            approvalStatusByAdmin = null;
         } else if (req.admin) {
-            const imagePath = `./Resource/${req.file.filename}`;
-            const response = await cloudinary.uploader.upload(imagePath);
-            // delete file from resource/servere
-            deleteSingleFile(req.file.path);
-            const courseImage = await CourseAndContentFile.findAll({
-                where: {
-                    courseId: req.params.id,
-                    fieldName: "CourseImage"
-                }
-            });
-            if (courseImage.length > 0) {
-                for (let i = 0; i < courseImage.length; i++) {
-                    await courseImage[i].destroy();
-                }
-            }
-            await CourseAndContentFile.create({
-                cloudinaryFileId: response.public_id,
-                titleOrOriginalName: req.file.originalname,
-                linkOrPath: response.secure_url,
-                mimeType: req.file.mimetype,
-                fileName: req.file.filename,
-                fieldName: req.file.fieldname,
-                createrId: req.admin.id,
-                creater: "Admin",
+            condition = {
                 courseId: req.params.id,
-                approvalStatusByAdmin: "Approved"
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Course Image added successfully!"
-            });
+                fieldName: "CourseImage"
+            };
+            createrId = req.admin.id;
+            creater = "Admin";
+            approvalStatusByAdmin = "Approved";
         } else {
             deleteSingleFile(req.file.path);
             res.status(400).send({
@@ -239,10 +193,42 @@ exports.addCourseImage = async (req, res) => {
                 message: "You can not add course image!"
             });
         }
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // console.log(response);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
+        const courseImage = await CourseAndContentFile.findAll({
+            where: condition
+        });
+        if (courseImage.length > 0) {
+            for (let i = 0; i < courseImage.length; i++) {
+                await courseImage[i].update({ deletedThrough: "ByUpdation" });
+                await courseImage[i].destroy();
+            }
+        }
+        await CourseAndContentFile.create({
+            cloudinaryFileId: response.public_id,
+            titleOrOriginalName: req.file.originalname,
+            linkOrPath: response.secure_url,
+            mimeType: req.file.mimetype,
+            fileName: req.file.filename,
+            fieldName: req.file.fieldname,
+            createrId: createrId,
+            creater: creater,
+            courseId: req.params.id,
+            approvalStatusByAdmin: approvalStatusByAdmin
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Course Image added successfully!"
+        });
+
     } catch (err) {
         res.status(500).send({
             success: false,
-            message: err.message
+            message: err
         });
     }
 };
@@ -256,82 +242,62 @@ exports.addTeacherImage = async (req, res) => {
                 message: "Please..Upload teacher image!"
             });
         }
-        // Find in database
+        let creater, createrId, approvalStatusByAdmin, condition;
         if (req.instructor) {
-            const imagePath = `./Resource/${req.file.filename}`;
-            const response = await cloudinary.uploader.upload(imagePath);
-            // delete file from resource/servere
-            deleteSingleFile(req.file.path);
-            const teacherImage = await CourseAndContentFile.findAll({
-                where: {
-                    courseId: req.params.id,
-                    createrId: req.instructor.id,
-                    fieldName: "TeacherImage"
-                }
-            });
-            if (teacherImage.length > 0) {
-                for (let i = 0; i < teacherImage.length; i++) {
-                    await teacherImage[i].destroy();
-                }
-            }
-            await CourseAndContentFile.create({
-                cloudinaryFileId: response.public_id,
-                titleOrOriginalName: req.file.originalname,
-                linkOrPath: response.secure_url,
-                mimeType: req.file.mimetype,
-                fileName: req.file.filename,
-                fieldName: req.file.fieldname,
+            condition = {
+                courseId: req.params.id,
                 createrId: req.instructor.id,
-                creater: "Instructor",
-                courseId: req.params.id,
-                approvalStatusByAdmin: null
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Teacher Image added successfully!"
-            });
+                fieldName: "TeacherImage"
+            };
+            createrId = req.instructor.id;
+            creater = "Instructor";
+            approvalStatusByAdmin = null;
         } else if (req.admin) {
-            const imagePath = `./Resource/${req.file.filename}`;
-            const response = await cloudinary.uploader.upload(imagePath);
-            // delete file from resource/servere
-            deleteSingleFile(req.file.path);
-            const teacherImage = await CourseAndContentFile.findAll({
-                where: {
-                    courseId: req.params.id,
-                    fieldName: "TeacherImage"
-                }
-            });
-            if (teacherImage.length > 0) {
-                for (let i = 0; i < teacherImage.length; i++) {
-                    await teacherImage[i].destroy();
-                }
-            }
-            await CourseAndContentFile.create({
-                cloudinaryFileId: response.public_id,
-                titleOrOriginalName: req.file.originalname,
-                linkOrPath: response.secure_url,
-                mimeType: req.file.mimetype,
-                fileName: req.file.filename,
-                fieldName: req.file.fieldname,
-                createrId: req.admin.id,
-                creater: "Admin",
+            condition = {
                 courseId: req.params.id,
-                approvalStatusByAdmin: "Approved"
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Teacher Image added successfully!"
-            });
+                fieldName: "TeacherImage"
+            };
+            createrId = req.admin.id;
+            creater = "Admin";
+            approvalStatusByAdmin = "Approved";
         } else {
-            // delete file from resource/servere
             deleteSingleFile(req.file.path);
             res.status(400).send({
                 success: false,
-                message: "You can not add teacher image!"
+                message: "You can not add course image!"
             });
         }
+        const imagePath = `./Resource/${req.file.filename}`;
+        const response = await cloudinary.uploader.upload(imagePath);
+        // delete file from resource/servere
+        deleteSingleFile(req.file.path);
+        const teacherImage = await CourseAndContentFile.findAll({
+            where: condition
+        });
+        if (teacherImage.length > 0) {
+            for (let i = 0; i < teacherImage.length; i++) {
+                await teacherImage[i].update({ deletedThrough: "ByUpdation" });
+                await teacherImage[i].destroy();
+            }
+        }
+        await CourseAndContentFile.create({
+            cloudinaryFileId: response.public_id,
+            titleOrOriginalName: req.file.originalname,
+            linkOrPath: response.secure_url,
+            mimeType: req.file.mimetype,
+            fileName: req.file.filename,
+            fieldName: req.file.fieldname,
+            createrId: createrId,
+            creater: creater,
+            courseId: req.params.id,
+            approvalStatusByAdmin: approvalStatusByAdmin
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Teacher Image added successfully!"
+        });
+
     } catch (err) {
         res.status(500).send({
             success: false,
@@ -391,16 +357,14 @@ exports.addContent = async (req, res) => {
 };
 
 // For Admin And Instructor
-exports.addContentVideo = async (req, res) => {
+exports.addRecordedVideo = async (req, res) => {
     try {
         // Validate body
-        const { error } = contentVideoValidation(req.body);
+        const { error } = addRecordedVideo(req.body);
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { titleOrOriginalName, linkOrPath } = req.body;
-        const mimeType = 'video';
-        const fieldName = 'ContentFile';
+        const { startingTime, endingTime, titleOrOriginalName, linkOrPath } = req.body;
         const fileContent = await CourseContent.findOne({
             where: {
                 id: req.params.id
@@ -414,16 +378,18 @@ exports.addContentVideo = async (req, res) => {
             });
         }
         if (req.instructor) {
-            await CourseAndContentFile.create({
+            await Video.create({
                 titleOrOriginalName: titleOrOriginalName,
                 linkOrPath: linkOrPath,
-                mimeType: mimeType,
-                createrId: req.instructor.id,
-                creater: "Instructor",
-                fieldName: fieldName,
+                startingTime: startingTime,
+                endingTime: endingTime,
+                mimeType: "video",
+                modeOfVideo: "Record",
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: null,
-                contentId: req.params.id
+                contentId: req.params.id,
+                createrId: req.instructor.id,
+                creater: "Instructor",
             });
             // Final response
             res.status(200).send({
@@ -431,16 +397,18 @@ exports.addContentVideo = async (req, res) => {
                 message: "Video added successfully!"
             });
         } else if (req.admin) {
-            await CourseAndContentFile.create({
+            await Video.create({
                 titleOrOriginalName: titleOrOriginalName,
                 linkOrPath: linkOrPath,
-                mimeType: mimeType,
-                createrId: req.admin.id,
-                creater: "Admin",
-                fieldName: fieldName,
+                startingTime: startingTime,
+                endingTime: endingTime,
+                mimeType: "video",
+                modeOfVideo: "Record",
                 courseId: fileContent.courseId,
                 approvalStatusByAdmin: "Approved",
-                contentId: req.params.id
+                contentId: req.params.id,
+                createrId: req.admin.id,
+                creater: "Admin",
             });
             // Final response
             res.status(200).send({

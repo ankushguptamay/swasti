@@ -27,6 +27,7 @@ db.course_Coupon = require('./Course/JunctionTable/course_Coupon_JunctionModel.j
 db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequelize);
 db.courseAndContentFile = require('./Course/courseAndContentFileModel.js')(sequelize, Sequelize);
 db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
+db.videos = require('./Course/videoModel.js')(sequelize, Sequelize);
 
 // Master
 db.coupon = require('./Master/couponModel.js')(sequelize, Sequelize);
@@ -95,6 +96,12 @@ db.course.hasMany(db.courseAndContentFile, { foreignKey: 'courseId', as: 'files'
 // Content's Association with file
 db.courseContent.hasMany(db.courseAndContentFile, { foreignKey: 'contentId', as: 'files' });
 
+// Course's Association with Videos
+db.course.hasMany(db.videos, { foreignKey: 'courseId', as: 'videos' });
+
+// Content's Association with Videos
+db.courseContent.hasMany(db.videos, { foreignKey: 'contentId', as: 'videos' });
+
 // Instructor Association with review
 db.instructor.hasMany(db.instructorReview, { foreignKey: 'instructorId', as: 'review' });
 
@@ -148,10 +155,8 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.dropTable("yogaStudioContacts").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioTimes").then((res) => { console.log("4cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "startingTime", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "endingTime", { type: DataTypes.STRING }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("courses", "startingDate", { type: DataTypes.DATEONLY }).then((res) => { console.log("1cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

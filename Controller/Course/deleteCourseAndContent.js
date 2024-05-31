@@ -4,15 +4,31 @@ const { deleteSingleFile } = require("../../Util/deleteFile")
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Video = db.videos;
 
-exports.softDeleteCourseForInstructor = async (req, res) => {
+exports.softDeleteCourse = async (req, res) => {
     try {
-        // Find Course In Database
-        const course = await Course.findOne({
-            where: {
+        let deletedThrough, condition;
+        if (req.instructor) {
+            condition = {
                 id: req.params.id,
                 createrId: req.instructor.id
-            }
+            };
+            deletedThrough = "Instructor";
+        } else if (req.admin) {
+            condition = {
+                id: req.params.id
+            };
+            deletedThrough = "Admin";
+        } else {
+            res.status(400).send({
+                success: false,
+                message: "You can not delete this course!"
+            });
+        }
+        // Find Course In Database
+        const course = await Course.findOne({
+            where: condition
         });
         if (!course) {
             return res.status(400).send({
@@ -20,7 +36,7 @@ exports.softDeleteCourseForInstructor = async (req, res) => {
                 message: "Course is not present!"
             });
         }
-        await course.update({ deletedThrough: "Instructor" });
+        await course.update({ deletedThrough: deletedThrough });
         // Soft Delete
         await course.destroy();
         // Final Response
@@ -36,44 +52,29 @@ exports.softDeleteCourseForInstructor = async (req, res) => {
     }
 };
 
-exports.softDeleteCourseForAdmin = async (req, res) => {
+exports.softDeleteContent = async (req, res) => {
     try {
-        // Find Course In Database
-        const course = await Course.findOne({
-            where: {
+        let deletedThrough, condition;
+        if (req.instructor) {
+            condition = {
+                id: req.params.id,
+                createrId: req.instructor.id
+            };
+            deletedThrough = "Instructor";
+        } else if (req.admin) {
+            condition = {
                 id: req.params.id
-            }
-        });
-        if (!course) {
-            return res.status(400).send({
+            };
+            deletedThrough = "Admin";
+        } else {
+            res.status(400).send({
                 success: false,
-                message: "Course is not present!"
+                message: "You can not delete this content!"
             });
         }
-        // If this course is not created by admin then some notification should go to admin
-        await course.update({ deletedThrough: "Admin" });
-        // Soft Delete
-        await course.destroy();
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: "Course deleted successfully!"
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.softDeleteContentForAdmin = async (req, res) => {
-    try {
         // Find Course Content In Database
         const courseContent = await CourseContent.findOne({
-            where: {
-                id: req.params.id
-            }
+            where: condition
         });
         if (!courseContent) {
             return res.status(400).send({
@@ -82,7 +83,7 @@ exports.softDeleteContentForAdmin = async (req, res) => {
             });
         }
         // If this course is not created by admin then some notification should go to admin
-        await courseContent.update({ deletedThrough: "Admin" });
+        await courseContent.update({ deletedThrough: deletedThrough });
         // Soft Delete
         await courseContent.destroy();
         // Final Response
@@ -98,44 +99,29 @@ exports.softDeleteContentForAdmin = async (req, res) => {
     }
 };
 
-exports.softDeleteContentForInstructor = async (req, res) => {
+exports.softDeleteFile = async (req, res) => {
     try {
-        // Find Course Content In Database
-        const courseContent = await CourseContent.findOne({
-            where: {
+        let deletedThrough, condition;
+        if (req.instructor) {
+            condition = {
                 id: req.params.id,
                 createrId: req.instructor.id
-            }
-        });
-        if (!courseContent) {
-            return res.status(400).send({
+            };
+            deletedThrough = "Instructor";
+        } else if (req.admin) {
+            condition = {
+                id: req.params.id
+            };
+            deletedThrough = "Admin";
+        } else {
+            res.status(400).send({
                 success: false,
-                message: "Data is not present!"
+                message: "You can not delete this file!"
             });
         }
-        await courseContent.update({ deletedThrough: "Instructor" });
-        // Soft Delete
-        await courseContent.destroy();
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: `Content deleted successfully!`
-        });
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-exports.softDeleteFileForAdmin = async (req, res) => {
-    try {
-        // Find Course Content In Database
+        // Find file In Database
         const file = await CourseAndContentFile.findOne({
-            where: {
-                id: req.params.id
-            }
+            where: condition
         });
         if (!file) {
             return res.status(400).send({
@@ -144,7 +130,7 @@ exports.softDeleteFileForAdmin = async (req, res) => {
             });
         }
         // If this course is not created by admin then some notification should go to admin
-        await file.update({ deletedThrough: "Admin" });
+        await file.update({ deletedThrough: deletedThrough });
         // Soft Delete
         await file.destroy();
         // Final Response
@@ -160,28 +146,44 @@ exports.softDeleteFileForAdmin = async (req, res) => {
     }
 };
 
-exports.softDeleteFileForInstructor = async (req, res) => {
+exports.softDeleteVideo = async (req, res) => {
     try {
-        // Find Course Content In Database
-        const file = await CourseAndContentFile.findOne({
-            where: {
+        let deletedThrough, condition;
+        if (req.instructor) {
+            condition = {
                 id: req.params.id,
                 createrId: req.instructor.id
-            }
+            };
+            deletedThrough = "Instructor";
+        } else if (req.admin) {
+            condition = {
+                id: req.params.id
+            };
+            deletedThrough = "Admin";
+        } else {
+            res.status(400).send({
+                success: false,
+                message: "You can not delete this video!"
+            });
+        }
+        // Find video In Database
+        const video = await Video.findOne({
+            where: condition
         });
-        if (!file) {
+        if (!video) {
             return res.status(400).send({
                 success: false,
                 message: "Data is not present!"
             });
         }
-        await file.update({ deletedThrough: "Instructor" });
+        // If this course is not created by admin then some notification should go to admin
+        await video.update({ deletedThrough: deletedThrough });
         // Soft Delete
-        await file.destroy();
+        await video.destroy();
         // Final Response
         res.status(200).send({
             success: true,
-            message: `${file.fieldName} deleted successfully!`
+            message: `Video deleted successfully!`
         });
     } catch (err) {
         res.status(500).send({

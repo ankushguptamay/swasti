@@ -6,6 +6,7 @@ const Course = db.course;
 const Course_Coupon = db.course_Coupon;
 const Course_Student = db.course_Student;
 const Coupon = db.coupon;
+const Video = db.videos;
 
 // exports.updateCourse = async (req, res) => {
 //     try {

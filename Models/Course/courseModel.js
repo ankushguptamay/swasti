@@ -70,6 +70,15 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isIn: [['Admin', 'Instructor', 'ByUpdation']]
             }
+        },
+        startingTime: {
+            type: DataTypes.STRING
+        },
+        endingTime: {
+            type: DataTypes.STRING
+        },
+        startingDate: {
+            type: DataTypes.DATEONLY
         }
     }, {
         paranoid: true

@@ -3,10 +3,10 @@ const { register, login, getInstructor, verifyOTP, updateInstructor, registerByN
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
-const { changeContentPublish, changeCoursePublish, changeCourseFilePublish, submitContentForApproval, submitCourseForApproval, submitFileForApproval } = require('../Controller/Course/approvalCourseAndContent');
-const { addCourse, addCourseImage, addTeacherImage, addContent, addContentVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
-const { getAllCourse, getCourseByIdForInstructor, getFileByContentId } = require('../Controller/Course/getCourseAndContent');
-const { softDeleteContentForInstructor, softDeleteCourseForInstructor, softDeleteFileForInstructor } = require('../Controller/Course/deleteCourseAndContent');
+const { changeContentPublish, changeCoursePublish, changeCourseFilePublish, changeVideoPublish, submitContentForApproval, submitCourseForApproval, submitFileForApproval, submitVideoForApproval } = require('../Controller/Course/approvalCourseAndContent');
+const { addCourse, addCourseImage, addTeacherImage, addContent, addRecordedVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
+const { getAllCourse, getCourseByIdForInstructor, getFileByContentId, getVideoByContentId } = require('../Controller/Course/getCourseAndContent');
+const { softDeleteContent, softDeleteCourse, softDeleteFile, softDeleteVideo } = require('../Controller/Course/deleteCourseAndContent');
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { getAllCourseDuration } = require('../Controller/Master/courseDurationController');
 const { getAllCourseType } = require('../Controller/Master/courseTypeController');
@@ -60,25 +60,30 @@ instructor.post("/addCourseImage/:id", verifyInstructorJWT, isInstructorPresent,
 instructor.post("/addTeacherImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
 instructor.post("/addContent", verifyInstructorJWT, isInstructorPresent, addContent); // courseId
 instructor.post("/addContentFile/:id", verifyInstructorJWT, isInstructorPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
-instructor.post("/addContentVideo/:id", verifyInstructorJWT, isInstructorPresent, addContentVideo); // contentId
+instructor.post("/addRecordedVideo/:id", verifyInstructorJWT, isInstructorPresent, addRecordedVideo); // contentId
 
 // 2. Get
 instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllCourse);
 instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
 instructor.get("/files/:id", verifyInstructorJWT, isInstructorPresent, getFileByContentId); // id:contentId
+instructor.get("/videos/:id", verifyInstructorJWT, isInstructorPresent, getVideoByContentId); // id:contentId
 
 // 3. Publish
 instructor.put("/coursePublish/:id", verifyInstructorJWT, isInstructorPresent, changeCoursePublish);  // courseId
 instructor.put("/contentPublish/:id", verifyInstructorJWT, isInstructorPresent, changeContentPublish); // contentId
 instructor.put("/filePublish/:id", verifyInstructorJWT, isInstructorPresent, changeCourseFilePublish); // fileId
+instructor.put("/videoPublish/:id", verifyInstructorJWT, isInstructorPresent, changeVideoPublish); // videoId
+
 instructor.put("/submitContentForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitContentForApproval);  // contentId
 instructor.put("/submitCourseForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitCourseForApproval); // courseId
 instructor.put("/submitFileForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitFileForApproval); // fileId
+instructor.put("/submitVideoForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitVideoForApproval); // videoId
 
 // 3. Delete
-instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourseForInstructor);
-instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContentForInstructor);
-instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFileForInstructor);
+instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourse);
+instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContent);
+instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFile);
+instructor.delete("/softDeleteVideo/:id", verifyInstructorJWT, isInstructorPresent, softDeleteVideo);
 
 // 4. Update
 instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId

@@ -2,6 +2,9 @@ const joi = require('joi');
 
 exports.courseValidation = (data) => {
     const schema = joi.object().keys({
+        startingTime: joi.string().required(),
+        startingDate: joi.string().required(),
+        endingTime: joi.string().required(),
         category: joi.string().optional(),
         coursePrice: joi.string().optional(),
         heading: joi.string().optional(),
@@ -26,8 +29,10 @@ exports.contentValidation = (data) => {
     return schema.validate(data);
 }
 
-exports.contentVideoValidation = (data) => {
+exports.addRecordedVideo = (data) => {
     const schema = joi.object().keys({
+        startingTime: joi.string().required(),
+        endingTime: joi.string().required(),
         titleOrOriginalName: joi.string().required(),
         linkOrPath: joi.string().required()
     });

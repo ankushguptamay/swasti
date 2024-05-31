@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const Video = db.videos;
 
 exports.restoreCourse = async (req, res) => {
     try {
@@ -82,7 +83,7 @@ exports.restoreContent = async (req, res) => {
 
 exports.restoreFile = async (req, res) => {
     try {
-        // Find Content In Database
+        // Find file In Database
         const file = await CourseAndContentFile.findOne({
             where: {
                 id: req.params.id,
@@ -108,7 +109,45 @@ exports.restoreFile = async (req, res) => {
         // Final Response
         res.status(200).send({
             success: true,
-            message: `Content restored successfully!`
+            message: `Video restored successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.restoreVideo = async (req, res) => {
+    try {
+        // Find Video In Database
+        const video = await Video.findOne({
+            where: {
+                id: req.params.id,
+                deletedAt: { [Op.ne]: null }
+            },
+            paranoid: false
+        });
+        if (!video) {
+            return res.status(400).send({
+                success: false,
+                message: "Data is not present!"
+            });
+        }
+        if (video.deletedThrough === "Instructor" || video.deletedThrough === "ByUpdation") {
+            return res.status(400).send({
+                success: true,
+                message: "Warning! This video is not deleted by Swasti!",
+            });
+        }
+        await video.update({ deletedThrough: null });
+        // Restore video
+        await video.restore();
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Video restored successfully!`
         });
     } catch (err) {
         res.status(500).send({
