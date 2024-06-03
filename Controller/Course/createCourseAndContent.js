@@ -6,6 +6,8 @@ const { capitalizeFirstLetter, createCodeForCourse } = require("../../Util/capit
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const CourseUpdateHistory = db.courseHistory;
+const ContentUpdateHistory = db.contentHistory;
 const Video = db.videos;
 
 const cloudinary = require("cloudinary").v2;
@@ -146,6 +148,27 @@ exports.addCourse = async (req, res) => {
                 approvalStatusByAdmin: approvalStatusByAdmin
             });
         }
+        //Create Updation request
+        await CourseUpdateHistory.create({
+            startingDate: startingDate,
+            endingTime: endingTime,
+            startingTime: startingTime,
+            category: category,
+            courseName: courseName,
+            coursePrice: coursePrice,
+            language: language,
+            heading: heading,
+            description: description,
+            level: level,
+            duration: duration,
+            teacherName: teacherName,
+            introVideoLink: introVideoLink,
+            certificationType: certificationType,
+            certificationFromInstitute: certificationFromInstitute,
+            createrId: createrId,
+            courseId: course.id,
+            creater: creater
+        })
         // Final response
         res.status(200).send({
             success: true,
@@ -315,39 +338,43 @@ exports.addContent = async (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         const { title, courseId } = req.body;
+        let approvalStatusByAdmin;
+        let createrId, creater;
         if (req.instructor) {
-            await CourseContent.create({
-                title: title,
-                createrId: req.instructor.id,
-                creater: "Instructor",
-                courseId: courseId,
-                approvalStatusByAdmin: null
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Content created successfully!"
-            });
+            createrId = req.instructor.id;
+            creater = "Instructor";
+            approvalStatusByAdmin = null;
         } else if (req.admin) {
-            await CourseContent.create({
-                title: title,
-                createrId: req.admin.id,
-                creater: "Admin",
-                courseId: courseId,
-                approvalStatusByAdmin: "Approved"
-            });
-            // Final response
-            res.status(200).send({
-                success: true,
-                message: "Content created successfully!"
-            });
+            creater = "Admin";
+            createrId = req.admin.id;
+            approvalStatusByAdmin = "Approved";
         } else {
-            // Final response
-            res.status(400).send({
+            return res.status(400).send({
                 success: false,
-                message: "You can not add content!"
+                message: "You can not create content!"
             });
         }
+        // Create Content
+        const content = await CourseContent.create({
+            title: title,
+            createrId: createrId,
+            creater: creater,
+            courseId: courseId,
+            approvalStatusByAdmin: approvalStatusByAdmin
+        });
+        //Create Updation request
+        await ContentUpdateHistory.create({
+            title: title,
+            createrId: createrId,
+            creater: creater,
+            contentId: content.id
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: "Content created successfully!"
+        });
+
     } catch (err) {
         res.status(500).send({
             success: false,

@@ -29,6 +29,13 @@ exports.contentValidation = (data) => {
     return schema.validate(data);
 }
 
+exports.contentUpdationValidation = (data) => {
+    const schema = joi.object().keys({
+        title: joi.string().required()
+    });
+    return schema.validate(data);
+}
+
 exports.addRecordedVideo = (data) => {
     const schema = joi.object().keys({
         startingTime: joi.string().required(),

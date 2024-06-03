@@ -1,9 +1,12 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { changeQualificationStatus, changePublish } = require("../../Middleware/Validate/validateInstructor");
+const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter");
 const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
+const CourseUpdateHistory = db.courseHistory;
+const ContentUpdateHistory = db.contentHistory;
 const Video = db.videos;
 
 exports.changeCourseStatus = async (req, res) => {
@@ -598,6 +601,152 @@ exports.submitVideoForApproval = async (req, res) => {
             message: `Video successfully submit for approval!`
         });
 
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeCourseUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find Course In Database
+        const courseUpdateHistories = await CourseUpdateHistory.findOne({
+            where: {
+                id: req.params.id,
+                creater: "Instructor"
+            }
+        });
+        if (!courseUpdateHistories) {
+            return res.status(400).send({
+                success: false,
+                message: "This Course updation request is not present!"
+            });
+        }
+        // Find Course
+        const course = await Course.findOne({
+            where: {
+                id: courseUpdateHistories.courseId
+            }
+        });
+        if (!course) {
+            return res.status(400).send({
+                success: false,
+                message: "Course is not present!"
+            });
+        }
+        if (approvalStatusByAdmin === "Approved") {
+            // Check is course name is changed
+            let courseName = course.courseName;
+            const newCourseName = capitalizeFirstLetter(courseUpdateHistories.courseName);
+            if (courseName !== newCourseName) {
+                const isCourse = await Course.findOne({
+                    where: {
+                        courseName: newCourseName
+                    },
+                    paranoid: false
+                });
+                if (isCourse) {
+                    return res.status(400).send({
+                        success: false,
+                        message: "This course name is present!"
+                    });
+                } else {
+                    courseName = newCourseName;
+                }
+            }
+            // Update Course
+            await course.update({
+                ...course,
+                startingDate: courseUpdateHistories.startingDate,
+                endingTime: courseUpdateHistories.endingTime,
+                startingTime: courseUpdateHistories.startingTime,
+                category: courseUpdateHistories.category,
+                courseName: courseUpdateHistories.courseName,
+                coursePrice: courseUpdateHistories.coursePrice,
+                language: courseUpdateHistories.language,
+                heading: courseUpdateHistories.heading,
+                description: courseUpdateHistories.description,
+                level: courseUpdateHistories.level,
+                duration: courseUpdateHistories.duration,
+                teacherName: courseUpdateHistories.teacherName,
+                introVideoLink: courseUpdateHistories.introVideoLink,
+                certificationType: courseUpdateHistories.certificationType,
+                certificationFromInstitute: courseUpdateHistories.certificationFromInstitute,
+            });
+        }
+        await courseUpdateHistories.update({
+            ...courseUpdateHistories,
+            updationStatus: approvalStatusByAdmin
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Course updation request ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeContentUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find Content In Database
+        const contentUpdateHistories = await ContentUpdateHistory.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!contentUpdateHistories) {
+            return res.status(400).send({
+                success: false,
+                message: "This content updation request is not present!"
+            });
+        }
+        // Find Content
+        const content = await CourseContent.findOne({
+            where: {
+                id: contentUpdateHistories.contentId
+            }
+        });
+        if (!content) {
+            return res.status(400).send({
+                success: false,
+                message: "Content is not present!"
+            });
+        }
+        if (approvalStatusByAdmin === "Approved") {
+            // Update content
+            await content.update({
+                ...content,
+                title: contentUpdateHistories.title
+            });
+        }
+        await contentUpdateHistories.update({
+            ...contentUpdateHistories,
+            updationStatus: approvalStatusByAdmin
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Chapter updation request ${approvalStatusByAdmin} successfully!`
+        });
     } catch (err) {
         res.status(500).send({
             success: false,

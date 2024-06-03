@@ -11,7 +11,7 @@ const { getAllCourseCategory } = require('../Controller/Master/courseCategoryCon
 const { getAllCourseDuration } = require('../Controller/Master/courseDurationController');
 const { getAllCourseType } = require('../Controller/Master/courseTypeController');
 const { getAllUniversity_Institute } = require('../Controller/Master/university_instituteController');
-const { } = require('../Controller/Course/updateCourseAndContent');
+const { updateContentForInstructor, updateCourseForInstructor } = require('../Controller/Course/updateCourseAndContent');
 const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile, totalStudent } = require('../Controller/User/Instructor/dashboardController');
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
@@ -87,6 +87,8 @@ instructor.delete("/softDeleteVideo/:id", verifyInstructorJWT, isInstructorPrese
 
 // 4. Update
 instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
+instructor.put("/updateContent/:id", verifyInstructorJWT, isInstructorPresent, updateContentForInstructor); // contentId
+instructor.put("/updateCourse/:id", verifyInstructorJWT, isInstructorPresent, updateCourseForInstructor); // courseId
 
 // Master
 instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, getAllCourseCategory);

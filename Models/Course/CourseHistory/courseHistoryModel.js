@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         courseName: {
-            type: DataTypes.STRING,
-            unique: true
+            type: DataTypes.STRING
         },
         courseCode: {
             type: DataTypes.STRING,
@@ -49,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         createrId: {
             type: DataTypes.STRING
         },
-        approvalStatusByAdmin: {
+        updationStatus: {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Pending', 'Approved', 'Rejected']]
@@ -63,7 +62,13 @@ module.exports = (sequelize, DataTypes) => {
         },
         startingDate: {
             type: DataTypes.DATEONLY
-        }
+        },
+        certificationType: {
+            type: DataTypes.STRING
+        },
+        certificationFromInstitute: {
+            type: DataTypes.STRING
+        },
     })
     return CourseUpdateHistory;
 }

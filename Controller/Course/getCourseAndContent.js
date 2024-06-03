@@ -4,6 +4,8 @@ const Course = db.course;
 const CourseContent = db.courseContent;
 const CourseAndContentFile = db.courseAndContentFile;
 const Course_Student = db.course_Student;
+const CourseUpdateHistory = db.courseHistory;
+const ContentUpdateHistory = db.contentHistory;
 const Course_Coupon = db.course_Coupon;
 const Coupon = db.coupon;
 const Video = db.videos;
@@ -356,7 +358,7 @@ exports.getCourseByIdForPublicStudent = async (req, res) => {
                     isPublish: true
                 },
                 required: false
-            },{
+            }, {
                 model: Course_Coupon,
                 as: 'course_coupon',
                 include: [{
@@ -685,6 +687,125 @@ exports.getVideoByContentId = async (req, res) => {
             success: true,
             message: "All Files fetched successfully!",
             data: video
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin
+exports.getAllCourseUpdationRequest = async (req, res) => {
+    try {
+        const { page, limit, search, approvalStatusByAdmin } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        const condition = [];
+        let message = "Course updation request fetched successfully!";
+        if (approvalStatusByAdmin) {
+            message = `${approvalStatusByAdmin} course updation request fetched successfully!`;
+            condition.push({ updationStatus: approvalStatusByAdmin });
+        }
+        // Search
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { courseName: { [Op.substring]: search } },
+                    { courseCode: { [Op.substring]: search } }
+                ]
+            })
+        }
+        // Count All Course Updation
+        const totalCourseUpdation = await CourseUpdateHistory.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        // Get All Course Updation
+        const courseUpdation = await CourseUpdateHistory.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: message,
+            totalPage: Math.ceil(totalCourseUpdation / recordLimit),
+            currentPage: currentPage,
+            data: courseUpdation
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+// For Admin
+exports.getAllContentUpdationRequest = async (req, res) => {
+    try {
+        const { page, limit, search, approvalStatusByAdmin } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        const condition = [];
+        let message = "Content updation request fetched successfully!";
+        if (approvalStatusByAdmin) {
+            message = `${approvalStatusByAdmin} content updation request fetched successfully!`;
+            condition.push({ updationStatus: approvalStatusByAdmin });
+        }
+        // Search
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { title: { [Op.substring]: search } }
+                ]
+            })
+        }
+        // Count All Content Updation
+        const totalContentUpdation = await ContentUpdateHistory.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        // Get All Content Updation
+        const contentUpdation = await ContentUpdateHistory.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: message,
+            totalPage: Math.ceil(totalContentUpdation / recordLimit),
+            currentPage: currentPage,
+            data: contentUpdation
         });
     } catch (err) {
         res.status(500).send({

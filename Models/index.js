@@ -28,6 +28,8 @@ db.courseContent = require('./Course/courseContentModel.js')(sequelize, Sequeliz
 db.courseAndContentFile = require('./Course/courseAndContentFileModel.js')(sequelize, Sequelize);
 db.course = require('./Course/courseModel.js')(sequelize, Sequelize);
 db.videos = require('./Course/videoModel.js')(sequelize, Sequelize);
+db.contentHistory = require('./Course/CourseHistory/contentHistoryModel.js')(sequelize, Sequelize);
+db.courseHistory = require('./Course/CourseHistory/courseHistoryModel.js')(sequelize, Sequelize);
 
 // Master
 db.coupon = require('./Master/couponModel.js')(sequelize, Sequelize);
@@ -101,6 +103,12 @@ db.course.hasMany(db.videos, { foreignKey: 'courseId', as: 'videos' });
 
 // Content's Association with Videos
 db.courseContent.hasMany(db.videos, { foreignKey: 'contentId', as: 'videos' });
+
+// Course's Association with courseHistory
+db.course.hasMany(db.courseHistory, { foreignKey: 'courseId', as: 'courseHistories' });
+
+// Content's Association with contentHistory
+db.courseContent.hasMany(db.contentHistory, { foreignKey: 'contentId', as: 'contentHistories' });
 
 // Instructor Association with review
 db.instructor.hasMany(db.instructorReview, { foreignKey: 'instructorId', as: 'review' });
