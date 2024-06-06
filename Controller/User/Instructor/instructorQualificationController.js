@@ -27,7 +27,7 @@ exports.addQualification = async (req, res) => {
             deleteSingleFile(req.file.path);
             return res.status(400).send(error.details[0].message);
         }
-        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber } = req.body;
+        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber, qualificationIn } = req.body;
         const imagePath = `./Resource/${req.file.filename}`;
         const response = await cloudinary.uploader.upload(imagePath);
         // delete file from resource/servere
@@ -42,6 +42,7 @@ exports.addQualification = async (req, res) => {
             marksType: marksType,
             marks: marks,
             certificationNumber: certificationNumber,
+            qualificationIn: qualificationIn,
             documentOriginalName: req.file.originalname,
             documentPath: response.secure_url,
             documentFileName: req.file.filename,
@@ -180,7 +181,7 @@ exports.updateQualification = async (req, res) => {
             deleteSingleFile(req.file.path);
             return res.status(400).send(error.details[0].message);
         }
-        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber } = req.body;
+        const { courseType, course, university_institute_name, year, marksType, marks, certificationNumber, qualificationIn } = req.body;
         // Find in database
         const qualification = await InstructorQualification.findOne({
             where: {
@@ -202,6 +203,7 @@ exports.updateQualification = async (req, res) => {
         await InstructorQualification.create({
             cloudinaryFileId: response.public_id,
             courseType: courseType,
+            qualificationIn: qualificationIn,
             course: course,
             university_institute_name: university_institute_name,
             year: year,

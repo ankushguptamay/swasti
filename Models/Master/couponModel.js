@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
         discountInPercent: {
             type: DataTypes.STRING
         },
+        couponFor: {
+            type: DataTypes.STRING
+        },
         creater: {
             type: DataTypes.STRING,
             validate: {

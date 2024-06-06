@@ -50,7 +50,8 @@ exports.addQualification = (data) => {
         year: joi.string().required(),
         marksType: joi.string().required(),
         marks: joi.string().required(),
-        certificationNumber: joi.string().required()
+        certificationNumber: joi.string().required(),
+        qualificationIn: joi.string().valid('YogaStudio', 'HomeTutor', 'Therapy').required()
     })//.options({ allowUnknown: true });
     return schema.validate(data);
 }

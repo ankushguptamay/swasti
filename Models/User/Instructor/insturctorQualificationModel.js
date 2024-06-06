@@ -38,6 +38,12 @@ module.exports = (sequelize, DataTypes) => {
         documentFileName: {
             type: DataTypes.STRING(1234)
         },
+        qualificationIn: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['YogaStudio', 'HomeTutor', 'Therapy']]
+            }
+        },
         approvalStatusByAdmin: {
             type: DataTypes.STRING,
             validate: {

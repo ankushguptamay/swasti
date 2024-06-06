@@ -15,7 +15,7 @@ exports.createCoupon = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { couponTitle, discountInPercent, validTill } = req.body;
+        const { couponTitle, discountInPercent, validTill, couponFor } = req.body;
         // generate Coupon code
         let code;
         const isCoupon = await Coupon.findAll({
@@ -35,6 +35,7 @@ exports.createCoupon = async (req, res) => {
             await Coupon.create({
                 couponTitle: couponTitle,
                 discountInPercent: discountInPercent,
+                couponFor: couponFor,
                 couponNumber: code,
                 createrId: req.instructor.id,
                 creater: "Instructor",
@@ -45,6 +46,7 @@ exports.createCoupon = async (req, res) => {
             await Coupon.create({
                 couponTitle: couponTitle,
                 discountInPercent: discountInPercent,
+                coupons: coupons,
                 couponNumber: code,
                 createrId: req.admin.id,
                 creater: "Admin",
@@ -445,7 +447,8 @@ exports.addCouponToCourse = async (req, res) => {
         const couponId = req.body.couponId;
         let conditionForCoupon = {
             id: couponId,
-            approvalStatusByAdmin: "Approved"
+            approvalStatusByAdmin: "Approved",
+            couponFor: "Course"
         };
         let conditionForCourse = {
             id: courseId,
@@ -585,7 +588,8 @@ exports.applyCouponToCourse = async (req, res) => {
         const { couponNumber, courseId } = req.body;
         const coupon = await Coupon.findOne({
             where: {
-                couponNumber: couponNumber
+                couponNumber: couponNumber,
+                couponFor: "Course"
             }
         });
         // is coupon present?

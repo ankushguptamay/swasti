@@ -12,7 +12,8 @@ exports.courseCouponValidation = (data) => {
     const schema = joi.object().keys({
         couponTitle: joi.string().required(),
         discountInPercent: joi.string().required(),
-        validTill: joi.string().required()
+        validTill: joi.string().required(),
+        couponFor: joi.string().valid('Course', 'HomeTutor', 'Theray').required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
