@@ -1,6 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP } = require('../Controller/User/Instructor/instructorController');
-const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById } = require('../Controller/User/Instructor/instructorQualificationController');
+const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { changeContentPublish, changeCoursePublish, changeCourseFilePublish, changeVideoPublish, submitContentForApproval, submitCourseForApproval, submitFileForApproval, submitVideoForApproval } = require('../Controller/Course/approvalCourseAndContent');
@@ -23,7 +23,8 @@ const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Control
 const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
 const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote } = require('../Controller/HomeTutor/createHomeTutorController');
-const { getMyHomeTutorForInstructor } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getMyHomeTutorForInstructor, getMyHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const instructor = express.Router();
 
 // middleware
@@ -48,6 +49,7 @@ instructor.get("/qualification/:id", verifyInstructorJWT, isInstructorProfileCom
 instructor.post("/addQualification", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), addQualification);
 instructor.put("/updateQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImageAndPDF.single("qualificationFile"), updateQualification);
 instructor.delete("/deleteQualification/:id", verifyInstructorJWT, isInstructorProfileComplete, deleteQualificationInstructor);
+instructor.get("/qualificationIn/:qualificationIn", verifyInstructorJWT, isInstructorProfileComplete, getMyQualificationByqualificationIn);
 
 // Experience
 instructor.post("/addExperience", verifyInstructorJWT, isInstructorProfileComplete, addExperience);
@@ -157,5 +159,10 @@ instructor.post("/addHTutorSeviceArea/:id", verifyInstructorJWT, isInstructorPre
 instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, addHTutorTimeSlote);
 
 instructor.get("/homeTutors", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorForInstructor);
+instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorById);
+
+instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, submitHomeTutorForApproval);
+instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, publishHomeTutor);
+instructor.put("/changeHTTimeSloteStatus/:id", verifyInstructorJWT, isInstructorPresent, changeHTTimeSloteStatus);
 
 module.exports = instructor;

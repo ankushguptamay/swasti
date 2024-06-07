@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: false
         },
+        password: {
+            type: DataTypes.INTEGER,
+        },
         appointmentStatus: {
             type: DataTypes.STRING,
             validate: {

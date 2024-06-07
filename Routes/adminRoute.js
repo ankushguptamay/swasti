@@ -32,6 +32,8 @@ const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdAdmin, updat
 const { createYogaStudioContact, updateYogaStudioContactForAdmin, changeYogaStudioContactStatus, restoreYogaStudioContact, softDeleteYogaStudioContact, hardDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
 const { createYogaStudioImage, changeYogaStudioImageStatus, restoreYogaStudioImage, softDeleteYogaStudioImage, hardDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
 const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus, restoreYogaStudioTime, softDeleteYogaStudioTime, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
+const { getHomeTutorForAdmin, getMyHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { changeHomeTutorStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const admin = express.Router();
 
 // middleware
@@ -233,5 +235,11 @@ admin.delete("/hardDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, hardDe
 admin.delete("/hardDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioContact);
 admin.delete("/hardDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioImage);
 admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioTime);
+
+// Home Tutor
+admin.get("/homeTutors", verifyAdminJWT, isAdminPresent, getHomeTutorForAdmin);
+admin.get("/homeTutors/:id", verifyAdminJWT, isAdminPresent, getMyHomeTutorById);
+
+admin.put("/changeHomeTutorStatus/:id", verifyAdminJWT, isAdminPresent, changeHomeTutorStatus);
 
 module.exports = admin;

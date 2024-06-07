@@ -1,6 +1,7 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { homeTutorValidation, hTutorLocationValidation, hTutorTimeSloteValidation } = require('../../Middleware/Validate/validateHomeTutor');
+const generateOTP = require("../../Util/generateOTP");
 const HomeTutor = db.homeTutor;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
@@ -172,8 +173,10 @@ exports.addHTutorTimeSlote = async (req, res) => {
         }
         // Store in database
         for (let i = 0; i < time.length; i++) {
+            const otp = generateOTP.generateFixedLengthRandomNumber(process.env.OTP_DIGITS_LENGTH);
             await HTTimeSlot.create({
                 date: date,
+                password: otp,
                 time: time[i],
                 isBooked: false,
                 appointmentStatus: "Active",

@@ -282,7 +282,7 @@ exports.getQualificationById = async (req, res) => {
         const qualification = await InstructorQualification.findOne(argument);
         if (!qualification) {
             return res.status(400).send({
-                success: true,
+                success: false,
                 message: "This qualification is not present!",
             });
         }
@@ -314,6 +314,31 @@ exports.getSoftDeletedQualification = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Soft deleted qualification fetched successfully!",
+            data: qualification
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getMyQualificationByqualificationIn = async (req, res) => {
+    try {
+        const qualificationIn = req.params.qualificationIn;
+        const argument = {
+            where: {
+                instructorId: req.instructor.id,
+                qualificationIn: qualificationIn,
+                approvalStatusByAdmin: "Approved"
+            }
+        };
+        const qualification = await InstructorQualification.findAll(argument);
+        // Final response
+        res.status(200).send({
+            success: true,
+            message: `${qualificationIn} qualification fetched successfully!`,
             data: qualification
         });
     } catch (err) {

@@ -40,6 +40,14 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isIn: [['Admin', 'Instructor']]
             }
+        },
+        isPublish: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        anyUpdateRequest: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, {
         paranoid: true
