@@ -22,6 +22,8 @@ const { createYogaStudioContact, updateYogaStudioContactForInstructor, softDelet
 const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
 const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
+const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote } = require('../Controller/HomeTutor/createHomeTutorController');
+const { getMyHomeTutorForInstructor } = require('../Controller/HomeTutor/getHomeTutorController');
 const instructor = express.Router();
 
 // middleware
@@ -148,5 +150,12 @@ instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorPres
 instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioContact);
 instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioImage);
 instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioTime);
+
+// Home Tutor
+instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorPresent, createHomeTutor);
+instructor.post("/addHTutorSeviceArea/:id", verifyInstructorJWT, isInstructorPresent, addHTutorSeviceArea);
+instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, addHTutorTimeSlote);
+
+instructor.get("/homeTutors", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorForInstructor);
 
 module.exports = instructor;

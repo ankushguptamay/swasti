@@ -56,6 +56,12 @@ db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, 
 db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
 db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
 
+//Home Tutor
+db.homeTutor = require('./HomeTutor/homeTutorModel.js')(sequelize, Sequelize);
+db.hTServiceArea = require('./HomeTutor/hTServiceAreaModel.js')(sequelize, Sequelize);
+db.hTTimeSlote = require('./HomeTutor/hTTimeSloteModel.js')(sequelize, Sequelize);
+db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
+
 // Instructor History
 db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);
 
@@ -125,6 +131,16 @@ db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', a
 db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
 
 db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
+
+// Home Tutor
+db.instructor.hasMany(db.homeTutor, { foreignKey: 'instructorId', as: 'homeTutors' });
+db.homeTutor.hasMany(db.hTServiceArea, { foreignKey: 'homeTutorId', as: 'serviceAreas' });
+db.hTServiceArea.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
+
+db.homeTutor.hasMany(db.hTTimeSlote, { foreignKey: 'homeTutorId', as: 'timeSlotes' });
+db.hTTimeSlote.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
+
+db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(

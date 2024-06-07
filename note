@@ -15,3 +15,7 @@ type of instructor.....is multi?
 university_institute_name would be dynamic from backend in instructor qualification
 courseType would be dynamic from backend in instructor qualification
 duration would be dynamic from backend in instructor qualification
+
+Task 06/06/2024
+couponFor column add in coupon, values is Course, HomeTutor, Terapy
+qualificationIn column add in instructorQualifications, values is YogaStudio, HomeTutor, Terapy
