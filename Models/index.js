@@ -179,16 +179,16 @@ db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeT
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("hTTimeSlots", "password", {
-    type: DataTypes.INTEGER
-}).then((res) => { console.log("1qualificationIn Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("homeTutors", "anyUpdateRequest", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-}).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("homeTutors", "isPublish", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("hTTimeSlots", "password", {
+//     type: DataTypes.INTEGER
+// }).then((res) => { console.log("1qualificationIn Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutors", "anyUpdateRequest", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: true
+// }).then((res) => { console.log("2cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutors", "isPublish", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("3cloudinaryFileId Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
