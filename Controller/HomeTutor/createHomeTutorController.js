@@ -1,11 +1,21 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
 const { homeTutorValidation, hTutorLocationValidation, hTutorTimeSloteValidation } = require('../../Middleware/Validate/validateHomeTutor');
+const { deleteSingleFile } = require("../../Util/deleteFile");
 const generateOTP = require("../../Util/generateOTP");
 const HomeTutor = db.homeTutor;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
+const HTutorImages = db.hTImage;
+
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 exports.createHomeTutor = async (req, res) => {
     try {
@@ -187,6 +197,70 @@ exports.addHTutorTimeSlote = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Time slote added successfully!",
+            data: { homeTutorId: homeTutorId }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.addHTutorImage = async (req, res) => {
+    try {
+        // File should be exist
+        if (!req.files) {
+            return res.status(400).send({
+                success: false,
+                message: "Please..Upload image!"
+            });
+        }
+        const homeTutorId = req.params.id;
+        const files = req.files;
+        // Check is this home tutor present and created by same instructor
+        const isHomeTutor = await HomeTutor.findOne({
+            where: {
+                id: homeTutorId,
+                instructorId: req.instructor.id
+            }
+        });
+        if (!isHomeTutor) {
+            // Delete File from server
+            for (let i = 0; i < files.length; i++) {
+                deleteSingleFile(files[i].path);
+            }
+            return res.status(400).send({
+                success: false,
+                message: "This home tutor is not present!"
+            });
+        }
+        // console.log(files);
+        // How mant file in already present
+        const maxFileUpload = 3;
+        const images = await HTutorImages.count({ where: { homeTutorId: homeTutorId, deletedThrough: null } });
+        const fileCanUpload = maxFileUpload - parseInt(images);
+        for (let i = 0; i < files.length; i++) {
+            if (i < fileCanUpload) {
+                const imagePath = `./Resource/${files[i].filename}`;
+                const response = await cloudinary.uploader.upload(imagePath);
+                await HTutorImages.create({
+                    cloudinaryFileId: response.public_id,
+                    originalName: files[i].originalname,
+                    path: response.secure_url,
+                    fileName: files[i].filename,
+                    homeTutorId: homeTutorId
+                });
+            }
+        }
+        // Delete File from server
+        for (let i = 0; i < files.length; i++) {
+            deleteSingleFile(files[i].path);
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `${fileCanUpload} home tutor images added successfully!`,
             data: { homeTutorId: homeTutorId }
         });
     } catch (err) {

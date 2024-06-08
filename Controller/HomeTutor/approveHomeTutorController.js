@@ -159,23 +159,90 @@ exports.changeHTTimeSloteStatus = async (req, res) => {
                 message: "This slote is not present!"
             });
         }
-        if (parseInt(password) === slote.password) {
-            // Update slote
-            await slote.update({
-                ...slote,
-                appointmentStatus: appointmentStatus
-            });
-            // Final Response
-            res.status(200).send({
-                success: true,
-                message: `Home slote ${appointmentStatus} successfully!`
-            });
-        } else {
+        if (slote.isBooked === true) {
+            if (!password) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Please enter the password!"
+                });
+            }
+            if (parseInt(password) !== slote.password) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Invalid password!"
+                });
+            }
+        }
+        // Update slote
+        await slote.update({
+            ...slote,
+            appointmentStatus: appointmentStatus
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Home slote ${appointmentStatus} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeHTutorUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find Tutor In Database
+        const history = await HomeTutorHistory.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!history) {
             return res.status(400).send({
                 success: false,
-                message: "Invalid password!"
+                message: "This Home tutor is not present!"
             });
         }
+        const homeTutor = await HomeTutor.findOne({
+            where: {
+                id: history.homeTutorId
+            }
+        });
+        if (approvalStatusByAdmin === "Approved") {
+            await Instructor.update({ bio: history.instructorBio }, { where: { id: homeTutor.instructorId } });
+            await homeTutor.update({
+                serviceOffered: history.serviceOffered,
+                language: history.language,
+                privateSessionPrice_Day: history.privateSessionPrice_Day,
+                privateSessionPrice_Month: history.privateSessionPrice_Month,
+                groupSessionPrice_Day: history.groupSessionPrice_Day,
+                groupSessionPrice_Month: history.groupSessionPrice_Month,
+                specilization: history.specilization,
+                instructorBio: history.instructorBio,
+            });
+        }
+        // Update tutor
+        await history.update({
+            ...history,
+            updationStatus: approvalStatusByAdmin
+        });
+        await homeTutor.update({
+            ...homeTutor,
+            anyUpdateRequest: false
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Request ${approvalStatusByAdmin} successfully!`
+        });
     } catch (err) {
         res.status(500).send({
             success: false,

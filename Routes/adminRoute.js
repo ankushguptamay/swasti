@@ -32,8 +32,10 @@ const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdAdmin, updat
 const { createYogaStudioContact, updateYogaStudioContactForAdmin, changeYogaStudioContactStatus, restoreYogaStudioContact, softDeleteYogaStudioContact, hardDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
 const { createYogaStudioImage, changeYogaStudioImageStatus, restoreYogaStudioImage, softDeleteYogaStudioImage, hardDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
 const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus, restoreYogaStudioTime, softDeleteYogaStudioTime, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
-const { getHomeTutorForAdmin, getMyHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
-const { changeHomeTutorStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
+const { getHomeTutorForAdmin, getMyHomeTutorById, getMyHTutorUpdationRequestById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { changeHomeTutorStatus, changeHTutorUpdationStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
+const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
+const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
 const admin = express.Router();
 
 // middleware
@@ -239,7 +241,19 @@ admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDelete
 // Home Tutor
 admin.get("/homeTutors", verifyAdminJWT, isAdminPresent, getHomeTutorForAdmin);
 admin.get("/homeTutors/:id", verifyAdminJWT, isAdminPresent, getMyHomeTutorById);
+admin.get("/hTutorUpdationRequest/:id", verifyAdminJWT, isAdminPresent, getMyHTutorUpdationRequestById);
 
 admin.put("/changeHomeTutorStatus/:id", verifyAdminJWT, isAdminPresent, changeHomeTutorStatus);
+admin.put("/changeHTutorUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeHTutorUpdationStatus);
+
+admin.delete("/softDeleteHTutorImage/:id", verifyAdminJWT, isAdminPresent, softDeleteHTutorImage);
+admin.delete("/softDeleteHTutorServiceArea/:id", verifyAdminJWT, isAdminPresent, softDeleteHTutorServiceArea);
+admin.delete("/softDeleteHTutorTimeSlote/:id", verifyAdminJWT, isAdminPresent, softDeleteHTutorTimeSlote);
+admin.delete("/softDeleteHomeTutor/:id", verifyAdminJWT, isAdminPresent, softDeleteHomeTutor);
+
+admin.put("/restoreHTutorImage/:id", verifyAdminJWT, isAdminPresent, restoreHTutorImage);
+admin.put("/restoreHTutorServiceArea/:id", verifyAdminJWT, isAdminPresent, restoreHTutorServiceArea);
+admin.put("/restoreHTutorTimeSlote/:id", verifyAdminJWT, isAdminPresent, restoreHTutorTimeSlote);
+admin.put("/restoreHomeTutor/:id", verifyAdminJWT, isAdminPresent, restoreHomeTutor);
 
 module.exports = admin;

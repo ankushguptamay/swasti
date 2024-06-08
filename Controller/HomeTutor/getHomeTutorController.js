@@ -4,6 +4,8 @@ const HomeTutor = db.homeTutor;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
+const HTutorImages = db.hTImage;
+
 
 exports.getMyHomeTutorForInstructor = async (req, res) => {
     try {
@@ -27,6 +29,13 @@ exports.getMyHomeTutorForInstructor = async (req, res) => {
                     deletedThrough: null
                 },
                 attributes: { exclude: ['password'] },
+                required: false
+            }, {
+                model: HTutorImages,
+                as: 'images',
+                where: {
+                    deletedThrough: null
+                },
                 required: false
             }]
         });
@@ -123,6 +132,13 @@ exports.getMyHomeTutorById = async (req, res) => {
                 },
                 attributes: { exclude: ['password'] },
                 required: false
+            }, {
+                model: HTutorImages,
+                as: 'images',
+                where: {
+                    deletedThrough: null
+                },
+                required: false
             }]
         });
         // Final Response
@@ -130,6 +146,28 @@ exports.getMyHomeTutorById = async (req, res) => {
             success: true,
             message: "Home tutor fetched successfully!",
             data: homeTutor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getMyHTutorUpdationRequestById = async (req, res) => {
+    try {
+        const homeTutorHistory = await HomeTutorHistory.findAll({
+            where: {
+                homeTutorId: req.params.id,
+                updationStatus: "Pending"
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor updation request fetched successfully!",
+            data: homeTutorHistory
         });
     } catch (err) {
         res.status(500).send({

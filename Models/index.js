@@ -60,6 +60,7 @@ db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistor
 db.homeTutor = require('./HomeTutor/homeTutorModel.js')(sequelize, Sequelize);
 db.hTServiceArea = require('./HomeTutor/hTServiceAreaModel.js')(sequelize, Sequelize);
 db.hTTimeSlote = require('./HomeTutor/hTTimeSloteModel.js')(sequelize, Sequelize);
+db.hTImage = require('./HomeTutor/hTImageModel.js')(sequelize, Sequelize);
 db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
 
 // Instructor History
@@ -134,11 +135,15 @@ db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', a
 
 // Home Tutor
 db.instructor.hasMany(db.homeTutor, { foreignKey: 'instructorId', as: 'homeTutors' });
+
 db.homeTutor.hasMany(db.hTServiceArea, { foreignKey: 'homeTutorId', as: 'serviceAreas' });
 db.hTServiceArea.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
 
 db.homeTutor.hasMany(db.hTTimeSlote, { foreignKey: 'homeTutorId', as: 'timeSlotes' });
 db.hTTimeSlote.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
+
+db.homeTutor.hasMany(db.hTImage, { foreignKey: 'homeTutorId', as: 'images' });
+db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
 
 db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 

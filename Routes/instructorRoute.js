@@ -22,9 +22,11 @@ const { createYogaStudioContact, updateYogaStudioContactForInstructor, softDelet
 const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
 const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
-const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote } = require('../Controller/HomeTutor/createHomeTutorController');
+const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote, addHTutorImage } = require('../Controller/HomeTutor/createHomeTutorController');
 const { getMyHomeTutorForInstructor, getMyHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
 const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
+const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
+const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
 const instructor = express.Router();
 
 // middleware
@@ -157,6 +159,7 @@ instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorPresent,
 instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorPresent, createHomeTutor);
 instructor.post("/addHTutorSeviceArea/:id", verifyInstructorJWT, isInstructorPresent, addHTutorSeviceArea);
 instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, addHTutorTimeSlote);
+instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.array('hTutorImages', 3), addHTutorImage);
 
 instructor.get("/homeTutors", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorForInstructor);
 instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorById);
@@ -164,5 +167,12 @@ instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorPresent, getM
 instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, submitHomeTutorForApproval);
 instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, publishHomeTutor);
 instructor.put("/changeHTTimeSloteStatus/:id", verifyInstructorJWT, isInstructorPresent, changeHTTimeSloteStatus);
+
+instructor.put("/updateHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, updateHomeTutor);
+
+instructor.delete("/deleteHTutorImage/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorImage);
+instructor.delete("/deleteHTutorServiceArea/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorServiceArea);
+instructor.delete("/deleteHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorTimeSlote);
+instructor.delete("/deleteHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHomeTutor);
 
 module.exports = instructor;

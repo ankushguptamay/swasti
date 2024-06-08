@@ -101,7 +101,7 @@ exports.changePublish = (data) => {
 exports.changeHTTimeSloteStatus = (data) => {
     const schema = joi.object().keys({
         appointmentStatus: joi.string().valid('Active', 'Deactivate').required(),
-        password: joi.string().length(6).required()
+        password: joi.string().length(6).optional()
     });
     return schema.validate(data);
 }
