@@ -6,12 +6,13 @@ const EmailCredential = db.emailCredential;
 const CourseReview = db.courseReview;
 const InstructorReview = db.instructorReview;
 const { registerStudent, verifyOTPByLandingPage, registerByLandingPage } = require("../../../Middleware/Validate/validateStudent");
-const { loginInstructor, verifyOTP } = require("../../../Middleware/Validate/validateInstructor");
+const { loginInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP } = require("../../../Middleware/Validate/validateInstructor");
 const { capitalizeFirstLetter } = require("../../../Util/capitalizeFirstLetter");
 const { STUDENT_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const generateOTP = require("../../../Util/generateOTP");
 const { sendEmail } = require("../../../Util/sendEmail");
+const { sendOTPToNumber } = require('../../../Util/sendOTPToMobileNumber');
 const { Op } = require("sequelize");
 
 // register
@@ -378,7 +379,8 @@ exports.verifyOTP = async (req, res) => {
         const authToken = jwt.sign(
             {
                 id: student.id,
-                email: email
+                email: email,
+                phoneNumber: student.phoneNumber
             },
             STUDENT_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -508,7 +510,7 @@ exports.getStudentForAdmin = async (req, res) => {
 
 exports.softDeleteStudent = async (req, res) => {
     try {
-        // Check perticular instructor present in database
+        // Check perticular student present in database
         const student = await Student.findOne({
             where: {
                 id: req.params.id
@@ -537,7 +539,7 @@ exports.softDeleteStudent = async (req, res) => {
 
 exports.restoreStudent = async (req, res) => {
     try {
-        // Check perticular instructor present in database
+        // Check perticular student present in database
         const student = await Student.findOne({
             paranoid: false,
             where: {
@@ -765,7 +767,7 @@ exports.verifyOTPByLandingPage = async (req, res) => {
 
 exports.hardDeleteStudent = async (req, res) => {
     try {
-        // Check perticular instructor present in database
+        // Check perticular student present in database
         const student = await Student.findOne({
             where: {
                 id: req.params.id
@@ -779,7 +781,7 @@ exports.hardDeleteStudent = async (req, res) => {
         }
         //hard delete StudentProfile , picture should be deleted from cloud 
         await StudentProfile.destroy({ where: { studentId: req.params.id }, force: true });
-        //hard delete instructor reviews
+        //hard delete student reviews
         await InstructorReview.destroy({ where: { reviewerId: req.params.id }, force: true });
         //hard delete course reviews
         await CourseReview.destroy({ where: { reviewerId: req.params.id }, force: true });
@@ -902,6 +904,189 @@ exports.registerByLandingPage = async (req, res) => {
         res.status(500).send({
             success: false,
             message: err.message
+        });
+    }
+};
+
+exports.registerByNumber = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = registerStudent(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check is present 
+        const isStudent = await Student.findOne({
+            paranoid: false,
+            where: {
+                [Op.or]: [
+                    { email: req.body.email },
+                    { phoneNumber: req.body.phoneNumber }
+                ]
+            }
+        });
+        if (isStudent) {
+            return res.status(400).send({
+                success: false,
+                message: "This credentials already exist!!"
+            });
+        }
+        // generate employee code
+        // generate employee code
+        let code;
+        const isStudentCode = await Student.findAll({
+            paranoid: false,
+            order: [
+                ['createdAt', 'ASC']
+            ]
+        });
+        if (isStudentCode.length == 0) {
+            code = "STUD" + 1000;
+        } else {
+            let lastStudentCode = isStudentCode[isStudentCode.length - 1];
+            let lastDigits = lastStudentCode.studentCode.substring(4);
+            let incrementedDigits = parseInt(lastDigits, 10) + 1;
+            code = "STUD" + incrementedDigits;
+        }
+        const name = capitalizeFirstLetter(req.body.name);
+        // Create student in database
+        const student = await Student.create({
+            email: req.body.email,
+            name: name,
+            phoneNumber: req.body.phoneNumber,
+            studentCode: code
+        });
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Sending OTP to mobile number
+        await sendOTPToNumber(req.body.phoneNumber, otp);
+        //  Store OTP
+        await EmailOTP.create({
+            vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+            otp: otp,
+            receiverId: student.id
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Registerd successfully!`,
+            data: { phoneNumber: req.body.phoneNumber }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.loginByNumber = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = loginInstructorByNumber(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        // Check is present 
+        const isStudent = await Student.findOne({
+            where: {
+                phoneNumber: req.body.phoneNumber
+            }
+        });
+        if (!isStudent) {
+            return res.status(400).send({
+                success: false,
+                message: "Not register!"
+            });
+        }
+        // Generate OTP for Email
+        const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
+        // Sending OTP to mobile number
+        await sendOTPToNumber(req.body.phoneNumber, otp);
+        //  Store OTP
+        await EmailOTP.create({
+            vallidTill: new Date().getTime() + parseInt(OTP_VALIDITY_IN_MILLISECONDS),
+            otp: otp,
+            receiverId: isStudent.id
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `OTP send successfully! Valid for ${OTP_VALIDITY_IN_MILLISECONDS / (60 * 1000)} minutes!`,
+            data: { phoneNumber: req.body.phoneNumber }
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.verifyNumberOTP = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = verifyNumberOTP(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { phoneNumber, otp } = req.body;
+        // Is Email Otp exist
+        const isOtp = await EmailOTP.findOne({
+            where: {
+                otp: otp
+            }
+        });
+        if (!isOtp) {
+            return res.status(400).send({
+                success: false,
+                message: `Invalid OTP!`
+            });
+        }
+        // Checking is user present or not
+        const student = await Student.findOne({
+            where: {
+                [Op.and]: [
+                    { phoneNumber: phoneNumber }, { id: isOtp.receiverId }
+                ]
+            }
+        });
+        if (!student) {
+            return res.status(400).send({
+                success: false,
+                message: "No Details Found. Register Now!"
+            });
+        }
+        // is email otp expired?
+        const isOtpExpired = new Date().getTime() > parseInt(isOtp.vallidTill);
+        if (isOtpExpired) {
+            await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+            return res.status(400).send({
+                success: false,
+                message: `OTP expired!`
+            });
+        }
+        await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // generate JWT Token
+        const authToken = jwt.sign(
+            {
+                id: student.id,
+                email: student.email,
+                phoneNumber: phoneNumber
+            },
+            STUDENT_JWT_SECRET_KEY,
+            { expiresIn: JWT_VALIDITY } // five day
+        );
+        res.status(201).send({
+            success: true,
+            message: `Verified successfully!`,
+            authToken: authToken
+        });
+    }
+    catch (err) {
+        res.status(500).send({
+            success: false,
+            err: err.message
         });
     }
 };

@@ -76,7 +76,7 @@ exports.isStudentPresent = async (req, res, next) => {
         const student = await Student.findOne({
             where: {
                 [Op.and]: [
-                    { id: req.student.id }, { email: req.student.email }
+                    { id: req.student.id }, { email: req.student.email }, { phoneNumber: req.student.phoneNumber }
                 ]
             }
         });
