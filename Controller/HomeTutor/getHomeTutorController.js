@@ -176,3 +176,209 @@ exports.getMyHTutorUpdationRequestById = async (req, res) => {
         });
     }
 };
+
+exports.getHomeTutorForUser = async (req, res) => {
+    try {
+        const { page, limit, search } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        const condition = [{ approvalStatusByAdmin: "Approved", isPublish: true }];
+        // Search
+        // if (search) {
+        //     condition.push({
+        //         [Op.or]: [
+        //             {}
+        //         ]
+        //     })
+        // }
+        // Count All Home Tutor
+        const totalTutor = await HomeTutor.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        const homeTutor = await HomeTutor.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor fetched successfully!",
+            totalPage: Math.ceil(totalTutor / recordLimit),
+            currentPage: currentPage,
+            data: homeTutor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getNearestHomeTutorForUser = async (req, res) => {
+    try {
+        const { page, limit, latitude, longitude, distanceUnit, areaDistance } = req.query;
+        if (!latitude && !longitude) {
+            return res.status(400).send({
+                success: false,
+                message: "Location is required!"
+            });
+        }
+        const unit = distanceUnit ? distanceUnit : 'km'; // km for kilometer m for mile
+        const distance = areaDistance ? areaDistance : 2;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        // Count All Areas
+        const totalAreas = await await HTServiceArea.scope({
+            method: ['distance', latitude, longitude, distance, unit]
+        })
+            .findAll({
+                attributes: [
+                    'id', "locationName", "latitude", "longitude",
+                ],
+                order: db.sequelize.col('distance')
+            });
+        // Find Areas
+        const areas = await HTServiceArea.scope({
+            method: ['distance', latitude, longitude, distance, unit]
+        })
+            .findAll({
+                attributes: [
+                    'id', "locationName", "latitude", "longitude",
+                ],
+                order: db.sequelize.col('distance'),
+                limit: recordLimit,
+                offset: offSet,
+                include: [{
+                    model: HomeTutor,
+                    as: 'homeTutors',
+                    where: { approvalStatusByAdmin: "Approved", isPublish: true }
+                }]
+            });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor fetched successfully!",
+            totalPage: Math.ceil(totalAreas.length / recordLimit),
+            currentPage: currentPage,
+            data: areas
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getMyHomeTutorByIdForUser = async (req, res) => {
+    try {
+        const date = JSON.stringify(new Date());
+        const todayDate = date.slice(1, 11);
+        const homeTutor = await HomeTutor.findOne({
+            where: {
+                id: req.params.id,
+                deletedThrough: null,
+                approvalStatusByAdmin: "Approved",
+                isPublish: true
+            },
+            include: [{
+                model: HTServiceArea,
+                as: 'serviceAreas',
+                where: {
+                    deletedThrough: null
+                },
+                required: false
+            },
+            {
+                model: HTTimeSlot,
+                as: 'timeSlotes',
+                where: {
+                    deletedThrough: null,
+                    date: todayDate
+                },
+                required: false
+            }, {
+                model: HTutorImages,
+                as: 'images',
+                where: {
+                    deletedThrough: null
+                },
+                required: false
+            }]
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor fetched successfully!",
+            data: homeTutor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getTimeSloteForUser = async (req, res) => {
+    try {
+        const { date } = req.query;
+        // 3 days validity
+        const date1 = JSON.stringify(new Date());
+        const date2 = JSON.stringify(new Date((new Date).getTime() + (1 * 24 * 60 * 60 * 1000)));
+        const date3 = JSON.stringify(new Date((new Date).getTime() + (2 * 24 * 60 * 60 * 1000)));
+        let dateCondition;
+        if (date) {
+            const array = [`${date1.slice(1, 11)}`, `${date2.slice(1, 11)}`, `${date3.slice(1, 11)}`]
+            if (array.indexOf(date) === -1) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Date should be with in required limit!"
+                });
+            } else {
+                dateCondition = date;
+            }
+        } else {
+            dateCondition = date1.slice(1, 11);
+        }
+        const slote = await HTTimeSlot.findAll({
+            where: {
+                homeTutorId: req.params.id,
+                deletedThrough: null,
+                date: dateCondition
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor Time slote fetched successfully!",
+            data: slote
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

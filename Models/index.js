@@ -147,6 +147,25 @@ db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors'
 
 db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 
+// For Location
+db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km") => {
+    const constant = unit == "km" ? 6371 : 3959;
+    const haversine = `(
+        ${constant} * acos(
+            cos(radians(${latitude}))
+            * cos(radians(latitude))
+            * cos(radians(longitude) - radians(${longitude}))
+            + sin(radians(${latitude})) * sin(radians(latitude))
+        )
+    )`;
+    return {
+        attributes: [
+            [sequelize.literal(haversine), 'distance'],
+        ],
+        having: sequelize.literal(`distance <= ${distance}`)
+    }
+});
+
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(
 //     db.userInformation, {
