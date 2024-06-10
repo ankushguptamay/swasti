@@ -203,42 +203,42 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructors", "latitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "longitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "isInstructor", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("3 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "isHomeTutor", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("4 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "isTherapist", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-}).then((res) => { console.log("5 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "therapistTermAccepted", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("6 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("hTTimeSlots", "homeTutorTermAccepted", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("7 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "instructorTermAccepted", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-}).then((res) => { console.log("8 Added!") }).catch((err) => { console.log(err) });
-
-// queryInterface.addColumn("instructorHistorys", "latitude", {
+// queryInterface.addColumn("instructors", "latitude", {
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorHistorys", "longitude", {
+// queryInterface.addColumn("instructors", "longitude", {
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "isInstructor", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("3 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "isHomeTutor", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("4 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "isTherapist", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: true
+// }).then((res) => { console.log("5 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "therapistTermAccepted", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("6 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("hTTimeSlots", "homeTutorTermAccepted", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("7 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "instructorTermAccepted", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: true
+// }).then((res) => { console.log("8 Added!") }).catch((err) => { console.log(err) });
+
+queryInterface.addColumn("instructorHistorys", "latitude", {
+    type: DataTypes.FLOAT(10, 6)
+}).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructorHistorys", "longitude", {
+    type: DataTypes.FLOAT(10, 6)
+}).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
