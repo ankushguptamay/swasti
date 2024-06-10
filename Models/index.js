@@ -206,9 +206,9 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 // queryInterface.addColumn("instructors", "latitude", {
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructors", "longitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "longitude", {
+//     type: DataTypes.FLOAT(10, 6)
+// }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("instructors", "isInstructor", {
 //     type: DataTypes.BOOLEAN,
 //     defaultValue: false
@@ -234,11 +234,11 @@ queryInterface.addColumn("instructors", "longitude", {
 //     defaultValue: true
 // }).then((res) => { console.log("8 Added!") }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructorHistorys", "latitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructorHistorys", "longitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("2 Added History!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "latitude", {
+//     type: DataTypes.FLOAT(10, 6)
+// }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "longitude", {
+//     type: DataTypes.FLOAT(10, 6)
+// }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
