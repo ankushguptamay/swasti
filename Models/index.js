@@ -239,6 +239,6 @@ queryInterface.addColumn("instructorHistorys", "latitude", {
 }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
 queryInterface.addColumn("instructorHistorys", "longitude", {
     type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
+}).then((res) => { console.log("2 Added History!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
