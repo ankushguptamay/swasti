@@ -53,7 +53,6 @@ exports.isInstructorForCourse = async (req, res, next) => {
                 message: "Please complete your profile!"
             });
         }
-        next();
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -88,7 +87,6 @@ exports.isInstructorForHomeTutor = async (req, res, next) => {
                 message: "Please complete your profile!"
             });
         }
-        next();
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -123,7 +121,6 @@ exports.isInstructorForTherapist = async (req, res, next) => {
                 message: "Please complete your profile!"
             });
         }
-        next();
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

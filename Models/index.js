@@ -225,10 +225,10 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 //     type: DataTypes.BOOLEAN,
 //     defaultValue: false
 // }).then((res) => { console.log("6 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("hTTimeSlots", "homeTutorTermAccepted", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("7 Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructors", "homeTutorTermAccepted", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("Added!") }).catch((err) => { console.log(err) });
 // queryInterface.addColumn("instructors", "instructorTermAccepted", {
 //     type: DataTypes.BOOLEAN,
 //     defaultValue: true
@@ -240,5 +240,7 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 // queryInterface.addColumn("instructorHistorys", "longitude", {
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
+
+queryInterface.removeColumn("hTTimeSlots", "homeTutorTermAccepted").then((res) => { console.log("Removed!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
