@@ -5,7 +5,7 @@ const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
-const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP } = require("../../../Middleware/Validate/validateInstructor");
+const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm, therapistTerm } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -738,7 +738,7 @@ exports.updateInstructor = async (req, res) => {
                 message: "Instructor is not present!"
             });
         }
-        const { bio, socialMediaLink, location, twitter_x, facebook, instagram, linkedIn, languages, dateOfBirth } = req.body;
+        const { bio, socialMediaLink, location, twitter_x, facebook, instagram, linkedIn, languages, dateOfBirth, latitude, longitude } = req.body;
         const name = capitalizeFirstLetter(req.body.name);
         // store current data in history
         await InstructorHistory.create({
@@ -759,7 +759,9 @@ exports.updateInstructor = async (req, res) => {
             instagram: instructor.instagram,
             linkedIn: instructor.linkedIn,
             languages: instructor.languages,
-            dateOfBirth: instructor.dateOfBirth
+            dateOfBirth: instructor.dateOfBirth,
+            longitude: instructor.longitude,
+            latitude: instructor.latitude
         });
         let image_Path = instructor.imagePath,
             imageFileName = instructor.imageFileName,
@@ -790,7 +792,9 @@ exports.updateInstructor = async (req, res) => {
             instagram: instagram,
             linkedIn: linkedIn,
             languages: languages,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth,
+            latitude: latitude,
+            longitude: longitude
         });
         // Send final success response
         res.status(200).send({
@@ -986,3 +990,126 @@ exports.verifyNumberOTP = async (req, res) => {
         });
     }
 };
+
+exports.instructorTerm = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = instructorTerm(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { isInstructor, instructorTermAccepted } = req.body;
+        // Check perticular instructor present in database
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.status(400).send({
+                success: false,
+                message: "Instructor is not present!"
+            });
+        }
+        // Update 
+        await instructor.update({
+            ...instructor,
+            instructorTermAccepted: instructorTermAccepted,
+            isInstructor: isInstructor
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Instructor term accepted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.homeTutorTerm = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = homeTutorTerm(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { isHomeTutor, homeTutorTermAccepted } = req.body;
+        // Check perticular instructor present in database
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.status(400).send({
+                success: false,
+                message: "Instructor is not present!"
+            });
+        }
+        // Update 
+        await instructor.update({
+            ...instructor,
+            homeTutorTermAccepted: homeTutorTermAccepted,
+            isHomeTutor: isHomeTutor
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Home tutor term accepted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.therapistTerm = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = therapistTerm(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { isTherapist, therapistTermAccepted } = req.body;
+        // Check perticular instructor present in database
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.status(400).send({
+                success: false,
+                message: "Instructor is not present!"
+            });
+        }
+        // Update 
+        await instructor.update({
+            ...instructor,
+            therapistTermAccepted: therapistTermAccepted,
+            isTherapist: isTherapist
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Therapist term accepted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}

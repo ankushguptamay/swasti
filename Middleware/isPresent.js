@@ -24,7 +24,7 @@ exports.isAdminPresent = async (req, res, next) => {
     }
 }
 
-exports.isInstructorPresent = async (req, res, next) => {
+exports.isInstructorForCourse = async (req, res, next) => {
     try {
         const instructor = await Instructor.findOne({
             where: {
@@ -37,6 +37,91 @@ exports.isInstructorPresent = async (req, res, next) => {
             return res.send({
                 message: "Instructor is not present! Are you register?.. "
             })
+        }
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
+            if (instructor.isInstructor === true && instructor.instructorTermAccepted === true) {
+                next();
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please accept term and condition for course!"
+                });
+            }
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Please complete your profile!"
+            });
+        }
+        next();
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}
+
+exports.isInstructorForHomeTutor = async (req, res, next) => {
+    try {
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.send({
+                message: "Instructor is not present! Are you register?.. "
+            })
+        }
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
+            if (instructor.isHomeTutor === true && instructor.homeTutorTermAccepted === true) {
+                next();
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please accept term and condition for Home Tutor!"
+                });
+            }
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Please complete your profile!"
+            });
+        }
+        next();
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}
+
+exports.isInstructorForTherapist = async (req, res, next) => {
+    try {
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.send({
+                message: "Instructor is not present! Are you register?.. "
+            })
+        }
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
+            if (instructor.isTherapist === true && instructor.therapistTermAccepted === true) {
+                next();
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please accept term and condition for Therapist!"
+                });
+            }
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Please complete your profile!"
+            });
         }
         next();
     } catch (err) {

@@ -330,8 +330,7 @@ exports.getMyQualificationByqualificationIn = async (req, res) => {
         const argument = {
             where: {
                 instructorId: req.instructor.id,
-                qualificationIn: qualificationIn,
-                approvalStatusByAdmin: "Approved"
+                qualificationIn: qualificationIn
             }
         };
         const qualification = await InstructorQualification.findAll(argument);

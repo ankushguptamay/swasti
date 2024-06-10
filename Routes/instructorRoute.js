@@ -1,5 +1,6 @@
 const express = require('express');
-const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP } = require('../Controller/User/Instructor/instructorController');
+const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm,
+    therapistTerm, homeTutorTerm } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -31,7 +32,7 @@ const instructor = express.Router();
 
 // middleware
 const { verifyInstructorJWT } = require('../Middleware/verifyJWTToken');
-const { isInstructorPresent, isInstructorProfileComplete } = require('../Middleware/isPresent');
+const { isInstructorForCourse, isInstructorProfileComplete, isInstructorForHomeTutor, isInstructorForTherapist } = require('../Middleware/isPresent');
 const uploadImage = require('../Middleware/uploadFile/image');
 const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
 const uploadPDF = require('../Middleware/uploadFile/pdf');
@@ -45,6 +46,11 @@ instructor.post("/loginByNumber", loginByNumber);
 instructor.post("/verifyNumberOTP", verifyNumberOTP);
 instructor.get("/instructor", verifyInstructorJWT, getInstructor);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
+
+// Term and condition
+instructor.put("/instructorTerm", verifyInstructorJWT, instructorTerm);
+instructor.put("/therapistTerm", verifyInstructorJWT, therapistTerm);
+instructor.put("/homeTutorTerm", verifyInstructorJWT, homeTutorTerm);
 
 // Qualification
 instructor.get("/qualification/:id", verifyInstructorJWT, isInstructorProfileComplete, getQualificationById);
@@ -61,118 +67,118 @@ instructor.delete("/deleteExperienceInstructor/:id", verifyInstructorJWT, isInst
 
 // Course And Content
 // 1. Add
-instructor.post("/addCourse", verifyInstructorJWT, isInstructorPresent, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
-instructor.post("/addCourseImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("CourseImage"), addCourseImage); // courseId
-instructor.post("/addTeacherImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
-instructor.post("/addContent", verifyInstructorJWT, isInstructorPresent, addContent); // courseId
-instructor.post("/addContentFile/:id", verifyInstructorJWT, isInstructorPresent, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
-instructor.post("/addRecordedVideo/:id", verifyInstructorJWT, isInstructorPresent, addRecordedVideo); // contentId
+instructor.post("/addCourse", verifyInstructorJWT, isInstructorForCourse, uploadImage.fields([{ name: 'CourseImage', maxCount: 1 }, { name: 'TeacherImage', maxCount: 1 }]), addCourse);
+instructor.post("/addCourseImage/:id", verifyInstructorJWT, isInstructorForCourse, uploadImage.single("CourseImage"), addCourseImage); // courseId
+instructor.post("/addTeacherImage/:id", verifyInstructorJWT, isInstructorForCourse, uploadImage.single("TeacherImage"), addTeacherImage); // courseId
+instructor.post("/addContent", verifyInstructorJWT, isInstructorForCourse, addContent); // courseId
+instructor.post("/addContentFile/:id", verifyInstructorJWT, isInstructorForCourse, uploadImageAndPDF.single("ContentFile"), addContentFile); // contentId
+instructor.post("/addRecordedVideo/:id", verifyInstructorJWT, isInstructorForCourse, addRecordedVideo); // contentId
 
 // 2. Get
-instructor.get("/courses", verifyInstructorJWT, isInstructorPresent, getAllCourse);
-instructor.get("/courses/:id", verifyInstructorJWT, isInstructorPresent, getCourseByIdForInstructor);
-instructor.get("/files/:id", verifyInstructorJWT, isInstructorPresent, getFileByContentId); // id:contentId
-instructor.get("/videos/:id", verifyInstructorJWT, isInstructorPresent, getVideoByContentId); // id:contentId
+instructor.get("/courses", verifyInstructorJWT, isInstructorForCourse, getAllCourse);
+instructor.get("/courses/:id", verifyInstructorJWT, isInstructorForCourse, getCourseByIdForInstructor);
+instructor.get("/files/:id", verifyInstructorJWT, isInstructorForCourse, getFileByContentId); // id:contentId
+instructor.get("/videos/:id", verifyInstructorJWT, isInstructorForCourse, getVideoByContentId); // id:contentId
 
 // 3. Publish
-instructor.put("/coursePublish/:id", verifyInstructorJWT, isInstructorPresent, changeCoursePublish);  // courseId
-instructor.put("/contentPublish/:id", verifyInstructorJWT, isInstructorPresent, changeContentPublish); // contentId
-instructor.put("/filePublish/:id", verifyInstructorJWT, isInstructorPresent, changeCourseFilePublish); // fileId
-instructor.put("/videoPublish/:id", verifyInstructorJWT, isInstructorPresent, changeVideoPublish); // videoId
+instructor.put("/coursePublish/:id", verifyInstructorJWT, isInstructorForCourse, changeCoursePublish);  // courseId
+instructor.put("/contentPublish/:id", verifyInstructorJWT, isInstructorForCourse, changeContentPublish); // contentId
+instructor.put("/filePublish/:id", verifyInstructorJWT, isInstructorForCourse, changeCourseFilePublish); // fileId
+instructor.put("/videoPublish/:id", verifyInstructorJWT, isInstructorForCourse, changeVideoPublish); // videoId
 
-instructor.put("/submitContentForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitContentForApproval);  // contentId
-instructor.put("/submitCourseForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitCourseForApproval); // courseId
-instructor.put("/submitFileForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitFileForApproval); // fileId
-instructor.put("/submitVideoForApproval/:id", verifyInstructorJWT, isInstructorPresent, submitVideoForApproval); // videoId
+instructor.put("/submitContentForApproval/:id", verifyInstructorJWT, isInstructorForCourse, submitContentForApproval);  // contentId
+instructor.put("/submitCourseForApproval/:id", verifyInstructorJWT, isInstructorForCourse, submitCourseForApproval); // courseId
+instructor.put("/submitFileForApproval/:id", verifyInstructorJWT, isInstructorForCourse, submitFileForApproval); // fileId
+instructor.put("/submitVideoForApproval/:id", verifyInstructorJWT, isInstructorForCourse, submitVideoForApproval); // videoId
 
 // 3. Delete
-instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCourse);
-instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorPresent, softDeleteContent);
-instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorPresent, softDeleteFile);
-instructor.delete("/softDeleteVideo/:id", verifyInstructorJWT, isInstructorPresent, softDeleteVideo);
+instructor.delete("/softDeleteCourse/:id", verifyInstructorJWT, isInstructorForCourse, softDeleteCourse);
+instructor.delete("/softDeleteContent/:id", verifyInstructorJWT, isInstructorForCourse, softDeleteContent);
+instructor.delete("/softDeleteFile/:id", verifyInstructorJWT, isInstructorForCourse, softDeleteFile);
+instructor.delete("/softDeleteVideo/:id", verifyInstructorJWT, isInstructorForCourse, softDeleteVideo);
 
 // 4. Update
-instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorPresent, addCouponToCourse); // courseId
-instructor.put("/updateContent/:id", verifyInstructorJWT, isInstructorPresent, updateContentForInstructor); // contentId
-instructor.put("/updateCourse/:id", verifyInstructorJWT, isInstructorPresent, updateCourseForInstructor); // courseId
+instructor.put("/addCouponToCourse/:id", verifyInstructorJWT, isInstructorForCourse, addCouponToCourse); // courseId
+instructor.put("/updateContent/:id", verifyInstructorJWT, isInstructorForCourse, updateContentForInstructor); // contentId
+instructor.put("/updateCourse/:id", verifyInstructorJWT, isInstructorForCourse, updateCourseForInstructor); // courseId
 
 // Master
-instructor.get("/coursecategories", verifyInstructorJWT, isInstructorPresent, getAllCourseCategory);
-instructor.get("/courseDurations", verifyInstructorJWT, isInstructorPresent, getAllCourseDuration);
-instructor.get("/courseTypes", verifyInstructorJWT, isInstructorPresent, getAllCourseType);
-instructor.get("/university_institutes", verifyInstructorJWT, isInstructorPresent, getAllUniversity_Institute);
-instructor.get("/courseDurationTypes/:type", verifyInstructorJWT, isInstructorPresent, getAllCourseByType);
+instructor.get("/coursecategories", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseCategory);
+instructor.get("/courseDurations", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseDuration);
+instructor.get("/courseTypes", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseType);
+instructor.get("/university_institutes", verifyInstructorJWT, isInstructorProfileComplete, getAllUniversity_Institute);
+instructor.get("/courseDurationTypes/:type", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseByType);
 
 // 2. Coupon
-instructor.post("/createCoupon", verifyInstructorJWT, isInstructorPresent, createCoupon);
-instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorPresent, softDeleteCoupon);
-instructor.get("/coupons", verifyInstructorJWT, isInstructorPresent, getAllInstructorCoupon);
-instructor.get("/coupons/:id", verifyInstructorJWT, isInstructorPresent, getCouponById);
-instructor.get("/couponToCourse/:id", verifyInstructorJWT, isInstructorPresent, getCouponToCourse);
-instructor.put("/applyCouponToCourse", verifyInstructorJWT, isInstructorPresent, applyCouponToCourse);
+instructor.post("/createCoupon", verifyInstructorJWT, isInstructorProfileComplete, createCoupon);
+instructor.delete("/softDeleteCoupon/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteCoupon);
+instructor.get("/coupons", verifyInstructorJWT, isInstructorProfileComplete, getAllInstructorCoupon);
+instructor.get("/coupons/:id", verifyInstructorJWT, isInstructorProfileComplete, getCouponById);
+instructor.get("/couponToCourse/:id", verifyInstructorJWT, isInstructorProfileComplete, getCouponToCourse);
+instructor.put("/applyCouponToCourse", verifyInstructorJWT, isInstructorProfileComplete, applyCouponToCourse);
 
 // Review
 // 1. Instructor Review
-instructor.get("/getInstructorAverageRating", verifyInstructorJWT, isInstructorPresent, getInstructorAverageRating);
-instructor.get("/getInstructorReview", verifyInstructorJWT, isInstructorPresent, getInstructorReview);
-instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstructorPresent, deleteInstructorReview); //id = review Id
+instructor.get("/getInstructorAverageRating", verifyInstructorJWT, isInstructorProfileComplete, getInstructorAverageRating);
+instructor.get("/getInstructorReview", verifyInstructorJWT, isInstructorProfileComplete, getInstructorReview);
+instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstructorProfileComplete, deleteInstructorReview); //id = review Id
 
 // 2. Course Review
-instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorPresent, getCourseReview); // id = courseId
-instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorPresent, getCourseAverageRating); // id = courseId
-// instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorPresent, deleteCourseReview); //id = review Id
+instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, getCourseReview); // id = courseId
+instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorForCourse, getCourseAverageRating); // id = courseId
+// instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, deleteCourseReview); //id = review Id
 
 // Dashboard
-instructor.get("/totalCourse", verifyInstructorJWT, isInstructorPresent, totalCourse);
-instructor.get("/totalDraftedCourse", verifyInstructorJWT, isInstructorPresent, totalDraftedCourse);
-instructor.get("/totalOngoingCourse", verifyInstructorJWT, isInstructorPresent, totalOngoingCourse);
-instructor.get("/getContentAndFile/:id", verifyInstructorJWT, isInstructorPresent, getContentAndFile); // courseId
-instructor.get("/totalStudent", verifyInstructorJWT, isInstructorPresent, totalStudent);
+instructor.get("/totalCourse", verifyInstructorJWT, isInstructorProfileComplete, totalCourse);
+instructor.get("/totalDraftedCourse", verifyInstructorJWT, isInstructorProfileComplete, totalDraftedCourse);
+instructor.get("/totalOngoingCourse", verifyInstructorJWT, isInstructorProfileComplete, totalOngoingCourse);
+instructor.get("/getContentAndFile/:id", verifyInstructorJWT, isInstructorProfileComplete, getContentAndFile); // courseId
+instructor.get("/totalStudent", verifyInstructorJWT, isInstructorProfileComplete, totalStudent);
 
 // Notification
-instructor.post("/createNotification", verifyInstructorJWT, isInstructorPresent, createNotificationForInstructor);
-instructor.get("/myNotifications", verifyInstructorJWT, isInstructorPresent, getMyNotificationForInstructor);
-instructor.get("/notifications", verifyInstructorJWT, isInstructorPresent, getNotificationForInstructor);
+instructor.post("/createNotification", verifyInstructorJWT, isInstructorProfileComplete, createNotificationForInstructor);
+instructor.get("/myNotifications", verifyInstructorJWT, isInstructorProfileComplete, getMyNotificationForInstructor);
+instructor.get("/notifications", verifyInstructorJWT, isInstructorProfileComplete, getNotificationForInstructor);
 
 // Payment
-instructor.get("/paymentDetails", verifyInstructorJWT, isInstructorPresent, getPaymentDetailsForInstructor);
+instructor.get("/paymentDetails", verifyInstructorJWT, isInstructorProfileComplete, getPaymentDetailsForInstructor);
 
 // YogaStudio
-instructor.post("/createYogaStudioBusiness", verifyInstructorJWT, isInstructorPresent, createYogaStudioBusiness);
-instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructorPresent, createYogaStudioContact);
-instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.array('studioImages', 10), createYogaStudioImage);
-instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorPresent, createYogaStudioTiming);
+instructor.post("/createYogaStudioBusiness", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioBusiness);
+instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioContact);
+instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImage.array('studioImages', 10), createYogaStudioImage);
+instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioTiming);
 
-instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorPresent, getMyYogaStudio);
-instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorPresent, getYogaStudioByIdInstructor);
+instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorProfileComplete, getMyYogaStudio);
+instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorProfileComplete, getYogaStudioByIdInstructor);
 
-instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioContactForInstructor);
-instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioBusinessForInstructor);
-instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorPresent, updateYogaStudioTimeForInstructor);
+instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioContactForInstructor);
+instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioBusinessForInstructor);
+instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioTimeForInstructor);
 
-instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioBusiness);
-instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioContact);
-instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioImage);
-instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorPresent, softDeleteYogaStudioTime);
+instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioBusiness);
+instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioContact);
+instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioImage);
+instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioTime);
 
 // Home Tutor
-instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorPresent, createHomeTutor);
-instructor.post("/addHTutorSeviceArea/:id", verifyInstructorJWT, isInstructorPresent, addHTutorSeviceArea);
-instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, addHTutorTimeSlote);
-instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorPresent, uploadImage.array('hTutorImages', 3), addHTutorImage);
+instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorForHomeTutor, createHomeTutor);
+instructor.post("/addHTutorSeviceArea/:id", verifyInstructorJWT, isInstructorForHomeTutor, addHTutorSeviceArea);
+instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorForHomeTutor, addHTutorTimeSlote);
+instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorForHomeTutor, uploadImage.array('hTutorImages', 3), addHTutorImage);
 
-instructor.get("/homeTutors", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorForInstructor);
-instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorPresent, getMyHomeTutorById);
+instructor.get("/homeTutors", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorForInstructor);
+instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorById);
 
-instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, submitHomeTutorForApproval);
-instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, publishHomeTutor);
-instructor.put("/changeHTTimeSloteStatus/:id", verifyInstructorJWT, isInstructorPresent, changeHTTimeSloteStatus);
+instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, submitHomeTutorForApproval);
+instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, publishHomeTutor);
+instructor.put("/changeHTTimeSloteStatus/:id", verifyInstructorJWT, isInstructorForHomeTutor, changeHTTimeSloteStatus);
 
-instructor.put("/updateHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, updateHomeTutor);
+instructor.put("/updateHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, updateHomeTutor);
 
-instructor.delete("/deleteHTutorImage/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorImage);
-instructor.delete("/deleteHTutorServiceArea/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorServiceArea);
-instructor.delete("/deleteHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHTutorTimeSlote);
-instructor.delete("/deleteHomeTutor/:id", verifyInstructorJWT, isInstructorPresent, softDeleteHomeTutor);
+instructor.delete("/deleteHTutorImage/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTutorImage);
+instructor.delete("/deleteHTutorServiceArea/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTutorServiceArea);
+instructor.delete("/deleteHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTutorTimeSlote);
+instructor.delete("/deleteHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHomeTutor);
 
 module.exports = instructor;

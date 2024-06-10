@@ -10,7 +10,6 @@ exports.loginInstructor = (data) => {
 
 exports.loginInstructorByNumber = (data) => {
     const schema = joi.object().keys({
-        name: joi.string().min(3).max(30).required(),
         phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required()
     });
     return schema.validate(data);
@@ -38,6 +37,8 @@ exports.updateInstructor = (data) => {
         twitter_x: joi.string().optional(),
         languages: joi.array().required(),
         dateOfBirth: joi.string().required(),
+        latitude: joi.string().required(),
+        longitude: joi.string().required()
     })//.options({ allowUnknown: true });
     return schema.validate(data);
 }
@@ -102,6 +103,30 @@ exports.changeHTTimeSloteStatus = (data) => {
     const schema = joi.object().keys({
         appointmentStatus: joi.string().valid('Active', 'Deactivate').required(),
         password: joi.string().length(6).optional()
+    });
+    return schema.validate(data);
+}
+
+exports.therapistTerm = (data) => {
+    const schema = joi.object().keys({
+        isTherapist: joi.boolean().required(),
+        therapistTermAccepted: joi.boolean().required()
+    });
+    return schema.validate(data);
+}
+
+exports.homeTutorTerm = (data) => {
+    const schema = joi.object().keys({
+        isHomeTutor: joi.boolean().required(),
+        homeTutorTermAccepted: joi.boolean().required()
+    });
+    return schema.validate(data);
+}
+
+exports.instructorTerm = (data) => {
+    const schema = joi.object().keys({
+        isInstructor: joi.boolean().required(),
+        instructorTermAccepted: joi.boolean().required()
     });
     return schema.validate(data);
 }

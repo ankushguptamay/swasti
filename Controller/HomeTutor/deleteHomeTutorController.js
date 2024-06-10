@@ -176,10 +176,10 @@ exports.softDeleteHTutorTimeSlote = async (req, res) => {
                 message: "Home tutor slote is not present!"
             });
         }
-        if (slote.isBooked === true && slote.appointmentStatus === "Active") {
+        if (slote.isBooked === true) {
             return res.status(400).send({
                 success: false,
-                message: "Home tutor slote is booked! You can not delete this slote! Consult with patient!"
+                message: "Home tutor slote is booked! You can not delete this slote!"
             });
         }
         await slote.update({ deletedThrough: deletedThrough });

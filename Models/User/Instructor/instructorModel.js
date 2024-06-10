@@ -54,6 +54,12 @@ module.exports = (sequelize, DataTypes) => {
         location: {
             type: DataTypes.STRING
         },
+        latitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
+        longitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
         bio: {
             type: DataTypes.STRING(1234)
         },
@@ -79,6 +85,30 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATEONLY
         },
         isVerify: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isInstructor: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isHomeTutor: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isTherapist: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        therapistTermAccepted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        homeTutorTermAccepted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        instructorTermAccepted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         }
