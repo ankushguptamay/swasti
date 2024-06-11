@@ -241,5 +241,4 @@ queryInterface.addColumn("homeTutors", "yogaFor", {
     type: DataTypes.JSON
 }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
-
 module.exports = db;
