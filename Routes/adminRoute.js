@@ -36,6 +36,7 @@ const { getHomeTutorForAdmin, getMyHomeTutorById, getMyHTutorUpdationRequestById
 const { changeHomeTutorStatus, changeHTutorUpdationStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
+const { getTherapyForAdmin, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const admin = express.Router();
 
 // middleware
@@ -255,5 +256,9 @@ admin.put("/restoreHTutorImage/:id", verifyAdminJWT, isAdminPresent, restoreHTut
 admin.put("/restoreHTutorServiceArea/:id", verifyAdminJWT, isAdminPresent, restoreHTutorServiceArea);
 admin.put("/restoreHTutorTimeSlote/:id", verifyAdminJWT, isAdminPresent, restoreHTutorTimeSlote);
 admin.put("/restoreHomeTutor/:id", verifyAdminJWT, isAdminPresent, restoreHomeTutor);
+
+// Therapy
+admin.get("/therapies", verifyAdminJWT, isAdminPresent, getTherapyForAdmin);
+admin.get("/therapies/:id", verifyAdminJWT, isAdminPresent, getTherapyById);
 
 module.exports = admin;

@@ -64,12 +64,12 @@ db.hTImage = require('./HomeTutor/hTImageModel.js')(sequelize, Sequelize);
 db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
 
 //Therapy
-// db.therapy = require('./Therapy/therapyModel.js')(sequelize, Sequelize);
-// db.therapyImage = require('./Therapy/therapyImageModel.js')(sequelize, Sequelize);
-// db.therapyOffered = require('./Therapy/therapyOfferedModel.js')(sequelize, Sequelize);
-// db.therapyServiceArea = require('./Therapy/therapyServiceAreaModel.js')(sequelize, Sequelize);
-// db.therapyTimeSlote = require('./Therapy/therapyTimeSloteModel.js')(sequelize, Sequelize);
-// db.therapyHistory = require('./Therapy/therapyHistoryModel.js')(sequelize, Sequelize);
+db.therapy = require('./Therapy/therapyModel.js')(sequelize, Sequelize);
+db.therapyImage = require('./Therapy/therapyImageModel.js')(sequelize, Sequelize);
+db.therapyOffered = require('./Therapy/therapyOfferedModel.js')(sequelize, Sequelize);
+db.therapyServiceArea = require('./Therapy/therapyServiceAreaModel.js')(sequelize, Sequelize);
+db.therapyTimeSlote = require('./Therapy/therapyTimeSloteModel.js')(sequelize, Sequelize);
+db.therapyHistory = require('./Therapy/therapyHistoryModel.js')(sequelize, Sequelize);
 
 // Instructor History
 db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);
@@ -156,24 +156,42 @@ db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors'
 db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 
 // Therapy
-// db.instructor.hasMany(db.therapy, { foreignKey: 'instructorId', as: 'therapies' });
+db.instructor.hasMany(db.therapy, { foreignKey: 'instructorId', as: 'therapies' });
 
-// db.therapy.hasMany(db.therapyServiceArea, { foreignKey: 'therapyId', as: 'serviceAreas' });
-// db.therapyServiceArea.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+db.therapy.hasMany(db.therapyServiceArea, { foreignKey: 'therapyId', as: 'serviceAreas' });
+db.therapyServiceArea.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
 
-// db.therapy.hasMany(db.therapyTimeSlote, { foreignKey: 'therapyId', as: 'timeSlotes' });
-// db.therapyTimeSlote.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+db.therapy.hasMany(db.therapyTimeSlote, { foreignKey: 'therapyId', as: 'timeSlotes' });
+db.therapyTimeSlote.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
 
-// db.therapy.hasMany(db.therapyImage, { foreignKey: 'therapyId', as: 'images' });
-// db.therapyImage.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+db.therapy.hasMany(db.therapyImage, { foreignKey: 'therapyId', as: 'images' });
+db.therapyImage.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
 
-// db.therapy.hasMany(db.therapyOffered, { foreignKey: 'therapyId', as: 'therapyTypeOffered' });
-// db.therapyOffered.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+db.therapy.hasMany(db.therapyOffered, { foreignKey: 'therapyId', as: 'therapyTypeOffered' });
+db.therapyOffered.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
 
-// db.therapy.hasOne(db.therapyHistory, { foreignKey: 'therapyId', as: 'therapyHistories' });
+db.therapy.hasOne(db.therapyHistory, { foreignKey: 'therapyId', as: 'therapyHistories' });
 
 // For Location
 db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km") => {
+    const constant = unit == "km" ? 6371 : 3959;
+    const haversine = `(
+        ${constant} * acos(
+            cos(radians(${latitude}))
+            * cos(radians(latitude))
+            * cos(radians(longitude) - radians(${longitude}))
+            + sin(radians(${latitude})) * sin(radians(latitude))
+        )
+    )`;
+    return {
+        attributes: [
+            [sequelize.literal(haversine), 'distance'],
+        ],
+        having: sequelize.literal(`distance <= ${distance}`)
+    }
+});
+
+db.therapyServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km") => {
     const constant = unit == "km" ? 6371 : 3959;
     const haversine = `(
         ${constant} * acos(

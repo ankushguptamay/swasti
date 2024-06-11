@@ -28,6 +28,8 @@ const { getMyHomeTutorForInstructor, getMyHomeTutorById } = require('../Controll
 const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
+const { createTherapy, addTherapyImage, addTherapySeviceArea, addTherapyTimeSlote, addTherapyTypeOffered } = require('../Controller/Therapy/createTherapyController');
+const { getMyTherapyForInstructor, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const instructor = express.Router();
 
 // middleware
@@ -180,5 +182,15 @@ instructor.delete("/deleteHTutorImage/:id", verifyInstructorJWT, isInstructorFor
 instructor.delete("/deleteHTutorServiceArea/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTutorServiceArea);
 instructor.delete("/deleteHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTutorTimeSlote);
 instructor.delete("/deleteHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHomeTutor);
+
+// Therapy
+instructor.post("/createTherapy", verifyInstructorJWT, isInstructorForTherapist, createTherapy);
+instructor.post("/addTherapySeviceArea/:id", verifyInstructorJWT, isInstructorForTherapist, addTherapySeviceArea);
+instructor.post("/addTherapyTimeSlote/:id", verifyInstructorJWT, isInstructorForTherapist, addTherapyTimeSlote);
+instructor.post("/addTherapyImage/:id", verifyInstructorJWT, isInstructorForTherapist, uploadImage.array('therapyImages', 3), addTherapyImage);
+instructor.post("/addTherapyTypeOffered/:id", verifyInstructorJWT, isInstructorForTherapist, addTherapyTypeOffered);
+
+instructor.get("/therapies", verifyInstructorJWT, isInstructorForTherapist, getMyTherapyForInstructor);
+instructor.get("/therapies/:id", verifyInstructorJWT, isInstructorForTherapist, getTherapyById);
 
 module.exports = instructor;
