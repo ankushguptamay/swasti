@@ -234,11 +234,11 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 // queryInterface.addColumn("homeTutors", "homeTutorName", {
 //     type: DataTypes.STRING
 // }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("homeTutorHistories", "yogaFor", {
-    type: DataTypes.JSON
-}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("homeTutors", "yogaFor", {
-    type: DataTypes.JSON
-}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutorHistories", "yogaFor", {
+//     type: DataTypes.JSON
+// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutors", "yogaFor", {
+//     type: DataTypes.JSON
+// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
