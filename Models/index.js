@@ -63,6 +63,14 @@ db.hTTimeSlote = require('./HomeTutor/hTTimeSloteModel.js')(sequelize, Sequelize
 db.hTImage = require('./HomeTutor/hTImageModel.js')(sequelize, Sequelize);
 db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
 
+//Therapy
+// db.therapy = require('./Therapy/therapyModel.js')(sequelize, Sequelize);
+// db.therapyImage = require('./Therapy/therapyImageModel.js')(sequelize, Sequelize);
+// db.therapyOffered = require('./Therapy/therapyOfferedModel.js')(sequelize, Sequelize);
+// db.therapyServiceArea = require('./Therapy/therapyServiceAreaModel.js')(sequelize, Sequelize);
+// db.therapyTimeSlote = require('./Therapy/therapyTimeSloteModel.js')(sequelize, Sequelize);
+// db.therapyHistory = require('./Therapy/therapyHistoryModel.js')(sequelize, Sequelize);
+
 // Instructor History
 db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);
 
@@ -147,6 +155,23 @@ db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors'
 
 db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 
+// Therapy
+// db.instructor.hasMany(db.therapy, { foreignKey: 'instructorId', as: 'therapies' });
+
+// db.therapy.hasMany(db.therapyServiceArea, { foreignKey: 'therapyId', as: 'serviceAreas' });
+// db.therapyServiceArea.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+
+// db.therapy.hasMany(db.therapyTimeSlote, { foreignKey: 'therapyId', as: 'timeSlotes' });
+// db.therapyTimeSlote.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+
+// db.therapy.hasMany(db.therapyImage, { foreignKey: 'therapyId', as: 'images' });
+// db.therapyImage.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+
+// db.therapy.hasMany(db.therapyOffered, { foreignKey: 'therapyId', as: 'therapyTypeOffered' });
+// db.therapyOffered.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
+
+// db.therapy.hasOne(db.therapyHistory, { foreignKey: 'therapyId', as: 'therapyHistories' });
+
 // For Location
 db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km") => {
     const constant = unit == "km" ? 6371 : 3959;
@@ -203,43 +228,18 @@ db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructors", "latitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "longitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "isInstructor", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("3 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "isHomeTutor", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("4 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "isTherapist", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: true
-// }).then((res) => { console.log("5 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "therapistTermAccepted", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("6 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructors", "instructorTermAccepted", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: true
-// }).then((res) => { console.log("8 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorHistorys", "latitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("1 Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorHistorys", "longitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("2 Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("homeTutorHistories", "homeTutorName", {
+    type: DataTypes.STRING
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("homeTutors", "homeTutorName", {
+    type: DataTypes.STRING
+}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutorHistories", "yogaFor", {
+//     type: DataTypes.JSON
+// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("homeTutors", "yogaFor", {
+//     type: DataTypes.JSON
+// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructors", "homeTutorTermAccepted", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("Added!") }).catch((err) => { console.log(err) });
-// queryInterface.removeColumn("hTTimeSlots", "homeTutorTermAccepted").then((res) => { console.log("Removed!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

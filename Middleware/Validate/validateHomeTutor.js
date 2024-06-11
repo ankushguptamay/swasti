@@ -3,6 +3,8 @@ const pattern = "/(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[$@$!#.])[A-Za-zd$@$!%*?&.]{
 
 exports.homeTutorValidation = (data) => {
     const schema = joi.object().keys({
+        yogaFor: joi.array().required(),
+        homeTutorName: joi.string().required(),
         serviceOffered: joi.array().required(),
         language: joi.array().required(),
         privateSessionPrice_Day: joi.string().optional(),
@@ -20,7 +22,7 @@ exports.hTutorLocationValidation = (data) => {
         locationName: joi.string().required(),
         latitude: joi.string().required(),
         longitude: joi.string().required(),
-        redius: joi.number().required(),
+        radius: joi.number().required(),
         unit: joi.string().valid('km', 'm').required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);

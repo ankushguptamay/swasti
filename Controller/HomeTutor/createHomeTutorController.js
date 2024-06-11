@@ -24,7 +24,7 @@ exports.createHomeTutor = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { serviceOffered, language, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
+        const { serviceOffered, language, yogaFor, homeTutorName, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
         // Validate price with there offer
         if (serviceOffered.length === 1) {
             if (serviceOffered[0] === "Group Class") {
@@ -65,6 +65,8 @@ exports.createHomeTutor = async (req, res) => {
         }
         // Store in database
         const homeTutor = await HomeTutor.create({
+            yogaFor: yogaFor,
+            homeTutorName: homeTutorName,
             serviceOffered: serviceOffered,
             language: language,
             privateSessionPrice_Day: privateSessionPrice_Day,
@@ -78,6 +80,8 @@ exports.createHomeTutor = async (req, res) => {
         });
         // create update history
         await HomeTutorHistory.create({
+            yogaFor: yogaFor,
+            homeTutorName: homeTutorName,
             serviceOffered: serviceOffered,
             language: language,
             privateSessionPrice_Day: privateSessionPrice_Day,
@@ -110,7 +114,7 @@ exports.addHTutorSeviceArea = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { locationName, latitude, longitude, redius, unit } = req.body;
+        const { locationName, latitude, longitude, radius, unit } = req.body;
         const homeTutorId = req.params.id;
         // Check is this home tutor present and created by same instructor
         const isHomeTutor = await HomeTutor.findOne({
@@ -130,7 +134,7 @@ exports.addHTutorSeviceArea = async (req, res) => {
             locationName: locationName,
             latitude: parseFloat(latitude),
             longitude: parseFloat(longitude),
-            redius: redius,
+            radius: radius,
             unit: unit,
             homeTutorId: homeTutorId
         });

@@ -14,7 +14,7 @@ exports.updateHomeTutor = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { serviceOffered, language, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
+        const { serviceOffered, language, yogaFor, homeTutorName, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
         // Validate price with there offer
         if (serviceOffered.length === 1) {
             if (serviceOffered[0] === "Group Class") {
@@ -69,6 +69,8 @@ exports.updateHomeTutor = async (req, res) => {
         if (homeTutor.approvalStatusByAdmin === null || homeTutor.approvalStatusByAdmin === "Pending") {
             await homeTutor.update({
                 ...homeTutor,
+                yogaFor: yogaFor,
+                homeTutorName: homeTutorName,
                 serviceOffered: serviceOffered,
                 language: language,
                 privateSessionPrice_Day: privateSessionPrice_Day,
@@ -88,6 +90,8 @@ exports.updateHomeTutor = async (req, res) => {
             });
             // create update history
             await HomeTutorHistory.create({
+                yogaFor: yogaFor,
+                homeTutorName: homeTutorName,
                 serviceOffered: serviceOffered,
                 language: language,
                 privateSessionPrice_Day: privateSessionPrice_Day,

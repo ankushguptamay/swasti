@@ -5,8 +5,14 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
+        homeTutorName: {
+            type: DataTypes.STRING
+        },
         serviceOffered: {
             type: DataTypes.JSON
+        },
+        yogaFor: {
+            type: DataTypes.JSON // Children, parents
         },
         language: {
             type: DataTypes.JSON

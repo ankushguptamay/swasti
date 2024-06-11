@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const { changeQualificationStatus, changePublish, changeHTTimeSloteStatus } = require("../../Middleware/Validate/validateInstructor");
 const Instructor = db.instructor;
 const HomeTutor = db.homeTutor;
+const Therapy = db.therapy;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
@@ -67,6 +68,7 @@ exports.changeHomeTutorStatus = async (req, res) => {
         }
         if (approvalStatusByAdmin === "Approved") {
             await Instructor.update({ bio: tutor.instructorBio }, { where: { id: tutor.instructorId } });
+            await Therapy.update({ instructorBio: tutor.instructorBio }, { where: { instructorId: tutor.instructorId } });
         }
         // Update tutor
         await tutor.update({
@@ -218,6 +220,7 @@ exports.changeHTutorUpdationStatus = async (req, res) => {
         });
         if (approvalStatusByAdmin === "Approved") {
             await Instructor.update({ bio: history.instructorBio }, { where: { id: homeTutor.instructorId } });
+            await Therapy.update({ instructorBio: history.instructorBio }, { where: { instructorId: homeTutor.instructorId } });
             await homeTutor.update({
                 serviceOffered: history.serviceOffered,
                 language: history.language,
