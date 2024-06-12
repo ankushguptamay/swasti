@@ -14,7 +14,7 @@ exports.softDeleteHomeTutor = async (req, res) => {
         if (req.instructor) {
             condition = {
                 id: req.params.id,
-                createrId: req.instructor.id
+                instructorId: req.instructor.id
             };
             deletedThrough = "Instructor";
         } else if (req.admin) {
@@ -56,27 +56,20 @@ exports.softDeleteHomeTutor = async (req, res) => {
 
 exports.softDeleteHTutorServiceArea = async (req, res) => {
     try {
-        let deletedThrough, condition;
+        let deletedThrough;
         if (req.instructor) {
-            condition = {
-                id: req.params.id,
-                createrId: req.instructor.id
-            };
             deletedThrough = "Instructor";
         } else if (req.admin) {
-            condition = {
-                id: req.params.id
-            };
             deletedThrough = "Admin";
         } else {
-            res.status(400).send({
+            return res.status(400).send({
                 success: false,
                 message: "You can not delete this home tutor!"
             });
         }
         // Find Home Tutor service area In Database
         const area = await HTServiceArea.findOne({
-            where: condition
+            where: { id: req.params.id }
         });
         if (!area) {
             return res.status(400).send({
@@ -102,27 +95,20 @@ exports.softDeleteHTutorServiceArea = async (req, res) => {
 
 exports.softDeleteHTutorImage = async (req, res) => {
     try {
-        let deletedThrough, condition;
+        let deletedThrough;
         if (req.instructor) {
-            condition = {
-                id: req.params.id,
-                createrId: req.instructor.id
-            };
             deletedThrough = "Instructor";
         } else if (req.admin) {
-            condition = {
-                id: req.params.id
-            };
             deletedThrough = "Admin";
         } else {
-            res.status(400).send({
+            return res.status(400).send({
                 success: false,
                 message: "You can not delete this home tutor!"
             });
         }
         // Find Home Tutor images In Database
         const images = await HTutorImages.findOne({
-            where: condition
+            where: { id: req.params.id }
         });
         if (!images) {
             return res.status(400).send({
@@ -148,27 +134,20 @@ exports.softDeleteHTutorImage = async (req, res) => {
 
 exports.softDeleteHTutorTimeSlote = async (req, res) => {
     try {
-        let deletedThrough, condition;
+        let deletedThrough;
         if (req.instructor) {
-            condition = {
-                id: req.params.id,
-                createrId: req.instructor.id
-            };
             deletedThrough = "Instructor";
         } else if (req.admin) {
-            condition = {
-                id: req.params.id
-            };
             deletedThrough = "Admin";
         } else {
-            res.status(400).send({
+            return res.status(400).send({
                 success: false,
-                message: "You can not delete this time slote!"
+                message: "You can not delete this home tutor!"
             });
         }
         // Find Home Tutor time slote In Database
         const slote = await HTTimeSlot.findOne({
-            where: condition
+            where: { id: req.params.id }
         });
         if (!slote) {
             return res.status(400).send({
