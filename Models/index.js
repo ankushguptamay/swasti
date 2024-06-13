@@ -50,13 +50,13 @@ db.instructorExperience = require('./User/Instructor/instructorExperienceModel.j
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 
 // YogaStudio
-db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);
-db.yogaStudioContact = require('./YogaStudio/yogaStudioContactModel.js')(sequelize, Sequelize);
-db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, Sequelize);
-db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
-db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
-db.ySContactHistory = require('./YogaStudio/UpdationAndHistory/ySContactHistoryModel.js')(sequelize, Sequelize);
-db.ySTimingHistory = require('./YogaStudio/UpdationAndHistory/ySTimingHistoryModel.js')(sequelize, Sequelize);
+// db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);
+// db.yogaStudioContact = require('./YogaStudio/yogaStudioContactModel.js')(sequelize, Sequelize);
+// db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, Sequelize);
+// db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
+// db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
+// db.ySContactHistory = require('./YogaStudio/UpdationAndHistory/ySContactHistoryModel.js')(sequelize, Sequelize);
+// db.ySTimingHistory = require('./YogaStudio/UpdationAndHistory/ySTimingHistoryModel.js')(sequelize, Sequelize);
 
 //Home Tutor
 db.homeTutor = require('./HomeTutor/homeTutorModel.js')(sequelize, Sequelize);
@@ -137,17 +137,17 @@ db.course.hasMany(db.courseReview, { foreignKey: 'courseId', as: 'review' });
 db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 
 // YogaStudio
-db.instructor.hasMany(db.yogaStudioBusiness, { foreignKey: 'instructorId', as: 'yogaStudioBusiness' });
-db.instructor.hasMany(db.yogaStudioContact, { foreignKey: 'instructorId', as: 'yogaStudioContacts' });
-db.instructor.hasMany(db.yogaStudioTiming, { foreignKey: 'instructorId', as: 'yogaStudioTimings' });
-db.instructor.hasMany(db.yogaStudioImage, { foreignKey: 'instructorId', as: 'yogaStudioImages' });
-db.yogaStudioBusiness.hasOne(db.yogaStudioContact, { foreignKey: 'businessId', as: 'contacts' });
-db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', as: 'timings' });
-db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
+// db.instructor.hasMany(db.yogaStudioBusiness, { foreignKey: 'instructorId', as: 'yogaStudioBusiness' });
+// db.instructor.hasMany(db.yogaStudioContact, { foreignKey: 'instructorId', as: 'yogaStudioContacts' });
+// db.instructor.hasMany(db.yogaStudioTiming, { foreignKey: 'instructorId', as: 'yogaStudioTimings' });
+// db.instructor.hasMany(db.yogaStudioImage, { foreignKey: 'instructorId', as: 'yogaStudioImages' });
+// db.yogaStudioBusiness.hasOne(db.yogaStudioContact, { foreignKey: 'businessId', as: 'contacts' });
+// db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', as: 'timings' });
+// db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
 
-db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
-db.yogaStudioContact.hasOne(db.ySContactHistory, { foreignKey: 'ySContactId', as: 'contactHistory' });
-db.yogaStudioTiming.hasOne(db.ySContactHistory, { foreignKey: 'ySTimeId', as: 'timeHistory' });
+// db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
+// db.yogaStudioContact.hasOne(db.ySContactHistory, { foreignKey: 'ySContactId', as: 'contactHistory' });
+// db.yogaStudioTiming.hasOne(db.ySContactHistory, { foreignKey: 'ySTimeId', as: 'timeHistory' });
 
 // Home Tutor
 db.instructor.hasMany(db.homeTutor, { foreignKey: 'instructorId', as: 'homeTutors' });
@@ -217,23 +217,23 @@ db.therapyServiceArea.addScope('distance', (latitude, longitude, distance, unit 
     }
 });
 
-db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit = "km") => {
-    const constant = unit == "km" ? 6371 : 3959;
-    const haversine = `(
-        ${constant} * acos(
-            cos(radians(${latitude}))
-            * cos(radians(latitude))
-            * cos(radians(longitude) - radians(${longitude}))
-            + sin(radians(${latitude})) * sin(radians(latitude))
-        )
-    )`;
-    return {
-        attributes: [
-            [sequelize.literal(haversine), 'distance'],
-        ],
-        having: sequelize.literal(`distance <= ${distance}`)
-    }
-});
+// db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit = "km") => {
+//     const constant = unit == "km" ? 6371 : 3959;
+//     const haversine = `(
+//         ${constant} * acos(
+//             cos(radians(${latitude}))
+//             * cos(radians(latitude))
+//             * cos(radians(longitude) - radians(${longitude}))
+//             + sin(radians(${latitude})) * sin(radians(latitude))
+//         )
+//     )`;
+//     return {
+//         attributes: [
+//             [sequelize.literal(haversine), 'distance'],
+//         ],
+//         having: sequelize.literal(`distance <= ${distance}`)
+//     }
+// });
 
 
 // This many to many relation auto deleteing table after create it.......?
@@ -280,12 +280,12 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
-// queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("6Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("7Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("3Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("4Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("5Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("6Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("7Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("3Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("4Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("5Droped!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
