@@ -1,6 +1,6 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
-const { createBusiness } = require('../../Middleware/Validate/validateYogaStudio');
+const { createBusiness, createTiming, createContact } = require('../../Middleware/Validate/validateYogaStudio');
 const { changeQualificationStatus } = require("../../Middleware/Validate/validateInstructor");
 const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter");
 const YogaStudioBusiness = db.yogaStudioBusiness;

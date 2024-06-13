@@ -169,7 +169,7 @@ exports.getYogaStudioById = async (req, res) => {
 
 exports.getYogaStudioForUser = async (req, res) => {
     try {
-        const { page, limit, search } = req.query;
+        const { page, limit, search, latitude, longitude, distanceUnit, areaDistance } = req.query;
         // Pagination
         const recordLimit = parseInt(limit) || 10;
         let offSet = 0;
@@ -192,23 +192,60 @@ exports.getYogaStudioForUser = async (req, res) => {
                 ]
             })
         }
-        // Count All studio
-        const totalStudio = await YogaStudioBusiness.count({
-            where: {
-                [Op.and]: condition
-            }
-        });
-        // Get All studio
-        const studio = await YogaStudioBusiness.findAll({
-            limit: recordLimit,
-            offset: offSet,
-            where: {
-                [Op.and]: condition
-            },
-            order: [
-                ['createdAt', 'ASC']
-            ]
-        });
+        let totalStudio, studio;
+        // Location
+        const unit = distanceUnit ? distanceUnit : 'km'; // km for kilometer m for mile
+        const distance = areaDistance ? areaDistance : 2;
+        if (latitude && longitude) {
+            // Count All studio
+            totalStudio = await await YogaStudioBusiness.scope({
+                method: ['distance', latitude, longitude, distance, unit]
+            })
+                .findAll({
+                    attributes: [
+                        'id', "businessName", "latitude", "longitude", "pincode", "block_building", "street_colony",
+                        "area", "landmark", "city", "state", "approvalStatusByAdmin", "isPublish", "instructorId"
+                    ],
+                    where: {
+                        [Op.and]: condition
+                    },
+                    order: db.sequelize.col('distance')
+                });
+            // Get All studio
+            studio = await YogaStudioBusiness.scope({
+                method: ['distance', latitude, longitude, distance, unit]
+            })
+                .findAll({
+                    attributes: [
+                        'id', "businessName", "latitude", "longitude", "pincode", "block_building", "street_colony",
+                        "area", "landmark", "city", "state", "approvalStatusByAdmin", "isPublish", "instructorId"
+                    ],
+                    order: db.sequelize.col('distance'),
+                    where: {
+                        [Op.and]: condition
+                    },
+                    limit: recordLimit,
+                    offset: offSet
+                });
+        } else {
+            // Count All studio
+            totalStudio = await YogaStudioBusiness.count({
+                where: {
+                    [Op.and]: condition
+                }
+            });
+            // Get All studio
+            studio = await YogaStudioBusiness.findAll({
+                limit: recordLimit,
+                offset: offSet,
+                where: {
+                    [Op.and]: condition
+                },
+                order: [
+                    ['createdAt', 'ASC']
+                ]
+            });
+        }
         // Final response
         res.status(200).send({
             success: true,
