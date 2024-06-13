@@ -273,11 +273,19 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructorHistorys", "latitude", {
-    type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-queryInterface.addColumn("instructorHistorys", "longitude", {
-   type: DataTypes.FLOAT(10, 6)
-}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "latitude", {
+//     type: DataTypes.FLOAT(10, 6)
+// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructorHistorys", "longitude", {
+//     type: DataTypes.FLOAT(10, 6)
+// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+
+queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("6Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("7Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("3Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("4Droped!") }).catch((err) => { console.log(err) });
+queryInterface.dropTable("yogaStudioBusinesses").then((res) => { console.log("5Droped!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
