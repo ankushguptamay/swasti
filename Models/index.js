@@ -280,22 +280,4 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     type: DataTypes.FLOAT(10, 6)
 // }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("yogaStudioBusinesses", "latitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("yogaStudioBusinesses", "longitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("yogaStudioBusinesses", "isPublish", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
-
-// queryInterface.dropTable("ySBusinessHistories").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("6Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("7Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySContactHistorys").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("ySTimehistorys").then((res) => { console.log("3Droped!") }).catch((err) => { console.log(err) });
-// queryInterface.dropTable("yogaStudioImages").then((res) => { console.log("4Droped!") }).catch((err) => { console.log(err) });
-
 module.exports = db;
