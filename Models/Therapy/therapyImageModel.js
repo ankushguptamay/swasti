@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const TherayImages = sequelize.define("therapyImages", {
+    const TherapyImages = sequelize.define("therapyImages", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         paranoid: true
     })
-    return TherayImages;
+    return TherapyImages;
 }
 
 // ForiegnKey

@@ -18,13 +18,13 @@ const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, a
 const { getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { createNotificationForInstructor, getMyNotificationForInstructor, getNotificationForInstructor } = require('../Controller/createNotificationCont');
 const { getPaymentDetailsForInstructor } = require('../Controller/User/Student/purchaseCourseController');
-const { createYogaStudioBusiness, getMyYogaStudio, getYogaStudioByIdInstructor, updateYogaStudioBusinessForInstructor, softDeleteYogaStudioBusiness } = require('../Controller/YogaStudio/businessController');
-const { createYogaStudioContact, updateYogaStudioContactForInstructor, softDeleteYogaStudioContact } = require('../Controller/YogaStudio/contactController');
-const { createYogaStudioImage, softDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
-const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
+const { createYogaStudioBusiness, createYogaStudioContact, createYogaStudioImage, createYogaStudioTiming } = require('../Controller/YogaStudio/createBusinessController');
+const { getMyYogaStudioForInstructor, getYogaStudioById } = require('../Controller/YogaStudio/getBusinessController');
+const { submitYSContactForApproval, submitYSImageForApproval, submitYSTimeForApproval, submitYogaStudioForApproval, publishYogaStudio } = require('../Controller/YogaStudio/approveBusinessController');
+// const { createYogaStudioTiming, updateYogaStudioTimeForInstructor, softDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
 const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote, addHTutorImage } = require('../Controller/HomeTutor/createHomeTutorController');
-const { getMyHomeTutorForInstructor, getMyHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getMyHomeTutorForInstructor, getHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
 const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
@@ -151,17 +151,24 @@ instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructo
 instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImage.array('studioImages', 10), createYogaStudioImage);
 instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioTiming);
 
-instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorProfileComplete, getMyYogaStudio);
-instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorProfileComplete, getYogaStudioByIdInstructor);
+instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorProfileComplete, getMyYogaStudioForInstructor);
+instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorProfileComplete, getYogaStudioById);
 
-instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioContactForInstructor);
-instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioBusinessForInstructor);
-instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioTimeForInstructor);
+instructor.put("/submitYogaStudio/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYogaStudioForApproval);
+instructor.put("/submitYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSContactForApproval);
+instructor.put("/submitYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSImageForApproval);
+instructor.put("/submitYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSTimeForApproval);
 
-instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioBusiness);
-instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioContact);
-instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioImage);
-instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioTime);
+instructor.put("/publishYogaStudio/:id", verifyInstructorJWT, isInstructorProfileComplete, publishYogaStudio);
+
+// instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioContactForInstructor);
+// instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioBusinessForInstructor);
+// instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioTimeForInstructor);
+
+// instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioBusiness);
+// instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioContact);
+// instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioImage);
+// instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioTime);
 
 // Home Tutor
 instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorForHomeTutor, createHomeTutor);
@@ -170,7 +177,7 @@ instructor.post("/addHTutorTimeSlote/:id", verifyInstructorJWT, isInstructorForH
 instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorForHomeTutor, uploadImage.array('hTutorImages', 3), addHTutorImage);
 
 instructor.get("/homeTutors", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorForInstructor);
-instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorById);
+instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHomeTutorById);
 
 instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, submitHomeTutorForApproval);
 instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, publishHomeTutor);

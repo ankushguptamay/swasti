@@ -29,15 +29,6 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             }
         },
-        creater: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Admin', 'Instructor']]
-            }
-        },
-        createrId: {
-            type: DataTypes.STRING
-        },
         anyUpdateRequest: {
             type: DataTypes.BOOLEAN,
             defaultValue: true

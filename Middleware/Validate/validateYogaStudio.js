@@ -9,7 +9,9 @@ exports.createBusiness = (data) => {
         area: joi.string().required(),
         landmark: joi.string().optional(),
         city: joi.string().required(),
-        state: joi.string().required()
+        state: joi.string().required(),
+        latitude: joi.string().required(),
+        longitude: joi.string().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }

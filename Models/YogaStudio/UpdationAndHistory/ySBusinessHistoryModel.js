@@ -29,29 +29,24 @@ module.exports = (sequelize, DataTypes) => {
         state: {
             type: DataTypes.STRING
         },
+        latitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
+        longitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
         updationStatus: {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             }
         },
-        deletedThrough: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Admin', 'Student', 'ByUpdation']]
-            }
-        },
-        creater: {
+        updatedBy: {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Admin', 'Instructor']]
             }
-        },
-        createrId: {
-            type: DataTypes.STRING
         }
-    }, {
-        paranoid: true
     })
     return YSBusinessHistory;
 }

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const YogaStudioContact = sequelize.define("yogaStudioContacts", {
+    const YSContactHistory = sequelize.define("ySContactHistorys", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -23,24 +23,18 @@ module.exports = (sequelize, DataTypes) => {
         email: {
             type: DataTypes.JSON
         },
-        deletedThrough: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Admin', 'Instructor', 'ByUpdation']]
-            }
-        },
-        approvalStatusByAdmin: {
+        updationStatus: {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             }
         },
-        anyUpdateRequest: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true
+        updatedBy: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor']]
+            }
         }
-    }, {
-        paranoid: true
     })
-    return YogaStudioContact;
+    return YSContactHistory;
 }

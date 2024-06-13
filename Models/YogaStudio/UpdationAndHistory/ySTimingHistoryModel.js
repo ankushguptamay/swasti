@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const YogaStudioTime = sequelize.define("yogaStudioTimes", {
+    const YSTimeHistory = sequelize.define("ySTimehistorys", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -39,24 +39,18 @@ module.exports = (sequelize, DataTypes) => {
         closeAt: {
             type: DataTypes.STRING
         },
-        deletedThrough: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Admin', 'Instructor', 'ByUpdation']]
-            }
-        },
-        approvalStatusByAdmin: {
+        updationStatus: {
             type: DataTypes.STRING,
             validate: {
                 isIn: [['Pending', 'Approved', 'Rejected']]
             }
         },
-        anyUpdateRequest: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true
+        updatedBy: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Admin', 'Instructor']]
+            }
         }
-    }, {
-        paranoid: true
     })
-    return YogaStudioTime;
+    return YSTimeHistory;
 }

@@ -6,8 +6,9 @@ const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating
 const { giveCourseReview, getCourseAverageRating, getCourseReview, deleteCourseReview } = require('../Controller/Review/courseReviewController');
 const { applyCouponToCourse } = require('../Controller/Master/couponController');
 const { createOrder, verifyPayment, createOrderYogaVolunteerCourse } = require('../Controller/User/Student/purchaseCourseController');
-const { getYogaStudioByIdUser, getYogaStudioForUser } = require('../Controller/YogaStudio/businessController');
-const { getHomeTutorForUser, getMyHomeTutorByIdForUser, getNearestHomeTutorForUser, getTimeSloteForUser } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getYogaStudioByIdUser, getYogaStudioForUser } = require('../Controller/YogaStudio/getBusinessController');
+const { getHomeTutorForUser, getHomeTutorByIdForUser, getNearestHomeTutorForUser, getHTTimeSloteForUser } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getTherapistByIdForUser, getTherapyForUser, getNearestTherapyForUser, getTherapyTimeSloteForUser } = require('../Controller/Therapy/getTherapyController');
 const student = express.Router();
 
 // middleware
@@ -57,8 +58,14 @@ student.get("/yogaStudios/:id", verifyStudentJWT, isStudentPresent, getYogaStudi
 
 // Home Tutor
 student.get("/homeTutors", verifyStudentJWT, isStudentPresent, getHomeTutorForUser);
-student.get("/homeTutors/:id", verifyStudentJWT, isStudentPresent, getMyHomeTutorByIdForUser);
+student.get("/homeTutors/:id", verifyStudentJWT, isStudentPresent, getHomeTutorByIdForUser);
 student.get("/nearestHomeTutors", verifyStudentJWT, isStudentPresent, getNearestHomeTutorForUser);
-student.get("/getTimeSlote/:id", verifyStudentJWT, isStudentPresent, getTimeSloteForUser);
+student.get("/getTimeSlote/:id", verifyStudentJWT, isStudentPresent, getHTTimeSloteForUser);
+
+// Therapy
+student.get("/thrapies", verifyStudentJWT, isStudentPresent, getTherapyForUser);
+student.get("/thrapies/:id", verifyStudentJWT, isStudentPresent, getTherapistByIdForUser);
+student.get("/nearestTherapies", verifyStudentJWT, isStudentPresent, getNearestTherapyForUser);
+student.get("/getTimeSlote/:id", verifyStudentJWT, isStudentPresent, getTherapyTimeSloteForUser);
 
 module.exports = student;

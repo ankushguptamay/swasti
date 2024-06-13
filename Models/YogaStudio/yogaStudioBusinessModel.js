@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
         area: {
             type: DataTypes.STRING
         },
+        latitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
+        longitude: {
+            type: DataTypes.FLOAT(10, 6)
+        },
         landmark: {
             type: DataTypes.STRING
         },
@@ -41,14 +47,9 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Admin', 'Instructor', 'ByUpdation']]
             }
         },
-        creater: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Admin', 'Instructor']]
-            }
-        },
-        createrId: {
-            type: DataTypes.STRING
+        isPublish: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         },
         anyUpdateRequest: {
             type: DataTypes.BOOLEAN,

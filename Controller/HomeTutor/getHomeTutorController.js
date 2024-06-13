@@ -109,7 +109,7 @@ exports.getHomeTutorForAdmin = async (req, res) => {
 };
 
 // Admin and Instructor all not deleted
-exports.getMyHomeTutorById = async (req, res) => {
+exports.getHomeTutorById = async (req, res) => {
     try {
         const homeTutor = await HomeTutor.findOne({
             where: {
@@ -155,7 +155,7 @@ exports.getMyHomeTutorById = async (req, res) => {
     }
 };
 
-exports.getMyHTutorUpdationRequestById = async (req, res) => {
+exports.getHTutorUpdationRequestById = async (req, res) => {
     try {
         const homeTutorHistory = await HomeTutorHistory.findAll({
             where: {
@@ -291,7 +291,7 @@ exports.getNearestHomeTutorForUser = async (req, res) => {
     }
 };
 
-exports.getMyHomeTutorByIdForUser = async (req, res) => {
+exports.getHomeTutorByIdForUser = async (req, res) => {
     try {
         const date = JSON.stringify(new Date());
         const todayDate = date.slice(1, 11);
@@ -341,7 +341,7 @@ exports.getMyHomeTutorByIdForUser = async (req, res) => {
     }
 };
 
-exports.getTimeSloteForUser = async (req, res) => {
+exports.getHTTimeSloteForUser = async (req, res) => {
     try {
         const { date } = req.query;
         // 3 days validity

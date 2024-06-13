@@ -55,6 +55,8 @@ db.yogaStudioContact = require('./YogaStudio/yogaStudioContactModel.js')(sequeli
 db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, Sequelize);
 db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
 db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
+db.ySContactHistory = require('./YogaStudio/UpdationAndHistory/ySContactHistoryModel.js')(sequelize, Sequelize);
+db.ySTimingHistory = require('./YogaStudio/UpdationAndHistory/ySTimingHistoryModel.js')(sequelize, Sequelize);
 
 //Home Tutor
 db.homeTutor = require('./HomeTutor/homeTutorModel.js')(sequelize, Sequelize);
@@ -135,11 +137,17 @@ db.course.hasMany(db.courseReview, { foreignKey: 'courseId', as: 'review' });
 db.student.hasMany(db.courseReview, { foreignKey: 'reviewerId', as: 'review' });
 
 // YogaStudio
+db.instructor.hasMany(db.yogaStudioBusiness, { foreignKey: 'instructorId', as: 'yogaStudioBusiness' });
+db.instructor.hasMany(db.yogaStudioContact, { foreignKey: 'instructorId', as: 'yogaStudioContacts' });
+db.instructor.hasMany(db.yogaStudioTiming, { foreignKey: 'instructorId', as: 'yogaStudioTimings' });
+db.instructor.hasMany(db.yogaStudioImage, { foreignKey: 'instructorId', as: 'yogaStudioImages' });
 db.yogaStudioBusiness.hasOne(db.yogaStudioContact, { foreignKey: 'businessId', as: 'contacts' });
 db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', as: 'timings' });
 db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
 
 db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
+db.yogaStudioContact.hasOne(db.ySContactHistory, { foreignKey: 'ySContactId', as: 'contactHistory' });
+db.yogaStudioTiming.hasOne(db.ySContactHistory, { foreignKey: 'ySTimeId', as: 'timeHistory' });
 
 // Home Tutor
 db.instructor.hasMany(db.homeTutor, { foreignKey: 'instructorId', as: 'homeTutors' });
@@ -153,7 +161,7 @@ db.hTTimeSlote.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTut
 db.homeTutor.hasMany(db.hTImage, { foreignKey: 'homeTutorId', as: 'images' });
 db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
 
-db.homeTutor.hasOne(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
+db.homeTutor.hasMany(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
 
 // Therapy
 db.instructor.hasMany(db.therapy, { foreignKey: 'instructorId', as: 'therapies' });
@@ -170,7 +178,7 @@ db.therapyImage.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies'
 db.therapy.hasMany(db.therapyOffered, { foreignKey: 'therapyId', as: 'therapyTypeOffered' });
 db.therapyOffered.belongsTo(db.therapy, { foreignKey: 'therapyId', as: 'therapies' });
 
-db.therapy.hasOne(db.therapyHistory, { foreignKey: 'therapyId', as: 'therapyHistories' });
+db.therapy.hasMany(db.therapyHistory, { foreignKey: 'therapyId', as: 'therapyHistories' });
 
 // For Location
 db.hTServiceArea.addScope('distance', (latitude, longitude, distance, unit = "km") => {
@@ -209,6 +217,25 @@ db.therapyServiceArea.addScope('distance', (latitude, longitude, distance, unit 
     }
 });
 
+db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit = "km") => {
+    const constant = unit == "km" ? 6371 : 3959;
+    const haversine = `(
+        ${constant} * acos(
+            cos(radians(${latitude}))
+            * cos(radians(latitude))
+            * cos(radians(longitude) - radians(${longitude}))
+            + sin(radians(${latitude})) * sin(radians(latitude))
+        )
+    )`;
+    return {
+        attributes: [
+            [sequelize.literal(haversine), 'distance'],
+        ],
+        having: sequelize.literal(`distance <= ${distance}`)
+    }
+});
+
+
 // This many to many relation auto deleteing table after create it.......?
 // db.leadProfile.belongsToMany(
 //     db.userInformation, {
@@ -246,17 +273,11 @@ db.therapyServiceArea.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("homeTutorHistories", "homeTutorName", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("homeTutors", "homeTutorName", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("homeTutorHistories", "yogaFor", {
-//     type: DataTypes.JSON
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("homeTutors", "yogaFor", {
-//     type: DataTypes.JSON
-// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructorHistorys", "latitude", {
+    type: DataTypes.FLOAT(10, 6)
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructorHistorys", "longitude", {
+   type: DataTypes.FLOAT(10, 6)
+}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
