@@ -72,6 +72,9 @@ exports.restoreYogaStudioImage = async (req, res) => {
                 message: `Can not restore this image!`
             });
         }
+        if (image.anyUpdateRequest === true) {
+            await YogaStudioBusiness.update({ anyUpdateRequest: true }, { where: { id: image.businessId } });
+        }
         // update image
         await image.update({
             ...image,
@@ -115,6 +118,9 @@ exports.restoreYogaStudioContact = async (req, res) => {
                 message: `Can not restore this contact successfully!`
             });
         }
+        if (contact.anyUpdateRequest === true) {
+            await YogaStudioBusiness.update({ anyUpdateRequest: true }, { where: { id: contact.businessId } });
+        }
         // update contact
         await contact.update({
             ...contact,
@@ -157,6 +163,9 @@ exports.restoreYogaStudioTime = async (req, res) => {
                 success: false,
                 message: `Can not restore this time successfully!`
             });
+        }
+        if (time.anyUpdateRequest === true) {
+            await YogaStudioBusiness.update({ anyUpdateRequest: true }, { where: { id: time.businessId } });
         }
         // update time
         await time.update({

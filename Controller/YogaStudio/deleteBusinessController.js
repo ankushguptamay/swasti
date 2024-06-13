@@ -48,24 +48,6 @@ exports.softDeleteYogaStudioBusiness = async (req, res) => {
         });
         // soft delete business
         await business.destroy();
-        // Any updation
-        const anyContatct = await YogaStudioContact.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyImage = await YogaStudioImage.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyTime = await YogaStudioTime.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: req.params.id, updationStatus: "Pending" } })
-        if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
-            // Update business
-            await business.update({
-                ...business,
-                anyUpdateRequest: true
-            });
-        } else {
-            // Update business
-            await business.update({
-                ...business,
-                anyUpdateRequest: false
-            });
-        }
         // Final Response
         res.status(200).send({
             success: true,
@@ -111,24 +93,6 @@ exports.hardDeleteYogaStudioBusiness = async (req, res) => {
         await YogaStudioImage.destroy({ where: { businessId: req.params.id }, force: true });
         // hard delete business
         await business.destroy({ force: true });
-        // Any updation
-        const anyContatct = await YogaStudioContact.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyImage = await YogaStudioImage.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyTime = await YogaStudioTime.findOne({ where: { businessId: req.params.id, anyUpdateRequest: true, deletedThrough: null } });
-        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: req.params.id, updationStatus: "Pending" } })
-        if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
-            // Update business
-            await business.update({
-                ...business,
-                anyUpdateRequest: true
-            });
-        } else {
-            // Update business
-            await business.update({
-                ...business,
-                anyUpdateRequest: false
-            });
-        }
         // Final Response
         res.status(200).send({
             success: true,
@@ -394,7 +358,7 @@ exports.softDeleteYogaStudioTime = async (req, res) => {
         const anyContatct = await YogaStudioContact.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
         const anyImage = await YogaStudioImage.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
         const anyTime = await YogaStudioTime.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
-        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { time: contact.businessId, updationStatus: "Pending" } })
+        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: time.businessId, updationStatus: "Pending" } })
         if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
             // Update business
             await YogaStudioBusiness.update({
@@ -444,7 +408,7 @@ exports.hardDeleteYogaStudioTime = async (req, res) => {
         const anyContatct = await YogaStudioContact.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
         const anyImage = await YogaStudioImage.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
         const anyTime = await YogaStudioTime.findOne({ where: { businessId: time.businessId, anyUpdateRequest: true, deletedThrough: null } });
-        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { time: contact.businessId, updationStatus: "Pending" } })
+        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: time.businessId, updationStatus: "Pending" } })
         if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
             // Update business
             await YogaStudioBusiness.update({

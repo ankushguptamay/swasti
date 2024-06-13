@@ -7,6 +7,7 @@ const YogaStudioTime = db.yogaStudioTiming;
 const YogaStudioImage = db.yogaStudioImage;
 const YSBusinessHistory = db.ySBusinessHistory;
 const YSContactHistory = db.ySContactHistory;
+const YSTimeHistory = db.ySTimingHistory;
 
 exports.changeYogaStudioBusinessStatus = async (req, res) => {
     try {
@@ -471,6 +472,228 @@ exports.publishYogaStudio = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `yoga studio ${message} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeYSBusinessUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find yoga In Database
+        const history = await YSBusinessHistory.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!history) {
+            return res.status(400).send({
+                success: false,
+                message: "This updation request is not present is not present!"
+            });
+        }
+        const yogaStudio = await YogaStudioBusiness.findOne({
+            where: {
+                id: history.businessId
+            }
+        });
+        if (approvalStatusByAdmin === "Approved") {
+            await yogaStudio.update({
+                ...yogaStudio,
+                latitude: history.latitude,
+                longitude: history.longitude,
+                businessName: history.businessName,
+                block_building: history.block_building,
+                street_colony: history.street_colony,
+                pincode: history.pincode,
+                state: history.state,
+                city: history.city,
+                landmark: history.landmark,
+                area: history.area
+            });
+        }
+        // Update history
+        await history.update({
+            ...history,
+            updationStatus: approvalStatusByAdmin
+        });
+        // Any updation
+        const anyContatct = await YogaStudioContact.findOne({ where: { businessId: history.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyImage = await YogaStudioImage.findOne({ where: { businessId: history.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyTime = await YogaStudioTime.findOne({ where: { businessId: history.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: history.businessId, updationStatus: "Pending" } })
+        if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
+            // Update business
+            await yogaStudio.update({
+                ...yogaStudio,
+                anyUpdateRequest: true
+            });
+        } else {
+            // Update business
+            await yogaStudio.update({
+                ...yogaStudio,
+                anyUpdateRequest: false
+            });
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Request ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeYSTimingUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find yoga In Database
+        const history = await YSTimeHistory.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!history) {
+            return res.status(400).send({
+                success: false,
+                message: "This updation request is not present is not present!"
+            });
+        }
+        const yogaStudioTime = await YogaStudioTime.findOne({
+            where: {
+                id: history.ySTimeId
+            }
+        });
+        if (approvalStatusByAdmin === "Approved") {
+            await yogaStudioTime.update({
+                ...yogaStudioTime,
+                openAt: history.openAt,
+                closeAt: history.closeAt,
+                isFri: history.isFri,
+                isMon: history.isMon,
+                isSat: history.isSat,
+                isSun: history.isSun,
+                isThu: history.isThu,
+                isTue: history.isThu,
+                isTue: history.isTue,
+                isWed: history.isWed,
+                anyUpdateRequest: false
+            });
+        }
+        // Update history
+        await history.update({
+            ...history,
+            updationStatus: approvalStatusByAdmin
+        });
+        // Any updation
+        const anyContatct = await YogaStudioContact.findOne({ where: { businessId: yogaStudioTime.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyImage = await YogaStudioImage.findOne({ where: { businessId: yogaStudioTime.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyTime = await YogaStudioTime.findOne({ where: { businessId: yogaStudioTime.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: yogaStudioTime.businessId, updationStatus: "Pending" } })
+        if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
+            // Update business
+            await YogaStudioBusiness.update({
+                anyUpdateRequest: true
+            }, { where: { id: yogaStudioTime.businessId } });
+        } else {
+            // Update business
+            await YogaStudioBusiness.update({
+                anyUpdateRequest: false
+            }, { where: { id: yogaStudioTime.businessId } });
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Request ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.changeYSContactUpdationStatus = async (req, res) => {
+    try {
+        // Validate Body
+        const { error } = changeQualificationStatus(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { approvalStatusByAdmin } = req.body;
+        // Find Yoga In Database
+        const history = await YSContactHistory.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (!history) {
+            return res.status(400).send({
+                success: false,
+                message: "This updation request is not present is not present!"
+            });
+        }
+        const yogaStudioContact = await YogaStudioContact.findOne({
+            where: {
+                id: history.ySContactId
+            }
+        });
+        if (approvalStatusByAdmin === "Approved") {
+            await yogaStudioContact.update({
+                ...yogaStudioContact,
+                title: history.title,
+                person: history.person,
+                mobileNumber: history.mobileNumber,
+                whatsAppNumber: history.whatsAppNumber,
+                landLineNumber: history.landLineNumber,
+                email: history.email,
+                anyUpdateRequest: false
+            });
+        }
+        // Update history
+        await history.update({
+            ...history,
+            updationStatus: approvalStatusByAdmin
+        });
+        // Any updation
+        const anyContatct = await YogaStudioContact.findOne({ where: { businessId: yogaStudioContact.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyImage = await YogaStudioImage.findOne({ where: { businessId: yogaStudioContact.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyTime = await YogaStudioTime.findOne({ where: { businessId: yogaStudioContact.businessId, anyUpdateRequest: true, deletedThrough: null } });
+        const anyBusinessHistory = await YSBusinessHistory.findOne({ where: { businessId: yogaStudioContact.businessId, updationStatus: "Pending" } })
+        if (anyContatct || anyImage || anyTime || anyBusinessHistory) {
+            // Update business
+            await YogaStudioBusiness.update({
+                anyUpdateRequest: true
+            }, { where: { id: yogaStudioContact.businessId } });
+        } else {
+            // Update business
+            await YogaStudioBusiness.update({
+                anyUpdateRequest: false
+            }, { where: { id: yogaStudioContact.businessId } });
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: `Request ${approvalStatusByAdmin} successfully!`
         });
     } catch (err) {
         res.status(500).send({

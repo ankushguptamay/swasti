@@ -81,10 +81,9 @@ exports.updateYogaStudioBusiness = async (req, res) => {
                 updationStatus: "Pending",
                 businessId: yogaStudio.id
             });
-            // update YogaStudioBusiness anyUpdateRequest
-            await yogaStudio.update({ ...yogaStudio, anyUpdateRequest: true });
         }
-
+        // update YogaStudioBusiness anyUpdateRequest
+        await yogaStudio.update({ ...yogaStudio, anyUpdateRequest: true });
         // Final Response
         res.status(200).send({
             success: true,
@@ -98,7 +97,7 @@ exports.updateYogaStudioBusiness = async (req, res) => {
     }
 };
 
-exports.updateYogaStudioContactForInstructor = async (req, res) => {
+exports.updateYogaStudioContact = async (req, res) => {
     try {
         // Validate Body
         const { error } = createContact(req.body);
@@ -174,7 +173,7 @@ exports.updateYogaStudioContactForInstructor = async (req, res) => {
 };
 
 
-exports.updateYogaStudioTimeForInstructor = async (req, res) => {
+exports.updateYogaStudioTime = async (req, res) => {
     try {
         // Validate Body
         const { error } = createTiming(req.body);

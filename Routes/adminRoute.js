@@ -27,10 +27,12 @@ const { totalCourse, totalDraftedCourse, totalPendingCourse, totalPublishedCours
     totalInstructor, totalPendingInstructor, totalVerifiedInstructor } = require('../Controller/Admin/dashboardController');
 const { getPaymentDetailsForAdmin } = require('../Controller/User/Student/purchaseCourseController');
 const { sendCampaignEmail, addCampaignEmailCredentials } = require('../Controller/campaignEmailController');
-const { getYogaStudioById, getYogaStudioForAdmin } = require('../Controller/YogaStudio/getBusinessController');
-const {changeYogaStudioBusinessStatus,changeYogaStudioContactStatus,changeYogaStudioImageStatus,changeYogaStudioTimeStatus } = require('../Controller/YogaStudio/approveBusinessController');
-// const { createYogaStudioImage, changeYogaStudioImageStatus, restoreYogaStudioImage, softDeleteYogaStudioImage, hardDeleteYogaStudioImage } = require('../Controller/YogaStudio/imageController');
-// const { createYogaStudioTiming, updateYogaStudioTimeForAdmin, changeYogaStudioTimeStatus, restoreYogaStudioTime, softDeleteYogaStudioTime, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/timingController');
+const { getYogaStudioById, getYogaStudioForAdmin, getYSBusinessUpdationHistoryById, getYSContactUpdationHistoryById, getYSTimeUpdationHistoryById } = require('../Controller/YogaStudio/getBusinessController');
+const { changeYogaStudioBusinessStatus, changeYogaStudioContactStatus, changeYogaStudioImageStatus, changeYogaStudioTimeStatus,
+    changeYSBusinessUpdationStatus, changeYSContactUpdationStatus, changeYSTimingUpdationStatus } = require('../Controller/YogaStudio/approveBusinessController');
+const { softDeleteYogaStudioBusiness, softDeleteYogaStudioContact, softDeleteYogaStudioImage, softDeleteYogaStudioTime,
+    hardDeleteYogaStudioBusiness, hardDeleteYogaStudioContact, hardDeleteYogaStudioImage, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/deleteBusinessController');
+const { restoreYogaStudioBusiness, restoreYogaStudioContact, restoreYogaStudioImage, restoreYogaStudioTime } = require('../Controller/YogaStudio/restoreBusinessController');
 const { getHomeTutorForAdmin, getHomeTutorById, getHTutorUpdationRequestById } = require('../Controller/HomeTutor/getHomeTutorController');
 const { changeHomeTutorStatus, changeHTutorUpdationStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
@@ -207,26 +209,33 @@ admin.post("/addCampaignEmailCredentials", addCampaignEmailCredentials);
 // YogaStudio
 admin.get("/yogaStudios", verifyAdminJWT, isAdminPresent, getYogaStudioForAdmin);
 admin.get("/yogaStudios/:id", verifyAdminJWT, isAdminPresent, getYogaStudioById);
+admin.get("/getYSBusinessUpdation/:id", verifyAdminJWT, isAdminPresent, getYSBusinessUpdationHistoryById);
+admin.get("/getYSContactUpdation/:id", verifyAdminJWT, isAdminPresent, getYSContactUpdationHistoryById);
+admin.get("/getYSTimeUpdation/:id", verifyAdminJWT, isAdminPresent, getYSTimeUpdationHistoryById);
 
 admin.put("/changeYogaStudioBusiness/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioBusinessStatus);
 admin.put("/changeYogaStudioContact/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioContactStatus);
 admin.put("/changeYogaStudioImage/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioImageStatus);
 admin.put("/changeYogaStudioTime/:id", verifyAdminJWT, isAdminPresent, changeYogaStudioTimeStatus);
 
-// admin.put("/restoreYSBusiness/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioBusiness);
-// admin.put("/restoreYSContact/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioContact);
-// admin.put("/restoreYSImage/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioImage);
-// admin.put("/restoreYSTime/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioTime);
+admin.put("/changeYSBusinessUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeYSBusinessUpdationStatus);
+admin.put("/changeYSContactUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeYSContactUpdationStatus);
+admin.put("/changeYSTimingUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeYSTimingUpdationStatus);
 
-// admin.delete("/softDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioBusiness);
-// admin.delete("/softDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioContact);
-// admin.delete("/softDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioImage);
-// admin.delete("/softDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioTime);
+admin.put("/restoreYSBusiness/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioBusiness);
+admin.put("/restoreYSContact/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioContact);
+admin.put("/restoreYSImage/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioImage);
+admin.put("/restoreYSTime/:id", verifyAdminJWT, isAdminPresent, restoreYogaStudioTime);
 
-// admin.delete("/hardDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioBusiness);
-// admin.delete("/hardDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioContact);
-// admin.delete("/hardDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioImage);
-// admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioTime);
+admin.delete("/softDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioBusiness);
+admin.delete("/softDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioContact);
+admin.delete("/softDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioImage);
+admin.delete("/softDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, softDeleteYogaStudioTime);
+
+admin.delete("/hardDeleteYSBusiness/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioBusiness);
+admin.delete("/hardDeleteYSContact/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioContact);
+admin.delete("/hardDeleteYSImage/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioImage);
+admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDeleteYogaStudioTime);
 
 // Home Tutor
 admin.get("/homeTutors", verifyAdminJWT, isAdminPresent, getHomeTutorForAdmin);

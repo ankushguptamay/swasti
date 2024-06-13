@@ -5,6 +5,8 @@ const YogaStudioContact = db.yogaStudioContact;
 const YogaStudioTime = db.yogaStudioTiming;
 const YogaStudioImage = db.yogaStudioImage;
 const YSBusinessHistory = db.ySBusinessHistory;
+const YSTimeHistory = db.ySTimingHistory;
+const YSContactHistory = db.ySContactHistory;
 
 // For Instructor
 exports.getMyYogaStudioForInstructor = async (req, res) => {
@@ -271,6 +273,72 @@ exports.getYogaStudioByIdUser = async (req, res) => {
             success: true,
             message: "Fetched successfully!",
             data: yogaStudio
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getYSBusinessUpdationHistoryById = async (req, res) => {
+    try {
+        const yoga = await YSBusinessHistory.findAll({
+            where: {
+                businessId: req.params.id,
+                updationStatus: "Pending"
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Fetched successfully!",
+            data: yoga
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getYSContactUpdationHistoryById = async (req, res) => {
+    try {
+        const yoga = await YSContactHistory.findAll({
+            where: {
+                ySContactId: req.params.id,
+                updationStatus: "Pending"
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Fetched successfully!",
+            data: yoga
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getYSTimeUpdationHistoryById = async (req, res) => {
+    try {
+        const yoga = await YSTimeHistory.findAll({
+            where: {
+                ySTimeId: req.params.id,
+                updationStatus: "Pending"
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Fetched successfully!",
+            data: yoga
         });
     } catch (err) {
         res.status(500).send({
