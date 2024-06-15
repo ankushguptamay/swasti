@@ -24,50 +24,39 @@ exports.createHomeTutor = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { serviceOffered, language, yogaFor, homeTutorName, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
+        const { isPrivateSO, isGroupSO, language, yogaFor, homeTutorName, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
         // Validate price with there offer
-        if (serviceOffered.length === 1) {
-            if (serviceOffered[0] === "Group Class") {
-                if (groupSessionPrice_Day && groupSessionPrice_Month) {
-                } else {
-                    return res.status(400).send({
-                        success: false,
-                        message: "Please enter required group class price!"
-                    });
-                }
-            } else if (serviceOffered[0] === "Individual Class") {
-                if (privateSessionPrice_Day && privateSessionPrice_Month) {
-                } else {
-                    return res.status(400).send({
-                        success: false,
-                        message: "Please enter required individual class price!"
-                    });
-                }
+        if (isPrivateSO === true) {
+            if (groupSessionPrice_Day && groupSessionPrice_Month) {
             } else {
                 return res.status(400).send({
                     success: false,
-                    message: "This service offered is not valid!"
+                    message: "Please enter required group class price!"
                 });
             }
-        } else if (serviceOffered.length === 2) {
-            if (groupSessionPrice_Day && groupSessionPrice_Month && privateSessionPrice_Day && privateSessionPrice_Month) {
+        }
+        if (isGroupSO === true) {
+            if (privateSessionPrice_Day && privateSessionPrice_Month) {
             } else {
                 return res.status(400).send({
                     success: false,
-                    message: "Please enter required price!"
+                    message: "Please enter required individual class price!"
                 });
             }
-        } else {
+        }
+        if (!isPrivateSO && !isGroupSO) {
             return res.status(400).send({
                 success: false,
-                message: "Please select required service offered!"
+                message: "Please select atleast one service offered!"
             });
         }
+
         // Store in database
         const homeTutor = await HomeTutor.create({
             yogaFor: yogaFor,
             homeTutorName: homeTutorName,
-            serviceOffered: serviceOffered,
+            isPrivateSO: isPrivateSO,
+            isGroupSO: isGroupSO,
             language: language,
             privateSessionPrice_Day: privateSessionPrice_Day,
             privateSessionPrice_Month: privateSessionPrice_Month,
@@ -82,7 +71,8 @@ exports.createHomeTutor = async (req, res) => {
         await HomeTutorHistory.create({
             yogaFor: yogaFor,
             homeTutorName: homeTutorName,
-            serviceOffered: serviceOffered,
+            isPrivateSO: isPrivateSO,
+            isGroupSO: isGroupSO,
             language: language,
             privateSessionPrice_Day: privateSessionPrice_Day,
             privateSessionPrice_Month: privateSessionPrice_Month,

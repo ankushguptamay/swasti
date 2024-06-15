@@ -8,8 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         homeTutorName: {
             type: DataTypes.STRING
         },
-        serviceOffered: {
-            type: DataTypes.JSON
+        isGroupSO: {
+            type: DataTypes.BOOLEAN
+        },
+        isPrivateSO: {
+            type: DataTypes.BOOLEAN
         },
         yogaFor: {
             type: DataTypes.JSON // Children, parents

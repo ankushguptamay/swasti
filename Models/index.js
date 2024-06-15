@@ -284,4 +284,23 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //             defaultValue: false
 // }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
+queryInterface.addColumn("homeTutors", "isGroupSO", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("homeTutors", "isPrivateSO", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("homeTutorHistories", "isGroupSO", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("homeTutorHistories", "isPrivateSO", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("4Added!") }).catch((err) => { console.log(err) });
+// queryInterface.removeColumn("homeTutorHistories", "serviceOffered").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
+// queryInterface.removeColumn("instructors", "serviceOffered").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
+
 module.exports = db;

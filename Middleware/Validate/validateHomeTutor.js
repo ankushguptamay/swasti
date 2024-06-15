@@ -5,7 +5,8 @@ exports.homeTutorValidation = (data) => {
     const schema = joi.object().keys({
         yogaFor: joi.array().required(),
         homeTutorName: joi.string().required(),
-        serviceOffered: joi.array().required(),
+        isPrivateSO: joi.boolean().required(),
+        isGroupSO: joi.boolean().required(),
         language: joi.array().required(),
         privateSessionPrice_Day: joi.string().optional(),
         privateSessionPrice_Month: joi.string().optional(),
