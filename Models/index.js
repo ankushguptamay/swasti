@@ -54,6 +54,7 @@ db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(seque
 db.yogaStudioContact = require('./YogaStudio/yogaStudioContactModel.js')(sequelize, Sequelize);
 db.yogaStudioImage = require('./YogaStudio/yogaStudioImageModel.js')(sequelize, Sequelize);
 db.yogaStudioTiming = require('./YogaStudio/yogaStudioTimingModel.js')(sequelize, Sequelize);
+db.ysReview = require('./YogaStudio/yogaStudioReviewModel.js')(sequelize, Sequelize);
 db.ySBusinessHistory = require('./YogaStudio/UpdationAndHistory/ySBusinessHistoryModel.js')(sequelize, Sequelize);
 db.ySContactHistory = require('./YogaStudio/UpdationAndHistory/ySContactHistoryModel.js')(sequelize, Sequelize);
 db.ySTimingHistory = require('./YogaStudio/UpdationAndHistory/ySTimingHistoryModel.js')(sequelize, Sequelize);
@@ -144,6 +145,7 @@ db.instructor.hasMany(db.yogaStudioImage, { foreignKey: 'instructorId', as: 'yog
 db.yogaStudioBusiness.hasOne(db.yogaStudioContact, { foreignKey: 'businessId', as: 'contacts' });
 db.yogaStudioBusiness.hasMany(db.yogaStudioTiming, { foreignKey: 'businessId', as: 'timings' });
 db.yogaStudioBusiness.hasMany(db.yogaStudioImage, { foreignKey: 'businessId', as: 'images' });
+db.yogaStudioBusiness.hasMany(db.ysReview, { foreignKey: 'businessId', as: 'reviews' });
 
 db.yogaStudioBusiness.hasOne(db.ySBusinessHistory, { foreignKey: 'businessId', as: 'businessHistory' });
 db.yogaStudioContact.hasOne(db.ySContactHistory, { foreignKey: 'ySContactId', as: 'contactHistory' });

@@ -31,6 +31,7 @@ const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTime
 const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
 const { createTherapy, addTherapyImage, addTherapySeviceArea, addTherapyTimeSlote, addTherapyTypeOffered } = require('../Controller/Therapy/createTherapyController');
 const { getMyTherapyForInstructor, getTherapyById } = require('../Controller/Therapy/getTherapyController');
+const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
 const instructor = express.Router();
 
 // middleware
@@ -130,6 +131,13 @@ instructor.delete("/deleteInstructorReview/:id", verifyInstructorJWT, isInstruct
 instructor.get("/getCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, getCourseReview); // id = courseId
 instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorForCourse, getCourseAverageRating); // id = courseId
 // instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, deleteCourseReview); //id = review Id
+
+// 3. Yoga Studio Review
+instructor.get("/getYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, getYSReview); //id = businessId
+instructor.get("/getYSAverageRating/:id", verifyInstructorJWT, isInstructorProfileComplete, getYSAverageRating);//id = businessId
+instructor.post("/giveYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, giveYSReview);//id = businessId
+instructor.delete("/deleteYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYSReview); //id = review Id
+instructor.delete("/updateYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYSReview); //id = review Id
 
 // Dashboard
 instructor.get("/totalCourse", verifyInstructorJWT, isInstructorProfileComplete, totalCourse);
