@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         isBooked: {
-            type: DataTypes.STRING,
+            type: DataTypes.BOOLEAN,
             defaultValue: false
         },
         password: {

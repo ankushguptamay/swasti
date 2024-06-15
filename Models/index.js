@@ -299,8 +299,17 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 // queryInterface.addColumn("homeTutorHistories", "isPrivateSO", {
 //     type: DataTypes.BOOLEAN,
 //     defaultValue: false
-// }).then((res) => { console.log("4Added!") }).catch((err) => { console.log(err) });
+// // }).then((res) => { console.log("4Added!") }).catch((err) => { console.log(err) });
 queryInterface.removeColumn("homeTutorHistories", "serviceOffered").then((res) => { console.log("1Droped!") }).catch((err) => { console.log(err) });
 queryInterface.removeColumn("instructors", "serviceOffered").then((res) => { console.log("2Droped!") }).catch((err) => { console.log(err) });
+
+queryInterface.changeColumn("therapyTimeSlots", "isBooked", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("1Changed!") }).catch((err) => { console.log(err) });
+queryInterface.changeColumn("hTTimeSlots", "isBooked", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("2Changed!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

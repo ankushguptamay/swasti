@@ -12,8 +12,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         isBooked: {
-            type: DataTypes.STRING,
+            type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        serviceType: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: [['Group', 'Private']]
+            },
+            defaultValue: "Private"
+        },
+        noOfPeople: {
+            type: DataTypes.INTEGER,
+            defaultValue: 1
         },
         password: {
             type: DataTypes.INTEGER,
