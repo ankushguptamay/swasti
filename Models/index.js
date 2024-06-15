@@ -275,11 +275,13 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructorHistorys", "latitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
-// queryInterface.addColumn("instructorHistorys", "longitude", {
-//     type: DataTypes.FLOAT(10, 6)
-// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructors", "ownYogaStudio", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("instructors", "yogaStudioTermAccepted", {
+    type: DataTypes.BOOLEAN,
+            defaultValue: false
+}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

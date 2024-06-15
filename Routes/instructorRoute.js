@@ -36,7 +36,7 @@ const instructor = express.Router();
 
 // middleware
 const { verifyInstructorJWT } = require('../Middleware/verifyJWTToken');
-const { isInstructorForCourse, isInstructorProfileComplete, isInstructorForHomeTutor, isInstructorForTherapist } = require('../Middleware/isPresent');
+const { isInstructorForCourse, isInstructorProfileComplete, isInstructorForHomeTutor, isInstructorForTherapist, isInstructorForYogaStudio } = require('../Middleware/isPresent');
 const uploadImage = require('../Middleware/uploadFile/image');
 const uploadImageAndPDF = require('../Middleware/uploadFile/imageAndPDF');
 const uploadPDF = require('../Middleware/uploadFile/pdf');
@@ -133,11 +133,11 @@ instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorF
 // instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, deleteCourseReview); //id = review Id
 
 // 3. Yoga Studio Review
-instructor.get("/getYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, getYSReview); //id = businessId
-instructor.get("/getYSAverageRating/:id", verifyInstructorJWT, isInstructorProfileComplete, getYSAverageRating);//id = businessId
-instructor.post("/giveYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, giveYSReview);//id = businessId
-instructor.delete("/deleteYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYSReview); //id = review Id
-instructor.delete("/updateYSReview/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYSReview); //id = review Id
+instructor.get("/getYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSReview); //id = businessId
+instructor.get("/getYSAverageRating/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSAverageRating);//id = businessId
+instructor.post("/giveYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, giveYSReview);//id = businessId
+instructor.delete("/deleteYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYSReview); //id = review Id
+instructor.delete("/updateYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, updateYSReview); //id = review Id
 
 // Dashboard
 instructor.get("/totalCourse", verifyInstructorJWT, isInstructorProfileComplete, totalCourse);
@@ -155,29 +155,29 @@ instructor.get("/notifications", verifyInstructorJWT, isInstructorProfileComplet
 instructor.get("/paymentDetails", verifyInstructorJWT, isInstructorProfileComplete, getPaymentDetailsForInstructor);
 
 // YogaStudio
-instructor.post("/createYogaStudioBusiness", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioBusiness);
-instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioContact);
-instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorProfileComplete, uploadImage.array('studioImages', 10), createYogaStudioImage);
-instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorProfileComplete, createYogaStudioTiming);
+instructor.post("/createYogaStudioBusiness", verifyInstructorJWT, isInstructorForYogaStudio, createYogaStudioBusiness);
+instructor.post("/createYogaStudioContact/:id", verifyInstructorJWT, isInstructorForYogaStudio, createYogaStudioContact);
+instructor.post("/createYogaStudioImage/:id", verifyInstructorJWT, isInstructorForYogaStudio, uploadImage.array('studioImages', 10), createYogaStudioImage);
+instructor.post("/createYogaStudioTiming/:id", verifyInstructorJWT, isInstructorForYogaStudio, createYogaStudioTiming);
 
-instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorProfileComplete, getMyYogaStudioForInstructor);
-instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorProfileComplete, getYogaStudioById);
+instructor.get("/myYogaStudios", verifyInstructorJWT, isInstructorForYogaStudio, getMyYogaStudioForInstructor);
+instructor.get("/yogaStudios/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYogaStudioById);
 
-instructor.put("/submitYogaStudio/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYogaStudioForApproval);
-instructor.put("/submitYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSContactForApproval);
-instructor.put("/submitYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSImageForApproval);
-instructor.put("/submitYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, submitYSTimeForApproval);
+instructor.put("/submitYogaStudio/:id", verifyInstructorJWT, isInstructorForYogaStudio, submitYogaStudioForApproval);
+instructor.put("/submitYSContact/:id", verifyInstructorJWT, isInstructorForYogaStudio, submitYSContactForApproval);
+instructor.put("/submitYSImage/:id", verifyInstructorJWT, isInstructorForYogaStudio, submitYSImageForApproval);
+instructor.put("/submitYSTime/:id", verifyInstructorJWT, isInstructorForYogaStudio, submitYSTimeForApproval);
 
-instructor.put("/publishYogaStudio/:id", verifyInstructorJWT, isInstructorProfileComplete, publishYogaStudio);
+instructor.put("/publishYogaStudio/:id", verifyInstructorJWT, isInstructorForYogaStudio, publishYogaStudio);
 
-instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioBusiness);
-instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioContact);
-instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorProfileComplete, updateYogaStudioTime);
+instructor.put("/updateYogaStudioBusiness/:id", verifyInstructorJWT, isInstructorForYogaStudio, updateYogaStudioBusiness);
+instructor.put("/updateYogaStudioContact/:id", verifyInstructorJWT, isInstructorForYogaStudio, updateYogaStudioContact);
+instructor.put("/updateYogaStudioTime/:id", verifyInstructorJWT, isInstructorForYogaStudio, updateYogaStudioTime);
 
-instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioBusiness);
-instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioContact);
-instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioImage);
-instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorProfileComplete, softDeleteYogaStudioTime);
+instructor.delete("/deleteYSBusiness/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYogaStudioBusiness);
+instructor.delete("/deleteYSContact/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYogaStudioContact);
+instructor.delete("/deleteYSImage/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYogaStudioImage);
+instructor.delete("/deleteYSTime/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYogaStudioTime);
 
 // Home Tutor
 instructor.post("/createHomeTutor", verifyInstructorJWT, isInstructorForHomeTutor, createHomeTutor);

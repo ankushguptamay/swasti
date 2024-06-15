@@ -111,6 +111,14 @@ module.exports = (sequelize, DataTypes) => {
         instructorTermAccepted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        ownYogaStudio: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        yogaStudioTermAccepted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         paranoid: true
