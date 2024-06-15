@@ -5,7 +5,7 @@ const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
-const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm, therapistTerm } = require("../../../Middleware/Validate/validateInstructor");
+const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm, therapistTerm, yogaStudioTerm } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -1105,6 +1105,47 @@ exports.therapistTerm = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Therapist term accepted successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.yogaStudioTerm = async (req, res) => {
+    try {
+        // Validate body
+        const { error } = yogaStudioTerm(req.body);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { ownYogaStudio, yogaStudioTermAccepted } = req.body;
+        // Check perticular instructor present in database
+        const instructor = await Instructor.findOne({
+            where: {
+                [Op.and]: [
+                    { id: req.instructor.id }, { email: req.instructor.email }, { phoneNumber: req.instructor.phoneNumber }
+                ]
+            }
+        });
+        if (!instructor) {
+            return res.status(400).send({
+                success: false,
+                message: "Instructor is not present!"
+            });
+        }
+        // Update 
+        await instructor.update({
+            ...instructor,
+            yogaStudioTermAccepted: yogaStudioTermAccepted,
+            ownYogaStudio: ownYogaStudio
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Yoga studio term accepted successfully!`
         });
     } catch (err) {
         res.status(500).send({

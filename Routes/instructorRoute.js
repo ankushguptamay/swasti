@@ -1,6 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm,
-    therapistTerm, homeTutorTerm } = require('../Controller/User/Instructor/instructorController');
+    therapistTerm, homeTutorTerm, yogaStudioTerm } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -55,6 +55,7 @@ instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("pro
 instructor.put("/instructorTerm", verifyInstructorJWT, instructorTerm);
 instructor.put("/therapistTerm", verifyInstructorJWT, therapistTerm);
 instructor.put("/homeTutorTerm", verifyInstructorJWT, homeTutorTerm);
+instructor.put("/yogaStudioTerm", verifyInstructorJWT, yogaStudioTerm);
 
 // Qualification
 instructor.get("/qualification/:id", verifyInstructorJWT, isInstructorProfileComplete, getQualificationById);

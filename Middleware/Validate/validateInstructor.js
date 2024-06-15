@@ -130,3 +130,11 @@ exports.instructorTerm = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.yogaStudioTerm = (data) => {
+    const schema = joi.object().keys({
+        ownYogaStudio: joi.boolean().required(),
+        yogaStudioTermAccepted: joi.boolean().required()
+    });
+    return schema.validate(data);
+}
