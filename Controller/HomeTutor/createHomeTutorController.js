@@ -149,7 +149,7 @@ exports.addHTutorTimeSlote = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { date, time } = req.body;
+        const { slotes, date } = req.body;
         const homeTutorId = req.params.id;
         // 3 days validity
         const date1 = JSON.stringify(new Date());
@@ -176,16 +176,31 @@ exports.addHTutorTimeSlote = async (req, res) => {
             });
         }
         // Store in database
-        for (let i = 0; i < time.length; i++) {
+        for (let i = 0; i < slotes.length; i++) {
             const otp = generateOTP.generateFixedLengthRandomNumber(process.env.OTP_DIGITS_LENGTH);
-            await HTTimeSlot.create({
-                date: date,
-                password: otp,
-                time: time[i],
-                isBooked: false,
-                appointmentStatus: "Active",
-                homeTutorId: homeTutorId
-            });
+            if (slotes[i].serviceType === "Private") {
+                await HTTimeSlot.create({
+                    date: date,
+                    password: otp,
+                    serviceType: slotes[i].serviceType,
+                    noOfPeople: 1,
+                    time: slotes[i].time,
+                    isBooked: false,
+                    appointmentStatus: "Active",
+                    homeTutorId: homeTutorId
+                });
+            } else if (slotes[i].serviceType === "Group") {
+                await HTTimeSlot.create({
+                    date: date,
+                    password: otp,
+                    serviceType: slotes[i].serviceType,
+                    noOfPeople: slotes[i].noOfPeople,
+                    time: slotes[i].time,
+                    isBooked: false,
+                    appointmentStatus: "Active",
+                    homeTutorId: homeTutorId
+                });
+            }
         }
         // Final Response
         res.status(200).send({

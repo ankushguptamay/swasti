@@ -32,7 +32,7 @@ exports.hTutorLocationValidation = (data) => {
 exports.hTutorTimeSloteValidation = (data) => {
     const schema = joi.object().keys({
         date: joi.string().required(),
-        time: joi.array().required()
+        slotes: joi.array().required()
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
