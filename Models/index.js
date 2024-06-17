@@ -33,6 +33,7 @@ db.courseHistory = require('./Course/CourseHistory/courseHistoryModel.js')(seque
 
 // Master
 db.coupon = require('./Master/couponModel.js')(sequelize, Sequelize);
+db.adminBanner = require('./Master/bannerModel.js')(sequelize, Sequelize);
 db.courseCategory = require('./Master/courseCategoryModel.js')(sequelize, Sequelize);
 db.courseDuration = require('./Master/courseDurationModel.js')(sequelize, Sequelize);
 db.courseDurationType = require('./Master/courseDurationTypeModel.js')(sequelize, Sequelize);
@@ -65,6 +66,7 @@ db.hTServiceArea = require('./HomeTutor/hTServiceAreaModel.js')(sequelize, Seque
 db.hTTimeSlote = require('./HomeTutor/hTTimeSloteModel.js')(sequelize, Sequelize);
 db.hTImage = require('./HomeTutor/hTImageModel.js')(sequelize, Sequelize);
 db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
+db.hTBooking = require('./HomeTutor/hTBookingModel.js')(sequelize, Sequelize);
 
 //Therapy
 db.therapy = require('./Therapy/therapyModel.js')(sequelize, Sequelize);

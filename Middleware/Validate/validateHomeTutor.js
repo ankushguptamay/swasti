@@ -36,3 +36,14 @@ exports.hTutorTimeSloteValidation = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.bookHTValidation = (data) => {
+    const schema = joi.object().keys({
+        amount: joi.string().required(),
+        currency: joi.string().required(),
+        receipt: joi.string().required(),
+        couponCode: joi.string().optional(),
+        timeSloteId: joi.string().required()
+    });
+    return schema.validate(data);
+}

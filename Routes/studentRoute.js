@@ -10,6 +10,8 @@ const { getYogaStudioByIdUser, getYogaStudioForUser } = require('../Controller/Y
 const { getHomeTutorForUser, getHomeTutorByIdForUser, getNearestHomeTutorForUser, getHTTimeSloteForUser } = require('../Controller/HomeTutor/getHomeTutorController');
 const { getTherapistByIdForUser, getTherapyForUser, getNearestTherapyForUser, getTherapyTimeSloteForUser } = require('../Controller/Therapy/getTherapyController');
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
+const { createHTOrder, verifyHTPayment } = require('../Controller/HomeTutor/hTBookingController');
+const { getAdminBanner } = require('../Controller/Admin/bannerController');
 const student = express.Router();
 
 // middleware
@@ -57,6 +59,9 @@ student.put("/updateYSReview/:id", verifyStudentJWT, isStudentPresent, updateYSR
 // Coupon
 student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCouponToCourse);
 
+// Master
+student.get("/adminBanners", verifyStudentJWT, isStudentPresent, getAdminBanner);
+
 // Order/Payment
 student.post("/createOrder", verifyStudentJWT, isStudentPresent, createOrder);
 student.post("/createOrderYogaVolunteerCourse", verifyStudentJWT, isStudentPresent, createOrderYogaVolunteerCourse);
@@ -70,6 +75,9 @@ student.get("/homeTutors", verifyStudentJWT, isStudentPresent, getHomeTutorForUs
 student.get("/homeTutors/:id", verifyStudentJWT, isStudentPresent, getHomeTutorByIdForUser);
 student.get("/nearestHomeTutors", verifyStudentJWT, isStudentPresent, getNearestHomeTutorForUser);
 student.get("/getTimeSlote/:id", verifyStudentJWT, isStudentPresent, getHTTimeSloteForUser);
+
+student.post("/createHTOrder", verifyStudentJWT, isStudentPresent, createHTOrder);
+student.post("/verifyHTPayment", verifyHTPayment);
 
 // Therapy
 student.get("/thrapies", verifyStudentJWT, isStudentPresent, getTherapyForUser);

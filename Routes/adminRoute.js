@@ -39,6 +39,7 @@ const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTime
 const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
 const { getTherapyForAdmin, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const { getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
+const { addAdminBanner, getAdminBanner, deleteAdminBanner } = require('../Controller/Admin/bannerController');
 const admin = express.Router();
 
 // middleware
@@ -168,6 +169,10 @@ admin.post("/createCourseDurationType", verifyAdminJWT, isAdminPresent, createCo
 admin.get("/courseDurationTypes", verifyAdminJWT, isAdminPresent, getAllCourseDurationType);
 admin.delete("/deleteCourseDurationType/:id", verifyAdminJWT, isAdminPresent, deleteCourseDurationType);
 admin.get("/courseDurationTypes/:type", verifyAdminJWT, isAdminPresent, getAllCourseByType);
+// 7. AdminBanner
+admin.post("/addAdminBanner", verifyAdminJWT, isAdminPresent, uploadImage.single("AdminBanner"), addAdminBanner);
+admin.get("/adminBanners", verifyAdminJWT, isAdminPresent, getAdminBanner);
+admin.delete("/deleteAdminBanner/:id", verifyAdminJWT, isAdminPresent, deleteAdminBanner);
 
 // Review
 // 1. Instructor Review
