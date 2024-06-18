@@ -175,26 +175,26 @@ exports.addHTutorTimeSlote = async (req, res) => {
                 message: "This home tutor is not present!"
             });
         }
+        // 1.Today Date
+        const dateFor = JSON.stringify(new Date((new Date).getTime() - (24 * 60 * 60 * 1000)));
+        const today = `${dateFor.slice(1, 12)}18:30:00.000Z`;
+        // Get All Today Code
+        let code;
+        const indtructorNumb = (req.instructorCode).substring(4);
+        const isSloteCode = await HTTimeSlot.findAll({
+            where: {
+                createdAt: { [Op.gt]: today },
+                sloteCode: { [Op.startsWith]: indtructorNumb }
+            },
+            order: [
+                ['createdAt', 'ASC']
+            ],
+            paranoid: false
+        });
         // Store in database
         for (let i = 0; i < slotes.length; i++) {
             const otp = generateOTP.generateFixedLengthRandomNumber(process.env.OTP_DIGITS_LENGTH);
             // Generating Code
-            // 1.Today Date
-            const dateFor = JSON.stringify(new Date((new Date).getTime() - (24 * 60 * 60 * 1000)));
-            const today = `${dateFor.slice(1, 12)}18:30:00.000Z`;
-            // Get All Today Code
-            let code;
-            const indtructorNumb = (req.instructorCode).substring(4);
-            const isSloteCode = await HTTimeSlot.findAll({
-                where: {
-                    createdAt: { [Op.gt]: today },
-                    sloteCode: { [Op.startsWith]: indtructorNumb }
-                },
-                order: [
-                    ['createdAt', 'ASC']
-                ],
-                paranoid: false
-            });
             const day = new Date().toISOString().slice(8, 10);
             const year = new Date().toISOString().slice(2, 4);
             const month = new Date().toISOString().slice(5, 7);
