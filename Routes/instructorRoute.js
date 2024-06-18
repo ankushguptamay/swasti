@@ -32,6 +32,7 @@ const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorCont
 const { createTherapy, addTherapyImage, addTherapySeviceArea, addTherapyTimeSlote, addTherapyTypeOffered } = require('../Controller/Therapy/createTherapyController');
 const { getMyTherapyForInstructor, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
+const { getMyHTBookedSloteForInstructor } = require('../Controller/HomeTutor/hTBookingController');
 const instructor = express.Router();
 
 // middleware
@@ -188,6 +189,8 @@ instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorForHomeT
 
 instructor.get("/homeTutors", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorForInstructor);
 instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHomeTutorById);
+
+instructor.get("/myHTBookedSlotes", verifyInstructorJWT, isInstructorForHomeTutor, getMyHTBookedSloteForInstructor);
 
 instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, submitHomeTutorForApproval);
 instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, publishHomeTutor);

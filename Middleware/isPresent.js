@@ -40,6 +40,7 @@ exports.isInstructorForCourse = async (req, res, next) => {
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
             if (instructor.isInstructor === true && instructor.instructorTermAccepted === true) {
+                req.instructorCode = instructor.instructorCode;
                 next();
             } else {
                 return res.status(400).json({
@@ -73,7 +74,8 @@ exports.isInstructorForHomeTutor = async (req, res, next) => {
             })
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
-            if (instructor.isHomeTutor === true && instructor.homeTutorTermAccepted === true) {
+            if (instructor.homeTutorTermAccepted === true) {
+                req.instructorCode = instructor.instructorCode;
                 next();
             } else {
                 return res.status(400).json({
@@ -108,6 +110,7 @@ exports.isInstructorForTherapist = async (req, res, next) => {
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
             if (instructor.isTherapist === true && instructor.therapistTermAccepted === true) {
+                req.instructorCode = instructor.instructorCode;
                 next();
             } else {
                 return res.status(400).json({
@@ -142,6 +145,7 @@ exports.isInstructorForYogaStudio = async (req, res, next) => {
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
             if (instructor.ownYogaStudio === true && instructor.yogaStudioTermAccepted === true) {
+                req.instructorCode = instructor.instructorCode;
                 next();
             } else {
                 return res.status(400).json({
@@ -175,6 +179,7 @@ exports.isInstructorProfileComplete = async (req, res, next) => {
             })
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
+            req.instructorCode = instructor.instructorCode;
             next();
         } else {
             return res.status(400).json({

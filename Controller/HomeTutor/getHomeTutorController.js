@@ -188,7 +188,7 @@ exports.getHomeTutorForUser = async (req, res) => {
             offSet = (parseInt(page) - 1) * recordLimit;
             currentPage = parseInt(page);
         }
-        const condition = [{ approvalStatusByAdmin: "Approved", isPublish: true }];
+        const condition = [{ approvalStatusByAdmin: "Approved" }, { isPublish: true }];
         // Search
         // if (search) {
         //     condition.push({

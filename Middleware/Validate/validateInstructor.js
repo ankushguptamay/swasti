@@ -117,7 +117,7 @@ exports.therapistTerm = (data) => {
 
 exports.homeTutorTerm = (data) => {
     const schema = joi.object().keys({
-        isHomeTutor: joi.boolean().required(),
+        // isHomeTutor: joi.boolean().required(),
         homeTutorTermAccepted: joi.boolean().required()
     });
     return schema.validate(data);

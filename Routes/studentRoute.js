@@ -10,7 +10,7 @@ const { getYogaStudioByIdUser, getYogaStudioForUser } = require('../Controller/Y
 const { getHomeTutorForUser, getHomeTutorByIdForUser, getNearestHomeTutorForUser, getHTTimeSloteForUser } = require('../Controller/HomeTutor/getHomeTutorController');
 const { getTherapistByIdForUser, getTherapyForUser, getNearestTherapyForUser, getTherapyTimeSloteForUser } = require('../Controller/Therapy/getTherapyController');
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
-const { createHTOrder, verifyHTPayment } = require('../Controller/HomeTutor/hTBookingController');
+const { createHTOrder, verifyHTPayment, getMyHTBookedSloteForUser } = require('../Controller/HomeTutor/hTBookingController');
 const { getAdminBanner } = require('../Controller/Admin/bannerController');
 const student = express.Router();
 
@@ -76,6 +76,7 @@ student.get("/homeTutors/:id", verifyStudentJWT, isStudentPresent, getHomeTutorB
 student.get("/nearestHomeTutors", verifyStudentJWT, isStudentPresent, getNearestHomeTutorForUser);
 student.get("/getTimeSlote/:id", verifyStudentJWT, isStudentPresent, getHTTimeSloteForUser);
 
+student.get("/myHTBookedSlotes", verifyStudentJWT, isStudentPresent, getMyHTBookedSloteForUser);
 student.post("/createHTOrder", verifyStudentJWT, isStudentPresent, createHTOrder);
 student.post("/verifyHTPayment", verifyHTPayment);
 

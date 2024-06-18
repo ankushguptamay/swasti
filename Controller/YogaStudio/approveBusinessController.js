@@ -398,24 +398,15 @@ exports.submitYSImageForApproval = async (req, res) => {
         const instructorId = req.instructor.id;
 
         // Find Yoga studio In Database
-        const yoga = await YogaStudioImage.findOne({
-            where: {
-                id: req.params.id,
-                instructorId: instructorId,
-                approvalStatusByAdmin: null
-            }
-        });
-        if (!yoga) {
-            return res.status(400).send({
-                success: false,
-                message: "This Yoga studio image is not present!"
+        await YogaStudioImage.update(
+            { approvalStatusByAdmin: "Pending" },
+            {
+                where: {
+                    businessId: req.params.id,
+                    instructorId: instructorId,
+                    approvalStatusByAdmin: null
+                }
             });
-        }
-        // Update Yoga studio
-        await yoga.update({
-            ...yoga,
-            approvalStatusByAdmin: "Pending"
-        });
         // Final Response
         res.status(200).send({
             success: true,

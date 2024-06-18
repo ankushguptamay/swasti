@@ -2,7 +2,7 @@ const db = require('../../Models');
 const { bookHTValidation } = require('../../Middleware/Validate/validateHomeTutor');
 const HTBooking = db.hTBooking;
 const HTTimeSlot = db.hTTimeSlote;
-const Student = db.student;
+const HomeTutor = db.homeTutor;
 const { RAZORPAY_KEY_ID, RAZORPAY_SECRET_ID } = process.env;
 const { Op } = require('sequelize');
 
@@ -187,6 +187,99 @@ exports.verifyHTPayment = async (req, res) => {
         res.status(500).send({
             success: false,
             err: err.message
+        });
+    }
+};
+
+exports.getMyHTBookedSloteForUser = async (req, res) => {
+    try {
+        const booking = await HTBooking.findAll({
+            where: {
+                status: "Paid",
+                verify: true,
+                userId: req.student.id
+            }
+        });
+        const sloteId = [];
+        for (let i = 0; i < booking.length; i++) {
+            sloteId.push(booking[i].timeSloteId);
+        }
+        const slote = await HTTimeSlot.findAll({ where: { id: sloteId } });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "My home tutor booked slote fetched successfully!",
+            data: slote
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getMyHTBookedSloteForInstructor = async (req, res) => {
+    try {
+        const { date, isBooked, search } = req.query;
+        // 3 days validity
+        const date1 = JSON.stringify(new Date());
+        const date2 = JSON.stringify(new Date((new Date).getTime() + (1 * 24 * 60 * 60 * 1000)));
+        const date3 = JSON.stringify(new Date((new Date).getTime() + (2 * 24 * 60 * 60 * 1000)));
+        let dateCondition;
+        if (date) {
+            const array = [`${date1.slice(1, 11)}`, `${date2.slice(1, 11)}`, `${date3.slice(1, 11)}`]
+            if (array.indexOf(date) === -1) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Date should be with in required limit!"
+                });
+            } else {
+                dateCondition = date;
+            }
+        } else {
+            dateCondition = date1.slice(1, 11);
+        }
+        // Get instructor Home tutor
+        const homeTutor = await HomeTutor.findAll({
+            where: {
+                instructorId: req.instructor.id,
+                isPublish: true
+            }
+        });
+        const homeTutorId = [];
+        for (let i = 0; i < homeTutor.length; i++) {
+            homeTutorId.push(homeTutor[i].id);
+        }
+        // Where condition
+        const condition = [{ id: homeTutorId }, { date: dateCondition }];
+        const slote = await HTTimeSlot.findAll({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        if (isBooked) {
+            condition.push({ isBooked: isBooked });
+        } else {
+            condition.push({ isBooked: true });
+        }
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { sloteCode: { [Op.substring]: search } }
+                ]
+            });
+        }
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "My home tutor booked slote fetched successfully!",
+            data: slote
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
         });
     }
 };
