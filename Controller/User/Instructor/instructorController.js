@@ -998,7 +998,7 @@ exports.instructorTerm = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { isInstructor, instructorTermAccepted } = req.body;
+        const { instructorTermAccepted } = req.body;
         // Check perticular instructor present in database
         const instructor = await Instructor.findOne({
             where: {
@@ -1017,7 +1017,7 @@ exports.instructorTerm = async (req, res) => {
         await instructor.update({
             ...instructor,
             instructorTermAccepted: instructorTermAccepted,
-            isInstructor: isInstructor
+            // isInstructor: isInstructor
         });
         // Send final success response
         res.status(200).send({
@@ -1039,7 +1039,7 @@ exports.homeTutorTerm = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { isHomeTutor, homeTutorTermAccepted } = req.body;
+        const { homeTutorTermAccepted } = req.body;
         // Check perticular instructor present in database
         const instructor = await Instructor.findOne({
             where: {
@@ -1058,7 +1058,7 @@ exports.homeTutorTerm = async (req, res) => {
         await instructor.update({
             ...instructor,
             homeTutorTermAccepted: homeTutorTermAccepted,
-            isHomeTutor: isHomeTutor
+            // isHomeTutor: isHomeTutor
         });
         // Send final success response
         res.status(200).send({
@@ -1080,7 +1080,7 @@ exports.therapistTerm = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { isTherapist, therapistTermAccepted } = req.body;
+        const { therapistTermAccepted } = req.body;
         // Check perticular instructor present in database
         const instructor = await Instructor.findOne({
             where: {
@@ -1099,7 +1099,7 @@ exports.therapistTerm = async (req, res) => {
         await instructor.update({
             ...instructor,
             therapistTermAccepted: therapistTermAccepted,
-            isTherapist: isTherapist
+            // isTherapist: isTherapist
         });
         // Send final success response
         res.status(200).send({
@@ -1121,7 +1121,7 @@ exports.yogaStudioTerm = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { ownYogaStudio, yogaStudioTermAccepted } = req.body;
+        const { yogaStudioTermAccepted } = req.body;
         // Check perticular instructor present in database
         const instructor = await Instructor.findOne({
             where: {
@@ -1140,7 +1140,7 @@ exports.yogaStudioTerm = async (req, res) => {
         await instructor.update({
             ...instructor,
             yogaStudioTermAccepted: yogaStudioTermAccepted,
-            ownYogaStudio: ownYogaStudio
+            // ownYogaStudio: ownYogaStudio
         });
         // Send final success response
         res.status(200).send({

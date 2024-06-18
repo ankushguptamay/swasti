@@ -109,7 +109,7 @@ exports.changeHTTimeSloteStatus = (data) => {
 
 exports.therapistTerm = (data) => {
     const schema = joi.object().keys({
-        isTherapist: joi.boolean().required(),
+        // isTherapist: joi.boolean().required(),
         therapistTermAccepted: joi.boolean().required()
     });
     return schema.validate(data);
@@ -125,7 +125,7 @@ exports.homeTutorTerm = (data) => {
 
 exports.instructorTerm = (data) => {
     const schema = joi.object().keys({
-        isInstructor: joi.boolean().required(),
+        // isInstructor: joi.boolean().required(),
         instructorTermAccepted: joi.boolean().required()
     });
     return schema.validate(data);
@@ -133,7 +133,7 @@ exports.instructorTerm = (data) => {
 
 exports.yogaStudioTerm = (data) => {
     const schema = joi.object().keys({
-        ownYogaStudio: joi.boolean().required(),
+        // ownYogaStudio: joi.boolean().required(),
         yogaStudioTermAccepted: joi.boolean().required()
     });
     return schema.validate(data);

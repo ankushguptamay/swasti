@@ -39,7 +39,7 @@ exports.isInstructorForCourse = async (req, res, next) => {
             })
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
-            if (instructor.isInstructor === true && instructor.instructorTermAccepted === true) {
+            if (instructor.instructorTermAccepted === true) {
                 req.instructorCode = instructor.instructorCode;
                 next();
             } else {
@@ -109,7 +109,7 @@ exports.isInstructorForTherapist = async (req, res, next) => {
             })
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
-            if (instructor.isTherapist === true && instructor.therapistTermAccepted === true) {
+            if (instructor.therapistTermAccepted === true) {
                 req.instructorCode = instructor.instructorCode;
                 next();
             } else {
@@ -144,7 +144,7 @@ exports.isInstructorForYogaStudio = async (req, res, next) => {
             })
         }
         if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
-            if (instructor.ownYogaStudio === true && instructor.yogaStudioTermAccepted === true) {
+            if (instructor.yogaStudioTermAccepted === true) {
                 req.instructorCode = instructor.instructorCode;
                 next();
             } else {

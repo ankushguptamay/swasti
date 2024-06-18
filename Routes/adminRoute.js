@@ -217,7 +217,6 @@ admin.get("/paymentDetails", verifyAdminJWT, isAdminPresent, getPaymentDetailsFo
 admin.post("/sendCampaignEmail", sendCampaignEmail);
 admin.post("/addCampaignEmailCredentials", addCampaignEmailCredentials);
 
-
 // YogaStudio
 admin.get("/yogaStudios", verifyAdminJWT, isAdminPresent, getYogaStudioForAdmin);
 admin.get("/yogaStudios/:id", verifyAdminJWT, isAdminPresent, getYogaStudioById);
