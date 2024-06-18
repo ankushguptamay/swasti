@@ -277,8 +277,17 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("hTTimeSlots", "sloteCode", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.changeColumn("homeTutors", "groupSessionPrice_Month", {
+    type: DataTypes.FLOAT
+}).then((res) => { console.log("1Changed!") }).catch((err) => { console.log(err) });
+queryInterface.changeColumn("homeTutors", "groupSessionPrice_Day", {
+    type: DataTypes.FLOAT
+}).then((res) => { console.log("2Changed!") }).catch((err) => { console.log(err) });
+queryInterface.changeColumn("homeTutors", "privateSessionPrice_Month", {
+    type: DataTypes.FLOAT
+}).then((res) => { console.log("4Changed!") }).catch((err) => { console.log(err) });
+queryInterface.changeColumn("homeTutors", "privateSessionPrice_Day", {
+    type: DataTypes.FLOAT
+}).then((res) => { console.log("3Changed!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

@@ -21,16 +21,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSON
         },
         privateSessionPrice_Day: {
-            type: DataTypes.STRING
+            type: DataTypes.FLOAT
         },
         privateSessionPrice_Month: {
-            type: DataTypes.STRING
+            type: DataTypes.FLOAT
         },
         groupSessionPrice_Day: {
-            type: DataTypes.STRING
+            type: DataTypes.FLOAT
         },
         groupSessionPrice_Month: {
-            type: DataTypes.STRING
+            type: DataTypes.FLOAT
         },
         specilization: {
             type: DataTypes.JSON

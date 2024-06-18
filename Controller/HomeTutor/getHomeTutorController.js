@@ -1,5 +1,6 @@
 const db = require('../../Models');
 const { Op } = require("sequelize");
+const { getHomeTutorForUserValidation } = require('../../Middleware/Validate/validateHomeTutor');
 const HomeTutor = db.homeTutor;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
@@ -179,7 +180,12 @@ exports.getHTutorUpdationRequestById = async (req, res) => {
 
 exports.getHomeTutorForUser = async (req, res) => {
     try {
-        const { page, limit, search } = req.query;
+        // Validate Body
+        const { error } = getHomeTutorForUserValidation(req.query);
+        if (error) {
+            return res.status(400).send(error.details[0].message);
+        }
+        const { page, limit, search, price, isPersonal, isGroup, perDay, monthly, language, latitude, longitude, experience } = req.query;
         // Pagination
         const recordLimit = parseInt(limit) || 10;
         let offSet = 0;
@@ -190,13 +196,52 @@ exports.getHomeTutorForUser = async (req, res) => {
         }
         const condition = [{ approvalStatusByAdmin: "Approved" }, { isPublish: true }];
         // Search
-        // if (search) {
-        //     condition.push({
-        //         [Op.or]: [
-        //             {}
-        //         ]
-        //     })
-        // }
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { homeTutorName: { [Op.substring]: search } }
+                ]
+            });
+        }
+        // Filter
+        if (language) {
+            condition.push({ language: { [Op.contains]: language } });
+        }
+        if (isPersonal) {
+            condition.push({ isPrivateSO: isPersonal });
+        }
+        if (isGroup) {
+            condition.push({ isGroupSO: isGroup });
+        }
+        if (price) {
+            condition.push({
+                [Op.or]: [
+                    { privateSessionPrice_Day: { [Op.lte]: parseFloat(price) } },
+                    { privateSessionPrice_Month: { [Op.lte]: parseFloat(price) } },
+                    { groupSessionPrice_Day: { [Op.lte]: parseFloat(price) } },
+                    { groupSessionPrice_Month: { [Op.lte]: parseFloat(price) } }
+                ]
+            });
+        }
+        // Location
+        if (latitude && longitude) {
+            const unit = 'km'; // km for kilometer m for mile
+            const distance = 20;
+            const totalLocation = await HTServiceArea.scope({
+                method: ['distance', parseFloat(latitude), parseFloat(longitude), distance, unit]
+            })
+                .findAll({
+                    attributes: [
+                        'id', "locationName", "latitude", "longitude", "homeTutorId"
+                    ],
+                    order: db.sequelize.col('distance')
+                });
+            const tutorId = [];
+            for (let i = 0; i < totalLocation.length; i++) {
+                tutorId.push(totalLocation.homeTutorId);
+            }
+            condition.push({ id: tutorId });
+        }
         // Count All Home Tutor
         const totalTutor = await HomeTutor.count({
             where: {
@@ -249,7 +294,7 @@ exports.getNearestHomeTutorForUser = async (req, res) => {
             currentPage = parseInt(page);
         }
         // Count All Areas
-        const totalAreas = await await HTServiceArea.scope({
+        const totalAreas = await HTServiceArea.scope({
             method: ['distance', latitude, longitude, distance, unit]
         })
             .findAll({

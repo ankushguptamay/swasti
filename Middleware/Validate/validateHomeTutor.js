@@ -47,3 +47,18 @@ exports.bookHTValidation = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.getHomeTutorForUserValidation = (data) => {
+    const schema = joi.object().keys({
+        isPersonal: joi.boolean().optional(),
+        isGroup: joi.boolean().optional(),
+        language: joi.array().optional(),
+        latitude: joi.string().optional(),
+        longitude: joi.string().optional(),
+        price: joi.string().optional(),
+        page: joi.number().optional(),
+        limit: joi.number().optional(),
+        search: joi.string().optional()
+    }).options({ allowUnknown: true });
+    return schema.validate(data);
+}
