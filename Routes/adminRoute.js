@@ -39,6 +39,7 @@ const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTime
 const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
 const { getTherapyForAdmin, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const { getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
+const { getHTAverageRating, getHTReview, updateHTReview, softDeleteHTReview } = require('../Controller/Review/hTReviewController');
 const { addAdminBanner, getAdminBanner, deleteAdminBanner } = require('../Controller/Admin/bannerController');
 const admin = express.Router();
 
@@ -185,10 +186,16 @@ admin.get("/getCourseAverageRating/:id", verifyAdminJWT, isAdminPresent, getCour
 // admin.delete("/deleteCourseReview/:id", verifyAdminJWT, isAdminPresent, deleteCourseReview); //id = review Id
 
 // 3. Yoga Studio Review
-admin.get("/getYSReview/:id", verifyAdminJWT, isAdminPresent, getYSReview); //id = businessId
-admin.get("/getYSAverageRating/:id", verifyAdminJWT, isAdminPresent, getYSAverageRating);//id = businessId
+admin.get("/ySReview/:id", verifyAdminJWT, isAdminPresent, getYSReview); //id = businessId
+admin.get("/ySAverageRating/:id", verifyAdminJWT, isAdminPresent, getYSAverageRating);//id = businessId
 admin.delete("/softDeleteYSReview/:id", verifyAdminJWT, isAdminPresent, softDeleteYSReview); //id = review Id
 admin.delete("/updateYSReview/:id", verifyAdminJWT, isAdminPresent, updateYSReview); //id = review Id
+
+// 3. Home Tutor Review
+admin.get("/hTReview/:id", verifyAdminJWT, isAdminPresent, getHTReview); //id = homeTutorId
+admin.get("/hTAverageRating/:id", verifyAdminJWT, isAdminPresent, getHTAverageRating);//id = homeTutorId
+admin.delete("/softDeleteHTReview/:id", verifyAdminJWT, isAdminPresent, softDeleteHTReview); //id = review Id
+admin.delete("/updateHTReview/:id", verifyAdminJWT, isAdminPresent, updateHTReview); //id = review Id
 
 // Notification
 admin.post("/createNotification", verifyAdminJWT, isAdminPresent, createNotificationForAdmin);

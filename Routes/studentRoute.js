@@ -11,6 +11,7 @@ const { getHomeTutorForUser, getHomeTutorByIdForUser, getNearestHomeTutorForUser
 const { getTherapistByIdForUser, getTherapyForUser, getNearestTherapyForUser, getTherapyTimeSloteForUser } = require('../Controller/Therapy/getTherapyController');
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
 const { createHTOrder, verifyHTPayment, getMyHTBookedSloteForUser } = require('../Controller/HomeTutor/hTBookingController');
+const { giveHTReviewForUser, getHTAverageRating, getHTReview, updateHTReview, softDeleteHTReview } = require('../Controller/Review/hTReviewController');
 const { getAdminBanner } = require('../Controller/Admin/bannerController');
 const student = express.Router();
 
@@ -55,6 +56,13 @@ student.get("/ySAverageRating/:id", verifyStudentJWT, isStudentPresent, getYSAve
 student.get("/ySReview/:id", verifyStudentJWT, isStudentPresent, getYSReview); //id = businessId
 student.delete("/deleteYSReview/:id", verifyStudentJWT, isStudentPresent, softDeleteYSReview); //id = review Id
 student.put("/updateYSReview/:id", verifyStudentJWT, isStudentPresent, updateYSReview); //id = review Id
+
+// Home Tutor Review
+student.post("/giveHTReview/:id", verifyStudentJWT, isStudentPresent, giveHTReviewForUser); //id = homeTutorId
+student.get("/hTAverageRating/:id", verifyStudentJWT, isStudentPresent, getHTAverageRating); //id = homeTutorId
+student.get("/hTReview/:id", verifyStudentJWT, isStudentPresent, getHTReview); //id = homeTutorId
+student.delete("/deleteHTReview/:id", verifyStudentJWT, isStudentPresent, softDeleteHTReview); //id = review Id
+student.put("/updateHTReview/:id", verifyStudentJWT, isStudentPresent, updateHTReview); //id = review Id
 
 // Coupon
 student.put("/applyCouponToCourse", verifyStudentJWT, isStudentPresent, applyCouponToCourse);

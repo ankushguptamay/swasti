@@ -67,6 +67,7 @@ db.hTTimeSlote = require('./HomeTutor/hTTimeSloteModel.js')(sequelize, Sequelize
 db.hTImage = require('./HomeTutor/hTImageModel.js')(sequelize, Sequelize);
 db.homeTutorHistory = require('./HomeTutor/homeTutorHistoryModel.js')(sequelize, Sequelize);
 db.hTBooking = require('./HomeTutor/hTBookingModel.js')(sequelize, Sequelize);
+db.hTReview = require('./HomeTutor/hTReviewModel.js')(sequelize, Sequelize);
 
 //Therapy
 db.therapy = require('./Therapy/therapyModel.js')(sequelize, Sequelize);
@@ -166,6 +167,8 @@ db.homeTutor.hasMany(db.hTImage, { foreignKey: 'homeTutorId', as: 'images' });
 db.hTImage.belongsTo(db.homeTutor, { foreignKey: 'homeTutorId', as: 'homeTutors' });
 
 db.homeTutor.hasMany(db.homeTutorHistory, { foreignKey: 'homeTutorId', as: 'homeTutorHistories' });
+
+db.homeTutor.hasMany(db.hTReview, { foreignKey: 'homeTutorId', as: 'hTReviews' });
 
 // Therapy
 db.instructor.hasMany(db.therapy, { foreignKey: 'instructorId', as: 'therapies' });

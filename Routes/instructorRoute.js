@@ -33,6 +33,7 @@ const { createTherapy, addTherapyImage, addTherapySeviceArea, addTherapyTimeSlot
 const { getMyTherapyForInstructor, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
 const { getMyHTBookedSloteForInstructor } = require('../Controller/HomeTutor/hTBookingController');
+const { getHTAverageRating, getHTReview, updateHTReview, softDeleteHTReview } = require('../Controller/Review/hTReviewController');
 const instructor = express.Router();
 
 // middleware
@@ -135,11 +136,17 @@ instructor.get("/getCourseAverageRating/:id", verifyInstructorJWT, isInstructorF
 // instructor.delete("/deleteCourseReview/:id", verifyInstructorJWT, isInstructorForCourse, deleteCourseReview); //id = review Id
 
 // 3. Yoga Studio Review
-instructor.get("/getYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSReview); //id = businessId
-instructor.get("/getYSAverageRating/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSAverageRating);//id = businessId
+instructor.get("/ySReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSReview); //id = businessId
+instructor.get("/ySAverageRating/:id", verifyInstructorJWT, isInstructorForYogaStudio, getYSAverageRating);//id = businessId
 instructor.post("/giveYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, giveYSReview);//id = businessId
 instructor.delete("/deleteYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, softDeleteYSReview); //id = review Id
 instructor.delete("/updateYSReview/:id", verifyInstructorJWT, isInstructorForYogaStudio, updateYSReview); //id = review Id
+
+// 4. Home Tutor Review
+instructor.get("/hTReview/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHTReview); //id = homeTutorId
+instructor.get("/hTAverageRating/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHTAverageRating);//id = homeTutorId
+instructor.delete("/deleteHTReview/:id", verifyInstructorJWT, isInstructorForHomeTutor, softDeleteHTReview); //id = review Id
+instructor.delete("/updateHTReview/:id", verifyInstructorJWT, isInstructorForHomeTutor, updateHTReview); //id = review Id
 
 // Dashboard
 instructor.get("/totalCourse", verifyInstructorJWT, isInstructorProfileComplete, totalCourse);
