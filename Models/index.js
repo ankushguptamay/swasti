@@ -39,6 +39,9 @@ db.courseDuration = require('./Master/courseDurationModel.js')(sequelize, Sequel
 db.courseDurationType = require('./Master/courseDurationTypeModel.js')(sequelize, Sequelize);
 db.courseType = require('./Master/courseTypeModel.js')(sequelize, Sequelize);
 db.university_institute = require('./Master/university_institute_nameModel.js')(sequelize, Sequelize);
+db.therapySpecilization = require('./Master/therapySpecilizationModel.js')(sequelize, Sequelize);
+db.therapyType = require('./Master/therapyTypeModel.js')(sequelize, Sequelize);
+db.hTSpecilization = require('./Master/hTSpecilizationModel.js')(sequelize, Sequelize);
 
 // Review
 db.instructorReview = require('./Review/instructorReviewModel.js')(sequelize, Sequelize);
@@ -75,7 +78,7 @@ db.therapyImage = require('./Therapy/therapyImageModel.js')(sequelize, Sequelize
 db.therapyOffered = require('./Therapy/therapyOfferedModel.js')(sequelize, Sequelize);
 db.therapyServiceArea = require('./Therapy/therapyServiceAreaModel.js')(sequelize, Sequelize);
 db.therapyTimeSlote = require('./Therapy/therapyTimeSloteModel.js')(sequelize, Sequelize);
-db.therapyHistory = require('./Therapy/therapyHistoryModel.js')(sequelize, Sequelize);
+db.therapyHistory = require('./Therapy/History/therapyHistoryModel.js')(sequelize, Sequelize);
 
 // Instructor History
 db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHistoryModel.js')(sequelize, Sequelize);

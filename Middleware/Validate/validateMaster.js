@@ -72,3 +72,17 @@ exports.addCampaignEmailCredentials = (data) => {
     }) // .options({ allowUnknown: true });
     return schema.validate(data);
 }
+
+exports.therapySpecilizationValidation = (data) => {
+    const schema = joi.object().keys({
+        specilization: joi.string().required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}
+
+exports.therapyTypeValidation = (data) => {
+    const schema = joi.object().keys({
+        therapyType: joi.string().required()
+    }) // .options({ allowUnknown: true });
+    return schema.validate(data);
+}

@@ -12,7 +12,7 @@ const { getTherapistByIdForUser, getTherapyForUser, getNearestTherapyForUser, ge
 const { giveYSReview, getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
 const { createHTOrder, verifyHTPayment, getMyHTBookedSloteForUser } = require('../Controller/HomeTutor/hTBookingController');
 const { giveHTReviewForUser, getHTAverageRating, getHTReview, updateHTReview, softDeleteHTReview } = require('../Controller/Review/hTReviewController');
-const { getAdminBanner } = require('../Controller/Admin/bannerController');
+const { getAdminBanner } = require('../Controller/Master/bannerController');
 const student = express.Router();
 
 // middleware

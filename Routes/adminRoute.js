@@ -40,7 +40,10 @@ const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, re
 const { getTherapyForAdmin, getTherapyById } = require('../Controller/Therapy/getTherapyController');
 const { getYSAverageRating, getYSReview, softDeleteYSReview, updateYSReview } = require('../Controller/Review/ySReviewController');
 const { getHTAverageRating, getHTReview, updateHTReview, softDeleteHTReview } = require('../Controller/Review/hTReviewController');
-const { addAdminBanner, getAdminBanner, deleteAdminBanner } = require('../Controller/Admin/bannerController');
+const { addAdminBanner, getAdminBanner, deleteAdminBanner } = require('../Controller/Master/bannerController');
+const { createTherapySpecilization, getAllTherapySpecilization, deleteTherapySpecilization } = require('../Controller/Master/therapySecilizationController');
+const { addTherapyType, getAllTherapyType, deleteTherapyType } = require('../Controller/Master/therapyTypeController');
+const { addHTSpecilization, getAllHTSpecilization, deleteHTSpecilization } = require('../Controller/Master/hTSpecilizationController');
 const admin = express.Router();
 
 // middleware
@@ -174,6 +177,18 @@ admin.get("/courseDurationTypes/:type", verifyAdminJWT, isAdminPresent, getAllCo
 admin.post("/addAdminBanner", verifyAdminJWT, isAdminPresent, uploadImage.single("AdminBanner"), addAdminBanner);
 admin.get("/adminBanners", verifyAdminJWT, isAdminPresent, getAdminBanner);
 admin.delete("/deleteAdminBanner/:id", verifyAdminJWT, isAdminPresent, deleteAdminBanner);
+// 8. Therapy Specilization
+admin.post("/addTherapySpecilization", verifyAdminJWT, isAdminPresent, createTherapySpecilization);
+admin.get("/therapySpecilizations", verifyAdminJWT, isAdminPresent, getAllTherapySpecilization);
+admin.delete("/deleteTherapySpecilization/:id", verifyAdminJWT, isAdminPresent, deleteTherapySpecilization);
+// 9. Therapy Type
+admin.post("/addTherapyType", verifyAdminJWT, isAdminPresent, addTherapyType);
+admin.get("/therapyTypes", verifyAdminJWT, isAdminPresent, getAllTherapyType);
+admin.delete("/deleteTherapyType/:id", verifyAdminJWT, isAdminPresent, deleteTherapyType);
+// 10. Home tutor Specilization
+admin.post("/addHTSpecilization", verifyAdminJWT, isAdminPresent, addHTSpecilization);
+admin.get("/hTSpecilizations", verifyAdminJWT, isAdminPresent, getAllHTSpecilization);
+admin.delete("/deleteHTSpecilization/:id", verifyAdminJWT, isAdminPresent, deleteHTSpecilization);
 
 // Review
 // 1. Instructor Review

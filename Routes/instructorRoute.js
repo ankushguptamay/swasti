@@ -11,7 +11,10 @@ const { softDeleteContent, softDeleteCourse, softDeleteFile, softDeleteVideo } =
 const { getAllCourseCategory } = require('../Controller/Master/courseCategoryController');
 const { getAllCourseDuration } = require('../Controller/Master/courseDurationController');
 const { getAllCourseType } = require('../Controller/Master/courseTypeController');
+const { getAllTherapySpecilization } = require('../Controller/Master/therapySecilizationController');
 const { getAllUniversity_Institute } = require('../Controller/Master/university_instituteController');
+const { getAllTherapyType } = require('../Controller/Master/therapyTypeController');
+const { getAllHTSpecilization } = require('../Controller/Master/hTSpecilizationController');
 const { updateContentForInstructor, updateCourseForInstructor } = require('../Controller/Course/updateCourseAndContent');
 const { totalCourse, totalDraftedCourse, totalOngoingCourse, getContentAndFile, totalStudent } = require('../Controller/User/Instructor/dashboardController');
 const { createCoupon, softDeleteCoupon, getAllInstructorCoupon, getCouponById, addCouponToCourse, getCouponToCourse, applyCouponToCourse } = require('../Controller/Master/couponController');
@@ -115,6 +118,9 @@ instructor.get("/courseDurations", verifyInstructorJWT, isInstructorProfileCompl
 instructor.get("/courseTypes", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseType);
 instructor.get("/university_institutes", verifyInstructorJWT, isInstructorProfileComplete, getAllUniversity_Institute);
 instructor.get("/courseDurationTypes/:type", verifyInstructorJWT, isInstructorProfileComplete, getAllCourseByType);
+instructor.get("/therapySpecilizations", verifyInstructorJWT, isInstructorProfileComplete, getAllTherapySpecilization);
+instructor.get("/therapyTypes", verifyInstructorJWT, isInstructorProfileComplete, getAllTherapyType);
+instructor.get("/hTSpecilizations", verifyInstructorJWT, isInstructorProfileComplete, getAllHTSpecilization);
 
 // 2. Coupon
 instructor.post("/createCoupon", verifyInstructorJWT, isInstructorProfileComplete, createCoupon);
