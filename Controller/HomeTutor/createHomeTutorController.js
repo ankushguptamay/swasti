@@ -177,7 +177,7 @@ exports.addHTutorTimeSlote = async (req, res) => {
         }
         // 1.Today Date
         const dateFor = JSON.stringify(new Date((new Date).getTime() - (24 * 60 * 60 * 1000)));
-        const today = `${dateFor.slice(1, 12)}18:30:00.000Z`;
+        const today = `${date}T18:30:00.000Z`;
         // Get All Today Code
         let code;
         const indtructorNumb = (req.instructorCode).substring(4);
@@ -191,47 +191,60 @@ exports.addHTutorTimeSlote = async (req, res) => {
             ],
             paranoid: false
         });
+        const day = date.slice(8, 10);
+        const year = date.slice(2, 4);
+        const month = date.slice(5, 7);
+        if (isSloteCode.length > 0) {
+            code = (isSloteCode[isSloteCode.length - 1]).sloteCode;
+        }
         // Store in database
         for (let i = 0; i < slotes.length; i++) {
             const otp = generateOTP.generateFixedLengthRandomNumber(process.env.OTP_DIGITS_LENGTH);
             // Generating Code
-            const day = new Date().toISOString().slice(8, 10);
-            const year = new Date().toISOString().slice(2, 4);
-            const month = new Date().toISOString().slice(5, 7);
-            if (isSloteCode.length == 0) {
-                code = indtructorNumb + day + month + year + 1;
-            } else {
-                const digit = indtructorNumb.length + 6;
-                let lastCode = isSloteCode[isSloteCode.length - 1];
-                let lastDigits = lastCode.sloteCode.substring(digit);
-                let incrementedDigits = parseInt(lastDigits, 10) + 1;
-                code = indtructorNumb + day + month + year + incrementedDigits;
-            }
-            if (slotes[i].serviceType === "Private") {
-                await HTTimeSlot.create({
-                    date: date,
-                    password: otp,
-                    sloteCode: code,
-                    serviceType: slotes[i].serviceType,
-                    noOfPeople: 1,
+            const isSlote = await HTTimeSlot.findOne({
+                where: {
                     time: slotes[i].time,
-                    isBooked: false,
-                    appointmentStatus: "Active",
-                    homeTutorId: homeTutorId
-                });
-            } else if (slotes[i].serviceType === "Group") {
-                await HTTimeSlot.create({
                     date: date,
-                    password: otp,
-                    serviceType: slotes[i].serviceType,
-                    sloteCode: code,
-                    noOfPeople: slotes[i].noOfPeople,
-                    time: slotes[i].time,
-                    isBooked: false,
-                    appointmentStatus: "Active",
                     homeTutorId: homeTutorId
-                });
+                }
+            });
+            if (!isSlote) {
+                if (!code) {
+                    code = indtructorNumb + day + month + year + 1;
+                } else {
+                    const digit = indtructorNumb.length + 6;
+                    let lastDigits = code.substring(digit);
+                    let incrementedDigits = parseInt(lastDigits, 10) + 1;
+                    code = indtructorNumb + day + month + year + incrementedDigits;
+                }
+                // Store in database
+                if (slotes[i].serviceType === "Private") {
+                    await HTTimeSlot.create({
+                        date: date,
+                        password: otp,
+                        sloteCode: code,
+                        serviceType: slotes[i].serviceType,
+                        noOfPeople: 1,
+                        time: slotes[i].time,
+                        isBooked: false,
+                        appointmentStatus: "Active",
+                        homeTutorId: homeTutorId
+                    });
+                } else if (slotes[i].serviceType === "Group") {
+                    await HTTimeSlot.create({
+                        date: date,
+                        password: otp,
+                        serviceType: slotes[i].serviceType,
+                        sloteCode: code,
+                        noOfPeople: slotes[i].noOfPeople,
+                        time: slotes[i].time,
+                        isBooked: false,
+                        appointmentStatus: "Active",
+                        homeTutorId: homeTutorId
+                    });
+                }
             }
+            console.log(code);
         }
         // Final Response
         res.status(200).send({

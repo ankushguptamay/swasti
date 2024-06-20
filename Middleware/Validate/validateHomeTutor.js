@@ -43,7 +43,8 @@ exports.bookHTValidation = (data) => {
         currency: joi.string().required(),
         receipt: joi.string().required(),
         couponCode: joi.string().optional(),
-        timeSloteId: joi.string().required()
+        timeSloteId: joi.string().required(),
+        userPreferedLanguage: joi.string().required()
     });
     return schema.validate(data);
 }

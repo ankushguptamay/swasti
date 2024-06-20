@@ -33,7 +33,7 @@ const { changeYogaStudioBusinessStatus, changeYogaStudioContactStatus, changeYog
 const { softDeleteYogaStudioBusiness, softDeleteYogaStudioContact, softDeleteYogaStudioImage, softDeleteYogaStudioTime,
     hardDeleteYogaStudioBusiness, hardDeleteYogaStudioContact, hardDeleteYogaStudioImage, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/deleteBusinessController');
 const { restoreYogaStudioBusiness, restoreYogaStudioContact, restoreYogaStudioImage, restoreYogaStudioTime } = require('../Controller/YogaStudio/restoreBusinessController');
-const { getHomeTutorForAdmin, getHomeTutorById, getHTutorUpdationRequestById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getHomeTutorForAdmin, getHomeTutorById, getHTutorUpdationRequestById, getHTTimeSlote } = require('../Controller/HomeTutor/getHomeTutorController');
 const { changeHomeTutorStatus, changeHTutorUpdationStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
@@ -274,6 +274,7 @@ admin.delete("/hardDeleteYSTime/:id", verifyAdminJWT, isAdminPresent, hardDelete
 admin.get("/homeTutors", verifyAdminJWT, isAdminPresent, getHomeTutorForAdmin);
 admin.get("/homeTutors/:id", verifyAdminJWT, isAdminPresent, getHomeTutorById);
 admin.get("/hTutorUpdationRequest/:id", verifyAdminJWT, isAdminPresent, getHTutorUpdationRequestById);
+admin.get("/hTTimeSlote/:id", verifyAdminJWT, isAdminPresent, getHTTimeSlote);
 
 admin.put("/changeHomeTutorStatus/:id", verifyAdminJWT, isAdminPresent, changeHomeTutorStatus);
 admin.put("/changeHTutorUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeHTutorUpdationStatus);

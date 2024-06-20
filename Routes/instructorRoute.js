@@ -28,7 +28,7 @@ const { submitYSContactForApproval, submitYSImageForApproval, submitYSTimeForApp
 const { updateYogaStudioBusiness, updateYogaStudioContact, updateYogaStudioTime } = require('../Controller/YogaStudio/updateBusinessController');
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
 const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote, addHTutorImage } = require('../Controller/HomeTutor/createHomeTutorController');
-const { getMyHomeTutorForInstructor, getHomeTutorById } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getMyHomeTutorForInstructor, getHomeTutorById, getHTTimeSlote } = require('../Controller/HomeTutor/getHomeTutorController');
 const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
@@ -202,6 +202,7 @@ instructor.post("/addHTutorImage/:id", verifyInstructorJWT, isInstructorForHomeT
 
 instructor.get("/homeTutors", verifyInstructorJWT, isInstructorForHomeTutor, getMyHomeTutorForInstructor);
 instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHomeTutorById);
+instructor.get("/hTTimeSlote/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHTTimeSlote);
 
 instructor.get("/myHTBookedSlotes", verifyInstructorJWT, isInstructorForHomeTutor, getMyHTBookedSloteForInstructor);
 

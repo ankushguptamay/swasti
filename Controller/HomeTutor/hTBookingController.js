@@ -21,7 +21,7 @@ exports.createHTOrder = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { amount, currency, receipt, couponCode, timeSloteId } = req.body; // receipt is id created for this order
+        const { amount, currency, receipt, couponCode, timeSloteId, userPreferedLanguage } = req.body; // receipt is id created for this order
         const userId = req.student.id;
         const timeSlote = await HTTimeSlot.findOne({ where: { id: timeSloteId, appointmentStatus: "Active", isBooked: false } });
         if (!timeSlote) {
@@ -60,6 +60,7 @@ exports.createHTOrder = async (req, res) => {
                 });
             }
         }
+        await timeSlote.update({ ...timeSlote, userPreferedLanguage: userPreferedLanguage });
         // initiate payment
         razorpayInstance.orders.create({ amount, currency, receipt },
             (err, order) => {

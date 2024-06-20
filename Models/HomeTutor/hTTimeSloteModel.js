@@ -32,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
         sloteCode: {
             type: DataTypes.STRING
         },
+        userPreferedLanguage: {
+            type: DataTypes.STRING
+        },
         appointmentStatus: {
             type: DataTypes.STRING,
             validate: {

@@ -10,6 +10,8 @@ const HTutorImages = db.hTImage;
 
 exports.getMyHomeTutorForInstructor = async (req, res) => {
     try {
+        const date = JSON.stringify(new Date());
+        const todayDate = date.slice(1, 11);
         const homeTutor = await HomeTutor.findAll({
             where: {
                 instructorId: req.instructor.id,
@@ -27,7 +29,8 @@ exports.getMyHomeTutorForInstructor = async (req, res) => {
                 model: HTTimeSlot,
                 as: 'timeSlotes',
                 where: {
-                    deletedThrough: null
+                    deletedThrough: null,
+                    date: todayDate
                 },
                 attributes: { exclude: ['password'] },
                 required: false
@@ -112,6 +115,8 @@ exports.getHomeTutorForAdmin = async (req, res) => {
 // Admin and Instructor all not deleted
 exports.getHomeTutorById = async (req, res) => {
     try {
+        const date = JSON.stringify(new Date());
+        const todayDate = date.slice(1, 11);
         const homeTutor = await HomeTutor.findOne({
             where: {
                 id: req.params.id,
@@ -129,7 +134,8 @@ exports.getHomeTutorById = async (req, res) => {
                 model: HTTimeSlot,
                 as: 'timeSlotes',
                 where: {
-                    deletedThrough: null
+                    deletedThrough: null,
+                    date: todayDate
                 },
                 attributes: { exclude: ['password'] },
                 required: false
@@ -412,6 +418,30 @@ exports.getHTTimeSloteForUser = async (req, res) => {
                 homeTutorId: req.params.id,
                 deletedThrough: null,
                 date: dateCondition
+            }
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Home tutor Time slote fetched successfully!",
+            data: slote
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getHTTimeSlote = async (req, res) => {
+    try {
+        const { date } = req.query;
+        const slote = await HTTimeSlot.findAll({
+            where: {
+                homeTutorId: req.params.id,
+                deletedThrough: null,
+                date: date
             }
         });
         // Final Response
