@@ -26,7 +26,7 @@ exports.createHomeTutor = async (req, res) => {
         }
         const { isPrivateSO, isGroupSO, language, yogaFor, homeTutorName, privateSessionPrice_Day, privateSessionPrice_Month, groupSessionPrice_Day, groupSessionPrice_Month, specilization, instructorBio } = req.body;
         // Validate price with there offer
-        if (isPrivateSO === true) {
+        if (isGroupSO === true) {
             if (groupSessionPrice_Day && groupSessionPrice_Month) {
             } else {
                 return res.status(400).send({
@@ -35,7 +35,7 @@ exports.createHomeTutor = async (req, res) => {
                 });
             }
         }
-        if (isGroupSO === true) {
+        if (isPrivateSO === true) {
             if (privateSessionPrice_Day && privateSessionPrice_Month) {
             } else {
                 return res.status(400).send({
