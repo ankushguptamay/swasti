@@ -420,11 +420,15 @@ exports.getHTTimeSloteForUser = async (req, res) => {
                 date: dateCondition
             }
         });
+        const homeTutor = await HomeTutor.findOne({ where: { id: req.params.id } });
         // Final Response
         res.status(200).send({
             success: true,
             message: "Home tutor Time slote fetched successfully!",
-            data: slote
+            data: {
+                slote: slote,
+                homeTutor: homeTutor
+            }
         });
     } catch (err) {
         res.status(500).send({
