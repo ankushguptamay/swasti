@@ -57,7 +57,7 @@ exports.register = async (req, res) => {
         if (isInstructor) {
             return res.status(400).send({
                 success: false,
-                message: "This credentials already exist!"
+                message: "This credentials already exist!" // Redirect to login by email page
             });
         }
         // generate employee code
@@ -229,7 +229,8 @@ exports.login = async (req, res) => {
         if (!isInstructor) {
             return res.status(400).send({
                 success: false,
-                message: "This credentials is not present!"
+                message: "NOTPRESENT!", // Redirect to register page, where only name and mobile number field will open
+                data: { email: req.body.email }
             });
         }
         // Generate OTP for Email
@@ -581,7 +582,7 @@ exports.registerInstructor = async (req, res) => {
             code = "INST" + incrementedDigits;
         }
         // Create instructor in database
-        const instructor = await Instructor.create({
+        await Instructor.create({
             ...req.body,
             instructorCode: code,
             createdBy: "Admin"
@@ -829,7 +830,7 @@ exports.registerByNumber = async (req, res) => {
         if (isInstructor) {
             return res.status(400).send({
                 success: false,
-                message: "This credentials already exist!!"
+                message: "This credentials already exist!!" // Redirect to login by phone number page
             });
         }
         // generate employee code
@@ -896,7 +897,8 @@ exports.loginByNumber = async (req, res) => {
         if (!isInstructor) {
             return res.status(400).send({
                 success: false,
-                message: "Not register!"
+                message: "NOTPRESENT!",// Redirect to register page, where only name and email field will open
+                data: { phoneNumber: req.body.phoneNumber }
             });
         }
         // Generate OTP for Email
