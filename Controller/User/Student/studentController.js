@@ -4,6 +4,7 @@ const StudentProfile = db.studentProfile;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const CourseReview = db.courseReview;
+const StudentWallet = db.studentWallet;
 const InstructorReview = db.instructorReview;
 const { registerStudent, verifyOTPByLandingPage, registerByLandingPage } = require("../../../Middleware/Validate/validateStudent");
 const { loginInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP } = require("../../../Middleware/Validate/validateInstructor");
@@ -86,6 +87,10 @@ exports.register = async (req, res) => {
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             studentCode: code
+        });
+        // Creating Wallet
+        await StudentWallet.create({
+            studentId: student.id
         });
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
@@ -672,10 +677,14 @@ exports.registerStudent = async (req, res) => {
             code = "STUD" + incrementedDigits;
         }
         // Create student in database
-        await Student.create({
+        const student = await Student.create({
             ...req.body,
             studentCode: code,
             createdBy: "Admin"
+        });
+        // Creating Wallet
+        await StudentWallet.create({
+            studentId: student.id
         });
         // Email or SMS to Student
         // Send final success response
@@ -955,6 +964,10 @@ exports.registerByNumber = async (req, res) => {
             name: name,
             phoneNumber: req.body.phoneNumber,
             studentCode: code
+        });
+        // Creating Wallet
+        await StudentWallet.create({
+            studentId: student.id
         });
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);

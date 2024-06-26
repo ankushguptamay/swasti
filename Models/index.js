@@ -48,6 +48,7 @@ db.instructorReview = require('./Review/instructorReviewModel.js')(sequelize, Se
 db.courseReview = require('./Review/courseReviewModel.js')(sequelize, Sequelize);
 
 // Instructor
+db.instructorWallet = require('./User/Instructor/InstructorWalletModel.js')(sequelize, Sequelize);
 db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Sequelize);
 db.insturctorQualification = require('./User/Instructor/insturctorQualificationModel.js')(sequelize, Sequelize);
 db.instructorExperience = require('./User/Instructor/instructorExperienceModel.js')(sequelize, Sequelize);
@@ -86,6 +87,7 @@ db.instructorHistory = require('./User/Instructor/InstructorHistory/instructorHi
 // Student
 db.student = require('./User/Student/studentModel.js')(sequelize, Sequelize);
 db.studentProfile = require('./User/Student/studentProfileModel.js')(sequelize, Sequelize);
+db.studentWallet = require('./User/Student/studentWalletMode.js')(sequelize, Sequelize);
 
 // Notification
 db.createNotification = require('./createNotificationModel.js')(sequelize, Sequelize);
@@ -96,8 +98,16 @@ db.campaignEmailCredential = require('./campaignEmailCredentialsModel.js')(seque
 // Student's Association with profile
 db.student.hasOne(db.studentProfile, { foreignKey: 'studentId', as: 'profile' });
 
+// Student's Association with student wallet
+db.student.hasOne(db.studentWallet, { foreignKey: 'studentId', as: 'studentWallets' });
+db.studentWallet.belongsTo(db.student, { foreignKey: 'studentId', as: 'student' });
+
 // Instructor's Association with Qualification
 db.instructor.hasMany(db.insturctorQualification, { foreignKey: 'instructorId', as: 'qualifications' });
+
+// Instructor with instructorwallet
+db.instructor.hasOne(db.instructorWallet, { foreignKey: 'instructorId', as: 'wallets' });
+db.instructorWallet.belongsTo(db.instructor, { foreignKey: 'instructorId', as: 'instructor' });
 
 // Instructor's Association with Experience
 db.instructor.hasMany(db.instructorExperience, { foreignKey: 'instructorId', as: 'experience' });

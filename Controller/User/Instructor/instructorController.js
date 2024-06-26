@@ -3,6 +3,7 @@ const Instructor = db.instructor;
 const InstructorQualification = db.insturctorQualification;
 const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
+const InstructorWallet = db.instructorWallet;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
 const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm, therapistTerm, yogaStudioTerm } = require("../../../Middleware/Validate/validateInstructor");
@@ -83,6 +84,10 @@ exports.register = async (req, res) => {
             name: name,
             phoneNumber: req.body.phoneNumber,
             instructorCode: code
+        });
+        // Creating Wallet
+        await InstructorWallet.create({
+            instructorId: instructor.id
         });
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
@@ -582,10 +587,14 @@ exports.registerInstructor = async (req, res) => {
             code = "INST" + incrementedDigits;
         }
         // Create instructor in database
-        await Instructor.create({
+        const instructor = await Instructor.create({
             ...req.body,
             instructorCode: code,
             createdBy: "Admin"
+        });
+        // Creating Wallet
+        await InstructorWallet.create({
+            instructorId: instructor.id
         });
         // Email or SMS to Insturctor
         // Send final success response
@@ -856,6 +865,10 @@ exports.registerByNumber = async (req, res) => {
             name: name,
             phoneNumber: req.body.phoneNumber,
             instructorCode: code
+        });
+        // Creating Wallet
+        await InstructorWallet.create({
+            instructorId: instructor.id
         });
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
