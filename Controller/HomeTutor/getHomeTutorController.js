@@ -6,6 +6,7 @@ const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
 const HTutorImages = db.hTImage;
+const ServiceNotification = db.serviceNotification;
 
 
 exports.getMyHomeTutorForInstructor = async (req, res) => {
@@ -612,6 +613,60 @@ exports.getDeletedHTServiceArea = async (req, res) => {
             success: true,
             message: "Deleted home tutor service areas fetched successfully!",
             data: area
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getServiceNotification = async (req, res) => {
+    try {
+        const { page, limit, search } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        const condition = [{ instructorId: req.instructor.id }];
+        // Search
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { notification: { [Op.substring]: search } },
+                    { instructorServices: { [Op.substring]: search } },
+                    { response: { [Op.substring]: search } }
+                ]
+            })
+        }
+        // Count All notification
+        const totalNotification = await ServiceNotification.count({
+            where: {
+                [Op.and]: condition
+            }
+        });
+        const notification = await ServiceNotification.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Service notification fetched successfully!",
+            totalPage: Math.ceil(totalNotification / recordLimit),
+            currentPage: currentPage,
+            data: notification
         });
     } catch (err) {
         res.status(500).send({

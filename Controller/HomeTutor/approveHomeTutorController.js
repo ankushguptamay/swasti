@@ -7,6 +7,7 @@ const Therapy = db.therapy;
 const HTServiceArea = db.hTServiceArea;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
+const ServiceNotification = db.serviceNotification;
 
 exports.submitHomeTutorForApproval = async (req, res) => {
     try {
@@ -75,6 +76,14 @@ exports.changeHomeTutorStatus = async (req, res) => {
             ...tutor,
             approvalStatusByAdmin: approvalStatusByAdmin,
             anyUpdateRequest: false
+        });
+        // create service Notification
+        await ServiceNotification.create({
+            instructorId: tutor.instructorId,
+            notification: `${tutor.homeTutorName} home tutor ${approvalStatusByAdmin} by Swasti!`,
+            instructorServices: "HomeTutor",
+            serviceId: req.params.id,
+            response: approvalStatusByAdmin
         });
         // Final Response
         res.status(200).send({
@@ -222,7 +231,8 @@ exports.changeHTutorUpdationStatus = async (req, res) => {
             await Instructor.update({ bio: history.instructorBio }, { where: { id: homeTutor.instructorId } });
             await Therapy.update({ instructorBio: history.instructorBio }, { where: { instructorId: homeTutor.instructorId } });
             await homeTutor.update({
-                serviceOffered: history.serviceOffered,
+                isGroupSO: history.isGroupSO,
+                isPrivateSO: history.isPrivateSO,
                 language: history.language,
                 privateSessionPrice_Day: history.privateSessionPrice_Day,
                 privateSessionPrice_Month: history.privateSessionPrice_Month,
@@ -240,6 +250,14 @@ exports.changeHTutorUpdationStatus = async (req, res) => {
         await homeTutor.update({
             ...homeTutor,
             anyUpdateRequest: false
+        });
+        // create service Notification
+        await ServiceNotification.create({
+            instructorId: homeTutor.instructorId,
+            notification: `${homeTutor.homeTutorName} your home tutor updation request ${approvalStatusByAdmin} by Swasti!`,
+            instructorServices: "HomeTutor",
+            serviceId: homeTutor.id,
+            response: approvalStatusByAdmin
         });
         // Final Response
         res.status(200).send({

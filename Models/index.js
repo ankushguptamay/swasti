@@ -20,6 +20,7 @@ db.sequelize = sequelize;
 // Admin
 db.admin = require('./Admin/adminModel.js')(sequelize, Sequelize);
 db.emailCredential = require('./Admin/bravoEmailCredentialModel.js')(sequelize, Sequelize);
+db.serviceNotification = require('./Admin/serviceNotificationModel.js')(sequelize, Sequelize);
 
 // Course
 db.course_Student = require('./Course/JunctionTable/course_Student_JunctionModel.js')(sequelize, Sequelize);
@@ -146,6 +147,9 @@ db.courseContent.hasMany(db.contentHistory, { foreignKey: 'contentId', as: 'cont
 
 // Instructor Association with review
 db.instructor.hasMany(db.instructorReview, { foreignKey: 'instructorId', as: 'review' });
+
+// Instructor Association with review
+db.instructor.hasMany(db.serviceNotification, { foreignKey: 'instructorId', as: 'serviceNotifications' });
 
 // Course Association with courseReview
 db.course.hasMany(db.courseReview, { foreignKey: 'courseId', as: 'review' });
