@@ -33,7 +33,8 @@ const { changeYogaStudioBusinessStatus, changeYogaStudioContactStatus, changeYog
 const { softDeleteYogaStudioBusiness, softDeleteYogaStudioContact, softDeleteYogaStudioImage, softDeleteYogaStudioTime,
     hardDeleteYogaStudioBusiness, hardDeleteYogaStudioContact, hardDeleteYogaStudioImage, hardDeleteYogaStudioTime } = require('../Controller/YogaStudio/deleteBusinessController');
 const { restoreYogaStudioBusiness, restoreYogaStudioContact, restoreYogaStudioImage, restoreYogaStudioTime } = require('../Controller/YogaStudio/restoreBusinessController');
-const { getHomeTutorForAdmin, getHomeTutorById, getHTutorUpdationRequestById, getHTTimeSlote } = require('../Controller/HomeTutor/getHomeTutorController');
+const { getHomeTutorForAdmin, getHomeTutorById, getHTutorUpdationRequestById, getHTTimeSlote, getAllDeletedHT, getDeletedHTImages,
+    getDeletedHTServiceArea, getDeletedHTTimeSlotes } = require('../Controller/HomeTutor/getHomeTutorController');
 const { changeHomeTutorStatus, changeHTutorUpdationStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { restoreHTutorImage, restoreHTutorServiceArea, restoreHTutorTimeSlote, restoreHomeTutor } = require('../Controller/HomeTutor/restoreHomeTutorController');
@@ -275,6 +276,11 @@ admin.get("/homeTutors", verifyAdminJWT, isAdminPresent, getHomeTutorForAdmin);
 admin.get("/homeTutors/:id", verifyAdminJWT, isAdminPresent, getHomeTutorById);
 admin.get("/hTutorUpdationRequest/:id", verifyAdminJWT, isAdminPresent, getHTutorUpdationRequestById);
 admin.get("/hTTimeSlote/:id", verifyAdminJWT, isAdminPresent, getHTTimeSlote);
+
+admin.get("/getAllDeletedHT", verifyAdminJWT, isAdminPresent, getAllDeletedHT);
+admin.get("/getDeletedHTImages/:id", verifyAdminJWT, isAdminPresent, getDeletedHTImages); //id = homeTutorId
+admin.get("/getDeletedHTServiceArea/:id", verifyAdminJWT, isAdminPresent, getDeletedHTServiceArea); //id = homeTutorId
+admin.get("/getDeletedHTTimeSlotes/:id", verifyAdminJWT, isAdminPresent, getDeletedHTTimeSlotes); //id = homeTutorId
 
 admin.put("/changeHomeTutorStatus/:id", verifyAdminJWT, isAdminPresent, changeHomeTutorStatus);
 admin.put("/changeHTutorUpdationStatus/:id", verifyAdminJWT, isAdminPresent, changeHTutorUpdationStatus);

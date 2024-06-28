@@ -244,7 +244,7 @@ exports.addHTutorTimeSlote = async (req, res) => {
                     });
                 }
             }
-            console.log(code);
+            // console.log(code);
         }
         // Final Response
         res.status(200).send({

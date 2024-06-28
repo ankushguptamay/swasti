@@ -461,3 +461,162 @@ exports.getHTTimeSlote = async (req, res) => {
         });
     }
 };
+
+exports.getAllDeletedHT = async (req, res) => {
+    try {
+        const { page, limit, search, deletedThrough } = req.query;
+        // Pagination
+        const recordLimit = parseInt(limit) || 10;
+        let offSet = 0;
+        let currentPage = 1;
+        if (page) {
+            offSet = (parseInt(page) - 1) * recordLimit;
+            currentPage = parseInt(page);
+        }
+        const condition = [{ deletedAt: { [Op.ne]: null } }];
+        // Search
+        if (search) {
+            condition.push({
+                [Op.or]: [
+                    { approvalStatusByAdmin: search }
+                ]
+            })
+        }
+        // Deleted Through
+        if (deletedThrough) {
+            condition.push({ deletedThrough: deletedThrough })
+        }
+        // Count All Home Tutor
+        const totalTutor = await HomeTutor.count({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        const homeTutor = await HomeTutor.findAll({
+            limit: recordLimit,
+            offset: offSet,
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false,
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Deleted home tutor fetched successfully!",
+            totalPage: Math.ceil(totalTutor / recordLimit),
+            currentPage: currentPage,
+            data: homeTutor
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getDeletedHTTimeSlotes = async (req, res) => {
+    try {
+        const { deletedThrough, date } = req.query;
+        const condition = [{
+            homeTutorId: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        }];
+        if (deletedThrough) {
+            condition.push({
+                deletedThrough: deletedThrough
+            });
+        }
+        if (date) {
+            condition.push({
+                date: date
+            });
+        }
+        const timeSlote = await HTTimeSlot.findAll({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Deleted home tutor time slotes fetched successfully!",
+            data: timeSlote
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getDeletedHTImages = async (req, res) => {
+    try {
+        const { deletedThrough } = req.query;
+        const condition = [{
+            homeTutorId: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        }];
+        if (deletedThrough) {
+            condition.push({
+                deletedThrough: deletedThrough
+            });
+        }
+        const images = await HTutorImages.findAll({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Deleted home tutor images fetched successfully!",
+            data: images
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.getDeletedHTServiceArea = async (req, res) => {
+    try {
+        const { deletedThrough } = req.query;
+        const condition = [{
+            homeTutorId: req.params.id,
+            deletedAt: { [Op.ne]: null }
+        }];
+        if (deletedThrough) {
+            condition.push({
+                deletedThrough: deletedThrough
+            });
+        }
+        const area = await HTServiceArea.findAll({
+            where: {
+                [Op.and]: condition
+            },
+            paranoid: false
+        });
+        // Final Response
+        res.status(200).send({
+            success: true,
+            message: "Deleted home tutor service areas fetched successfully!",
+            data: area
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};

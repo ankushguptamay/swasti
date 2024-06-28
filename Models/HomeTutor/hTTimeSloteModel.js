@@ -42,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             defaultValue: "Active"
         },
+        userId: {
+            type: DataTypes.STRING
+        },
         deletedThrough: {
             type: DataTypes.STRING,
             validate: {

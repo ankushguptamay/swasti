@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         userId: {
             type: DataTypes.STRING
+        },
+        noOfBooking: {
+            type: DataTypes.INTEGER,
+            defaultValue: 1
         }
     }, {
         paranoid: true

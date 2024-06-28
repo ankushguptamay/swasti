@@ -104,6 +104,17 @@ exports.restoreHTutorTimeSlote = async (req, res) => {
                 message: "Warning! This home tutor slote is not deleted by Swasti!",
             });
         }
+        // time 
+        const date1 = JSON.stringify(new Date());
+        const date2 = JSON.stringify(new Date((new Date).getTime() + (1 * 24 * 60 * 60 * 1000)));
+        const date3 = JSON.stringify(new Date((new Date).getTime() + (2 * 24 * 60 * 60 * 1000)));
+        const array = [`${date1.slice(1, 11)}`, `${date2.slice(1, 11)}`, `${date3.slice(1, 11)}`]
+        if (array.indexOf(slote.date) === -1) {
+            return res.status(400).send({
+                success: false,
+                message: "Can't restore!"
+            });
+        }
         await slote.update({ deletedThrough: null });
         // Restore slote
         await slote.restore();
@@ -144,7 +155,7 @@ exports.restoreHTutorImage = async (req, res) => {
         }
         // find no. of current image
         const images = await HTutorImages.count({ where: { homeTutorId: image.homeTutorId, deletedThrough: null } });
-        if (parseInt(image) < 3) {
+        if (parseInt(images) < 3) {
             await image.update({ deletedThrough: null });
             // Restore image
             await image.restore();

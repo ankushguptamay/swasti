@@ -44,6 +44,7 @@ exports.bookHTValidation = (data) => {
         receipt: joi.string().required(),
         couponCode: joi.string().optional(),
         timeSloteId: joi.string().required(),
+        noOfBooking: joi.string().required(),
         userPreferedLanguage: joi.string().required()
     });
     return schema.validate(data);

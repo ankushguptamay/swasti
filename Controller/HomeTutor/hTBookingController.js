@@ -21,7 +21,7 @@ exports.createHTOrder = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
-        const { amount, currency, receipt, couponCode, timeSloteId, userPreferedLanguage } = req.body; // receipt is id created for this order
+        const { amount, currency, receipt, couponCode, timeSloteId, userPreferedLanguage, } = req.body; // receipt is id created for this order
         const userId = req.student.id;
         const timeSlote = await HTTimeSlot.findOne({ where: { id: timeSloteId, appointmentStatus: "Active", isBooked: false } });
         if (!timeSlote) {
@@ -42,6 +42,11 @@ exports.createHTOrder = async (req, res) => {
                 message: "Can't book more then three days slote!"
 
             });
+        }
+        let noOfBooking = req.body.noOfBooking;
+        // Number
+        if (timeSlote.serviceType === "Private") {
+            noOfBooking = 1;
         }
         // Group class validation
         if (timeSlote.serviceType === "Group") {
@@ -66,6 +71,7 @@ exports.createHTOrder = async (req, res) => {
             (err, order) => {
                 if (!err) {
                     HTBooking.create({
+                        noOfBooking: noOfBooking,
                         timeSloteId: timeSloteId,
                         homeTutorId: timeSlote.homeTutorId,
                         userId: userId,
@@ -135,21 +141,7 @@ exports.verifyHTPayment = async (req, res) => {
         } else if (purchase.verify === false && purchase.status === "Created") {
             if (razorpay_signature === generated_signature) {
                 const timeSlote = await HTTimeSlot.findOne({ where: { id: purchase.timeSloteId } });
-                if (timeSlote.serviceType === "Private") {
-                    await timeSlote.update({ isBooked: true });
-                } else {
-                    const findBooked = await HTBooking.findAll({
-                        where: {
-                            timeSloteId: purchase.timeSloteId,
-                            status: "Paid",
-                            verify: true
-                        }
-                    });
-                    const noOfPeople = parseInt(timeSlote.noOfPeople) - 1;
-                    if (findBooked.length === noOfPeople) {
-                        await timeSlote.update({ isBooked: true });
-                    }
-                }
+                await timeSlote.update({ ...timeSlote, isBooked: true, userId: purchase.userId });
                 // Update Purchase
                 await purchase.update({
                     ...purchase,
