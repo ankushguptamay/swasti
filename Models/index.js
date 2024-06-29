@@ -298,17 +298,30 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructors", "isOTPVerify", {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "isOTPVerify", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructors", "referralCode", {
-    type: DataTypes.STRING
-}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "referralCode", {
+//     type: DataTypes.STRING
+// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
 
-queryInterface.addColumn("instructors", "chakraBreakNumber", {
-    type: DataTypes.INTEGER
-}).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
+// queryInterface.addColumn("instructors", "chakraBreakNumber", {
+//     type: DataTypes.INTEGER
+// }).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
+
+// queryInterface.addColumn("students", "isOTPVerify", {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+
+// queryInterface.addColumn("students", "referralCode", {
+//     type: DataTypes.STRING
+// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+
+// queryInterface.addColumn("students", "chakraBreakNumber", {
+//     type: DataTypes.INTEGER
+// }).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;
