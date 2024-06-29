@@ -4,6 +4,7 @@ const StudentProfile = db.studentProfile;
 const EmailOTP = db.emailOTP;
 const EmailCredential = db.emailCredential;
 const CourseReview = db.courseReview;
+const Chakra = db.chakra;
 const StudentWallet = db.studentWallet;
 const InstructorReview = db.instructorReview;
 const { registerStudent, verifyOTPByLandingPage, registerByLandingPage } = require("../../../Middleware/Validate/validateStudent");
@@ -28,6 +29,15 @@ const { Op } = require("sequelize");
 // restoreStudent
 // verifyStudent
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function getRandomIntInclusive(max, exclude) {
+    const num = Math.floor(Math.random() * max);
+    return (num + 1 === exclude) ? getRandomInt(max) : num + 1
+}
+
 exports.register = async (req, res) => {
     try {
         // Validate Body
@@ -35,6 +45,7 @@ exports.register = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { referralCode } = req.body;
         // Check in paranoid true
         const paranoidTrue = await Student.findOne({
             where: {
@@ -81,17 +92,30 @@ exports.register = async (req, res) => {
         if (req.body.name) {
             name = capitalizeFirstLetter(req.body.name);
         }
+        const num = getRandomInt(7);
         // Create student in database
         const student = await Student.create({
             name: name,
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
-            studentCode: code
+            studentCode: code,
+            referralCode: referralCode,
+            chakraBreakNumber: num + 1
         });
         // Creating Wallet
         await StudentWallet.create({
             studentId: student.id
         });
+        // Create Chakra
+        const chakraName = ['Root', 'Sacral', 'Solar Plexus', 'Heart', 'Throat', 'Third Eye', 'Crown'];
+        for (let i = 0; i < chakraName.length; i++) {
+            await Chakra.create({
+                chakraName: chakraName[i],
+                chakraNumber: i + 1,
+                quantity: 0,
+                ownerId: student.id
+            });
+        }
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
         // Update sendEmail 0 every day
@@ -380,6 +404,41 @@ exports.verifyOTP = async (req, res) => {
             });
         }
         await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // Chakra
+        if (!student.isOTPVerify) {
+            await student.update({ ...student, isOTPVerify: true });
+            if (student.referralCode) {
+                const referral = await Student.findOne({
+                    where: {
+                        studentCode: student.referralCode
+                    }
+                });
+                if (referral) {
+                    const chakraBreakNumber = parseInt(referral.chakraBreakNumber);
+                    const chakras = await Chakra.findAll({
+                        where: {
+                            ownerId: referral.id
+                        },
+                        order: [
+                            ['chakraNumber', 'ASC']
+                        ]
+                    });
+                    let totalChakraQuantity = 0;
+                    for (let i = 0; i < chakras.length; i++) {
+                        totalChakraQuantity = totalChakraQuantity + parseInt(chakras[i].quantity);
+                    }
+                    let specialNum;
+                    if (totalChakraQuantity <= 20) {
+                        specialNum = getRandomIntInclusive(7, chakraBreakNumber);
+                    } else {
+                        specialNum = getRandomInt(7);
+                    }
+                    const specialChakra = await Chakra.findOne({ where: { ownerId: referral.id, chakraNumber: parseInt(specialNum) } });
+                    const newQuantity = parseInt(specialChakra.quantity) + 1;
+                    await specialChakra.update({ ...specialChakra, quantity: newQuantity });
+                }
+            }
+        }
         // generate JWT Token
         const authToken = jwt.sign(
             {
@@ -634,6 +693,7 @@ exports.registerStudent = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { referralCode } = req.body;
         // Check in paranoid true
         const paranoidTrue = await Student.findOne({
             where: {
@@ -676,16 +736,29 @@ exports.registerStudent = async (req, res) => {
             let incrementedDigits = parseInt(lastDigits, 10) + 1;
             code = "STUD" + incrementedDigits;
         }
+        const num = getRandomInt(7);
         // Create student in database
         const student = await Student.create({
             ...req.body,
             studentCode: code,
-            createdBy: "Admin"
+            createdBy: "Admin",
+            referralCode: referralCode,
+            chakraBreakNumber: num + 1
         });
         // Creating Wallet
         await StudentWallet.create({
             studentId: student.id
         });
+        // Create Chakra
+        const chakraName = ['Root', 'Sacral', 'Solar Plexus', 'Heart', 'Throat', 'Third Eye', 'Crown'];
+        for (let i = 0; i < chakraName.length; i++) {
+            await Chakra.create({
+                chakraName: chakraName[i],
+                chakraNumber: i + 1,
+                quantity: 0,
+                ownerId: student.id
+            });
+        }
         // Email or SMS to Student
         // Send final success response
         res.status(200).send({
@@ -924,6 +997,7 @@ exports.registerByNumber = async (req, res) => {
         if (error) {
             return res.status(400).send(error.details[0].message);
         }
+        const { referralCode } = req.body;
         // Check is present 
         const isStudent = await Student.findOne({
             paranoid: false,
@@ -958,17 +1032,30 @@ exports.registerByNumber = async (req, res) => {
             code = "STUD" + incrementedDigits;
         }
         const name = capitalizeFirstLetter(req.body.name);
+        const num = getRandomInt(7);
         // Create student in database
         const student = await Student.create({
             email: req.body.email,
             name: name,
             phoneNumber: req.body.phoneNumber,
-            studentCode: code
+            studentCode: code,
+            referralCode: referralCode,
+            chakraBreakNumber: num + 1
         });
         // Creating Wallet
         await StudentWallet.create({
             studentId: student.id
         });
+        // Create Chakra
+        const chakraName = ['Root', 'Sacral', 'Solar Plexus', 'Heart', 'Throat', 'Third Eye', 'Crown'];
+        for (let i = 0; i < chakraName.length; i++) {
+            await Chakra.create({
+                chakraName: chakraName[i],
+                chakraNumber: i + 1,
+                quantity: 0,
+                ownerId: student.id
+            });
+        }
         // Generate OTP for Email
         const otp = generateOTP.generateFixedLengthRandomNumber(OTP_DIGITS_LENGTH);
         // Sending OTP to mobile number
@@ -1080,6 +1167,41 @@ exports.verifyNumberOTP = async (req, res) => {
             });
         }
         await EmailOTP.destroy({ where: { receiverId: isOtp.receiverId } });
+        // Chakra
+        if (!student.isOTPVerify) {
+            await student.update({ ...student, isOTPVerify: true });
+            if (student.referralCode) {
+                const referral = await Student.findOne({
+                    where: {
+                        studentCode: student.referralCode
+                    }
+                });
+                if (referral) {
+                    const chakraBreakNumber = parseInt(referral.chakraBreakNumber);
+                    const chakras = await Chakra.findAll({
+                        where: {
+                            ownerId: referral.id
+                        },
+                        order: [
+                            ['chakraNumber', 'ASC']
+                        ]
+                    });
+                    let totalChakraQuantity = 0;
+                    for (let i = 0; i < chakras.length; i++) {
+                        totalChakraQuantity = totalChakraQuantity + parseInt(chakras[i].quantity);
+                    }
+                    let specialNum;
+                    if (totalChakraQuantity <= 20) {
+                        specialNum = getRandomIntInclusive(7, chakraBreakNumber);
+                    } else {
+                        specialNum = getRandomInt(7);
+                    }
+                    const specialChakra = await Chakra.findOne({ where: { ownerId: referral.id, chakraNumber: parseInt(specialNum) } });
+                    const newQuantity = parseInt(specialChakra.quantity) + 1;
+                    await specialChakra.update({ ...specialChakra, quantity: newQuantity });
+                }
+            }
+        }
         // generate JWT Token
         const authToken = jwt.sign(
             {
@@ -1103,3 +1225,29 @@ exports.verifyNumberOTP = async (req, res) => {
         });
     }
 };
+
+exports.getMyChakra = async (req, res) => {
+    try {
+        const chakra = await Chakra.findAll({
+            where: {
+                [Op.and]: [
+                    { ownerId: req.student.id }
+                ]
+            },
+            order: [
+                ['chakraNumber', 'ASC']
+            ]
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Chakra fetched successfully!`,
+            data: chakra
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}

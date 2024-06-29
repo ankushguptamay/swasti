@@ -5,7 +5,8 @@ exports.registerStudent = (data) => {
     const schema = joi.object().keys({
         name: joi.string().min(3).max(30).optional(),
         email: joi.string().email().required().label('Email'),
-        phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).optional()
+        phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).optional(),
+        referralCode: joi.string().optional()
     });
     return schema.validate(data);
 }

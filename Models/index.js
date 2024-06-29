@@ -54,6 +54,7 @@ db.instructor = require('./User/Instructor/instructorModel.js')(sequelize, Seque
 db.insturctorQualification = require('./User/Instructor/insturctorQualificationModel.js')(sequelize, Sequelize);
 db.instructorExperience = require('./User/Instructor/instructorExperienceModel.js')(sequelize, Sequelize);
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
+db.chakra = require('./User/chakraModel.js')(sequelize, Sequelize);
 
 // YogaStudio
 db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);
@@ -297,13 +298,17 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("hTTimeSlots", "userId", {
-//     type: DataTypes.STRING
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("students", "isOTPVerify", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("hTBookings", "noOfBooking", {
-//     type: DataTypes.INTEGER,
-//     defaultValue: 1
-// }).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("students", "referralCode", {
+    type: DataTypes.STRING
+}).then((res) => { console.log("2Added!") }).catch((err) => { console.log(err) });
+
+queryInterface.addColumn("students", "chakraBreakNumber", {
+    type: DataTypes.INTEGER
+}).then((res) => { console.log("3Added!") }).catch((err) => { console.log(err) });
 
 module.exports = db;

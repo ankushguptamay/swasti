@@ -16,6 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         phoneNumber: {
             type: DataTypes.STRING
         },
+        isOTPVerify: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        referralCode: {
+            type: DataTypes.STRING
+        },
         location: {
             type: DataTypes.STRING(1234)
         },
@@ -30,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['Self', 'Admin']]
             },
             defaultValue: 'Self'
+        },
+        chakraBreakNumber: {
+            type: DataTypes.INTEGER
         }
     }, {
         paranoid: true

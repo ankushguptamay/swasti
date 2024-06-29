@@ -84,6 +84,16 @@ module.exports = (sequelize, DataTypes) => {
         dateOfBirth: {
             type: DataTypes.DATEONLY
         },
+        isOTPVerify: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        referralCode: {
+            type: DataTypes.STRING
+        },
+        chakraBreakNumber: {
+            type: DataTypes.INTEGER
+        },
         isVerify: {
             type: DataTypes.BOOLEAN,
             defaultValue: false

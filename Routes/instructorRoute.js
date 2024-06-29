@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm,
+const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm,getMyChakra,
     therapistTerm, homeTutorTerm, yogaStudioTerm } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
@@ -54,6 +54,7 @@ instructor.post("/registerByNumber", registerByNumber);
 instructor.post("/loginByNumber", loginByNumber);
 instructor.post("/verifyNumberOTP", verifyNumberOTP);
 instructor.get("/instructor", verifyInstructorJWT, getInstructor);
+instructor.get("/chakras", verifyInstructorJWT, getMyChakra);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
 
 // Term and condition
