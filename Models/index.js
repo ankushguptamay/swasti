@@ -298,10 +298,10 @@ db.yogaStudioBusiness.addScope('distance', (latitude, longitude, distance, unit 
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface.addColumn("instructors", "isOTPVerify", {
-//     type: DataTypes.BOOLEAN,
-//     defaultValue: false
-// }).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
+queryInterface.addColumn("serviceNotifications", "isViewed", {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+}).then((res) => { console.log("1Added!") }).catch((err) => { console.log(err) });
 
 // queryInterface.addColumn("instructors", "referralCode", {
 //     type: DataTypes.STRING

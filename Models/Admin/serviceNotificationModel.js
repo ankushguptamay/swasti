@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isIn: [['Approved', 'Rejected']]
             }
+        },
+        isViewed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     })
     return ServiceNotification;

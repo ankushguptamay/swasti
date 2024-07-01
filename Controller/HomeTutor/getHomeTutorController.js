@@ -44,6 +44,25 @@ exports.getMyHomeTutorForInstructor = async (req, res) => {
                 required: false
             }]
         });
+        // Auto submit for approval
+        for (let i = 0; i < homeTutor.length; i++) {
+            if (!homeTutor[i].approvalStatusByAdmin) {
+                const language = homeTutor[i].language;
+                const yogaFor = homeTutor[i].yogaFor;
+                const images = homeTutor[i].images;
+                const serviceAreas = homeTutor[i].serviceAreas;
+                const specilization = homeTutor[i].specilization;
+                if (specilization.length > 0 && yogaFor.length > 0 && language.length > 0 && homeTutor[i].instructorBio) {
+                    if (serviceAreas.length > 0 && images.length > 0) {
+                        // Submit for approval
+                        await homeTutor[i].update({
+                            ...homeTutor[i],
+                            approvalStatusByAdmin: "Pending"
+                        });
+                    }
+                }
+            }
+        }
         // Final Response
         res.status(200).send({
             success: true,
@@ -660,13 +679,20 @@ exports.getServiceNotification = async (req, res) => {
                 ['createdAt', 'DESC']
             ]
         });
+        // Count All unViewed notification
+        const totalUnViewed = await ServiceNotification.count({
+            where: {
+                instructorId: req.instructor.id,
+                isViewed: false
+            }
+        });
         // Final Response
         res.status(200).send({
             success: true,
             message: "Service notification fetched successfully!",
             totalPage: Math.ceil(totalNotification / recordLimit),
             currentPage: currentPage,
-            data: notification
+            data: { notification: notification, unViewedNotification: totalUnViewed }
         });
     } catch (err) {
         res.status(500).send({

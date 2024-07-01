@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm,getMyChakra,
+const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm, getMyChakra,
     therapistTerm, homeTutorTerm, yogaStudioTerm } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
@@ -29,7 +29,7 @@ const { updateYogaStudioBusiness, updateYogaStudioContact, updateYogaStudioTime 
 const { getAllCourseByType } = require('../Controller/Master/courseDurationTypeController');
 const { createHomeTutor, addHTutorSeviceArea, addHTutorTimeSlote, addHTutorImage } = require('../Controller/HomeTutor/createHomeTutorController');
 const { getMyHomeTutorForInstructor, getHomeTutorById, getHTTimeSlote, getServiceNotification } = require('../Controller/HomeTutor/getHomeTutorController');
-const { submitHomeTutorForApproval, publishHomeTutor, changeHTTimeSloteStatus } = require('../Controller/HomeTutor/approveHomeTutorController');
+const { publishHomeTutor, changeHTTimeSloteStatus, viewServiceNotifications } = require('../Controller/HomeTutor/approveHomeTutorController');
 const { softDeleteHTutorImage, softDeleteHTutorServiceArea, softDeleteHTutorTimeSlote, softDeleteHomeTutor } = require('../Controller/HomeTutor/deleteHomeTutorController');
 const { updateHomeTutor } = require('../Controller/HomeTutor/updateHomeTutorController');
 const { createTherapy, addTherapyImage, addTherapySeviceArea, addTherapyTimeSlote, addTherapyTypeOffered } = require('../Controller/Therapy/createTherapyController');
@@ -206,10 +206,10 @@ instructor.get("/homeTutors/:id", verifyInstructorJWT, isInstructorForHomeTutor,
 instructor.get("/hTTimeSlote/:id", verifyInstructorJWT, isInstructorForHomeTutor, getHTTimeSlote);
 
 instructor.get("/serviceNotifications", verifyInstructorJWT, isInstructorForHomeTutor, getServiceNotification);
+instructor.put("/viewServiceNotifications", verifyInstructorJWT, isInstructorForHomeTutor, viewServiceNotifications);
 
 instructor.get("/myHTBookedSlotes", verifyInstructorJWT, isInstructorForHomeTutor, getMyHTBookedSloteForInstructor);
 
-instructor.put("/submitHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, submitHomeTutorForApproval);
 instructor.put("/publishHomeTutor/:id", verifyInstructorJWT, isInstructorForHomeTutor, publishHomeTutor);
 instructor.put("/changeHTTimeSloteStatus/:id", verifyInstructorJWT, isInstructorForHomeTutor, changeHTTimeSloteStatus);
 

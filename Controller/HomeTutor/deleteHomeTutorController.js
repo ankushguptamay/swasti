@@ -77,6 +77,16 @@ exports.softDeleteHTutorServiceArea = async (req, res) => {
                 message: "Home tutor area is not present!"
             });
         }
+        // Find All Service Area
+        const totalArea = await HTServiceArea.count({
+            where: { id: req.params.id }
+        });
+        if (parseInt(totalArea) <= 1) {
+            return res.status(400).send({
+                success: false,
+                message: "There should be at least one service area present!"
+            });
+        }
         await area.update({ deletedThrough: deletedThrough });
         // Soft Delete
         await area.destroy();
@@ -114,6 +124,16 @@ exports.softDeleteHTutorImage = async (req, res) => {
             return res.status(400).send({
                 success: false,
                 message: "Home tutor images is not present!"
+            });
+        }
+        // Find All Images
+        const totalImages = await HTutorImages.count({
+            where: { id: req.params.id }
+        });
+        if (parseInt(totalImages) <= 1) {
+            return res.status(400).send({
+                success: false,
+                message: "There should be at least one image present!"
             });
         }
         await images.update({ deletedThrough: deletedThrough });

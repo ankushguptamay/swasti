@@ -9,44 +9,6 @@ const HTTimeSlot = db.hTTimeSlote;
 const HomeTutorHistory = db.homeTutorHistory;
 const ServiceNotification = db.serviceNotification;
 
-exports.submitHomeTutorForApproval = async (req, res) => {
-    try {
-        const instructorId = req.instructor.id;
-
-        // Find Home tutor In Database
-        const tutor = await HomeTutor.findOne({
-            where: {
-                id: req.params.id,
-                instructorId: instructorId,
-                approvalStatusByAdmin: null
-            }
-        });
-        if (!tutor) {
-            return res.status(400).send({
-                success: false,
-                message: "This home tutor is not present!"
-            });
-        }
-
-        // Update Home tutor
-        await tutor.update({
-            ...tutor,
-            approvalStatusByAdmin: "Pending"
-        });
-        // Final Response
-        res.status(200).send({
-            success: true,
-            message: `Home tutor successfully submit for approval!`
-        });
-
-    } catch (err) {
-        res.status(500).send({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
 exports.changeHomeTutorStatus = async (req, res) => {
     try {
         // Validate Body
@@ -263,6 +225,21 @@ exports.changeHTutorUpdationStatus = async (req, res) => {
         res.status(200).send({
             success: true,
             message: `Request ${approvalStatusByAdmin} successfully!`
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+exports.viewServiceNotifications = async (req, res) => {
+    try {
+        await ServiceNotification.update({ isViewed: true }, { where: { instructorId: req.instructor.id } });
+        res.status(200).send({
+            success: true,
+            message: "Service notification viewed successfully!"
         });
     } catch (err) {
         res.status(500).send({
