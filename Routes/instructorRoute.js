@@ -1,6 +1,6 @@
 const express = require('express');
 const { register, login, getInstructor, verifyOTP, updateInstructor, registerByNumber, loginByNumber, verifyNumberOTP, instructorTerm, getMyChakra,
-    therapistTerm, homeTutorTerm, yogaStudioTerm } = require('../Controller/User/Instructor/instructorController');
+    therapistTerm, homeTutorTerm, yogaStudioTerm, getReferralData } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -55,6 +55,7 @@ instructor.post("/loginByNumber", loginByNumber);
 instructor.post("/verifyNumberOTP", verifyNumberOTP);
 instructor.get("/instructor", verifyInstructorJWT, getInstructor);
 instructor.get("/chakras", verifyInstructorJWT, getMyChakra);
+instructor.get("/referralDatas", verifyInstructorJWT, getReferralData);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
 
 // Term and condition

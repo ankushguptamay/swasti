@@ -55,6 +55,7 @@ db.insturctorQualification = require('./User/Instructor/insturctorQualificationM
 db.instructorExperience = require('./User/Instructor/instructorExperienceModel.js')(sequelize, Sequelize);
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 db.chakra = require('./User/chakraModel.js')(sequelize, Sequelize);
+db.referralHistory = require('./User/referralHistoryModel.js')(sequelize, Sequelize);
 
 // YogaStudio
 db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);

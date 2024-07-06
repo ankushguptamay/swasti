@@ -4,6 +4,7 @@ const InstructorQualification = db.insturctorQualification;
 const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const Chakra = db.chakra;
+const ReferralHistory = db.referralHistory;
 const InstructorWallet = db.instructorWallet;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
@@ -42,6 +43,22 @@ cloudinary.config({
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
+
+function getTodayTime() {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const option = {
+        timeZone: timeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    };
+    const time = new Intl.DateTimeFormat([], option)
+    return time.format(new Date());
+}
+
 
 function getRandomIntInclusive(max, exclude) {
     const num = Math.floor(Math.random() * max);
@@ -467,6 +484,14 @@ exports.verifyOTP = async (req, res) => {
                     const specialChakra = await Chakra.findOne({ where: { ownerId: referral.id, chakraNumber: parseInt(specialNum) } });
                     const newQuantity = parseInt(specialChakra.quantity) + 1;
                     await specialChakra.update({ ...specialChakra, quantity: newQuantity });
+                    const date = getTodayTime();
+                    await ReferralHistory.create({
+                        chakraNumber: specialNum,
+                        joinerName: instructor.name,
+                        date: date,
+                        joinerId: instructor.id,
+                        ownerId: referral.id
+                    });
                 }
             }
         }
@@ -1101,6 +1126,14 @@ exports.verifyNumberOTP = async (req, res) => {
                     const specialChakra = await Chakra.findOne({ where: { ownerId: referral.id, chakraNumber: parseInt(specialNum) } });
                     const newQuantity = parseInt(specialChakra.quantity) + 1;
                     await specialChakra.update({ ...specialChakra, quantity: newQuantity });
+                    const date = getTodayTime();
+                    await ReferralHistory.create({
+                        chakraNumber: specialNum,
+                        joinerName: instructor.name,
+                        date: date,
+                        joinerId: instructor.id,
+                        ownerId: referral.id
+                    });
                 }
             }
         }
@@ -1309,6 +1342,30 @@ exports.getMyChakra = async (req, res) => {
             success: true,
             message: `Chakra fetched successfully!`,
             data: chakra
+        });
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message
+        });
+    }
+}
+
+exports.getReferralData = async (req, res) => {
+    try {
+        const referral = await ReferralHistory.findAll({
+            where: {
+                ownerId: req.instructor.id
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+        // Send final success response
+        res.status(200).send({
+            success: true,
+            message: `Referral data fetched successfully!`,
+            data: referral
         });
     } catch (err) {
         res.status(500).send({

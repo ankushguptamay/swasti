@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getStudent, verifyOTP, verifyOTPByLandingPage, registerByLandingPage, registerByNumber, loginByNumber, verifyNumberOTP, getMyChakra } = require('../Controller/User/Student/studentController');
+const { register, login, getStudent, verifyOTP, verifyOTPByLandingPage, registerByLandingPage, registerByNumber, loginByNumber, verifyNumberOTP, getMyChakra, getReferralData } = require('../Controller/User/Student/studentController');
 const { addUpdateStudentProfile, deleteStudentProfile } = require('../Controller/User/Student/studentProfileController');
 const { getAllApprovedCourseForStudent, getCourseByIdForPublicStudent, getMyCourses, myCourseByIdForStudent } = require('../Controller/Course/getCourseAndContent');
 const { giveInstructorReview, deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
@@ -31,6 +31,7 @@ student.post("/verifyNumberOTP", verifyNumberOTP);
 // student.post("/registerByLandingPage", registerByLandingPage);
 student.get("/student", verifyStudentJWT, getStudent);
 student.get("/chakras", verifyStudentJWT, getMyChakra);
+student.get("/referralDatas", verifyStudentJWT, getReferralData);
 
 student.post("/addUpdateStudentProfile", verifyStudentJWT, isStudentPresent, uploadImage.single("StudentProfile"), addUpdateStudentProfile);
 student.delete("/deleteProfile/:id", verifyStudentJWT, isStudentPresent, deleteStudentProfile);
