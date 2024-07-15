@@ -56,6 +56,8 @@ db.instructorExperience = require('./User/Instructor/instructorExperienceModel.j
 db.emailOTP = require('./User/emailOTPModel.js')(sequelize, Sequelize);
 db.chakra = require('./User/chakraModel.js')(sequelize, Sequelize);
 db.referralHistory = require('./User/referralHistoryModel.js')(sequelize, Sequelize);
+db.instructorBankDetails = require('./User/Instructor/instructorBankDetailsModel.js')(sequelize, Sequelize);
+db.instructorKYC = require('./User/Instructor/instructorKYCModel.js')(sequelize, Sequelize);
 
 // YogaStudio
 db.yogaStudioBusiness = require('./YogaStudio/yogaStudioBusinessModel.js')(sequelize, Sequelize);
@@ -107,6 +109,9 @@ db.studentWallet.belongsTo(db.student, { foreignKey: 'studentId', as: 'student' 
 
 // Instructor's Association with Qualification
 db.instructor.hasMany(db.insturctorQualification, { foreignKey: 'instructorId', as: 'qualifications' });
+
+db.instructor.hasMany(db.instructorBankDetails, { foreignKey: 'instructorId', as: 'bankDetails' });
+db.instructor.hasOne(db.instructorKYC, { foreignKey: 'instructorId', as: 'kycs' });
 
 // Instructor with instructorwallet
 db.instructor.hasOne(db.instructorWallet, { foreignKey: 'instructorId', as: 'wallets' });

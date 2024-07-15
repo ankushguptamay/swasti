@@ -3,6 +3,7 @@ const { register, login, getInstructor, verifyOTP, updateInstructor, registerByN
     therapistTerm, homeTutorTerm, yogaStudioTerm, getReferralData } = require('../Controller/User/Instructor/instructorController');
 const { addQualification, updateQualification, deleteQualificationInstructor, getQualificationById, getMyQualificationByqualificationIn } = require('../Controller/User/Instructor/instructorQualificationController');
 const { addExperience, updateExperiencen, deleteExperienceInstructor, getExperienceById } = require('../Controller/User/Instructor/instructorExperienceController');
+const { addBankDetails, addKYC, getBankDetails, getKYC, deleteBankDetails, deleteKYC } = require('../Controller/User/Instructor/bankDetailsCont');
 const { deleteInstructorReview, getInstructorAverageRating, getInstructorReview } = require('../Controller/Review/instructorReviewController');
 const { changeContentPublish, changeCoursePublish, changeCourseFilePublish, changeVideoPublish, submitContentForApproval, submitCourseForApproval, submitFileForApproval, submitVideoForApproval } = require('../Controller/Course/approvalCourseAndContent');
 const { addCourse, addCourseImage, addTeacherImage, addContent, addRecordedVideo, addContentFile } = require('../Controller/Course/createCourseAndContent');
@@ -57,6 +58,14 @@ instructor.get("/instructor", verifyInstructorJWT, getInstructor);
 instructor.get("/chakras", verifyInstructorJWT, getMyChakra);
 instructor.get("/referralDatas", verifyInstructorJWT, getReferralData);
 instructor.put("/updateInstructor", verifyInstructorJWT, uploadImage.single("profileImage"), updateInstructor);
+
+// Bank and KYC
+instructor.get("/getBankDetails", verifyInstructorJWT, getBankDetails);
+instructor.post("/addBankDetails", verifyInstructorJWT, addBankDetails);
+instructor.get("/getKYC", verifyInstructorJWT, getKYC);
+instructor.post("/addKYC", verifyInstructorJWT, addKYC);
+instructor.delete("/deleteBankDetails/:id", verifyInstructorJWT, deleteBankDetails);
+instructor.delete("/deleteKYC/:id", verifyInstructorJWT, deleteKYC);
 
 // Term and condition
 instructor.put("/instructorTerm", verifyInstructorJWT, instructorTerm);

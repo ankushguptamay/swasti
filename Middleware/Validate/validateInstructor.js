@@ -139,3 +139,24 @@ exports.yogaStudioTerm = (data) => {
     });
     return schema.validate(data);
 }
+
+exports.addBankDetails = (data) => {
+    const schema = joi.object().keys({
+        accountNumber: joi.string().required(),
+        bankName: joi.string().required(),
+        name: joi.string().required(),
+        IFSCCode: joi.string().required(),
+        isVerify: joi.boolean().required()
+    });
+    return schema.validate(data);
+}
+
+exports.addKYC = (data) => {
+    const schema = joi.object().keys({
+        aadharNumber: joi.string().required(),
+        address: joi.string().required(),
+        name: joi.string().required(),
+        isVerify: joi.boolean().required()
+    });
+    return schema.validate(data);
+}

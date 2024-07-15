@@ -4,11 +4,14 @@ const InstructorQualification = db.insturctorQualification;
 const InstructorExperience = db.instructorExperience;
 const EmailOTP = db.emailOTP;
 const Chakra = db.chakra;
+const IBankDetail = db.instructorBankDetails;
+const IKYC = db.instructorKYC;
 const ReferralHistory = db.referralHistory;
 const InstructorWallet = db.instructorWallet;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
-const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm, therapistTerm, yogaStudioTerm } = require("../../../Middleware/Validate/validateInstructor");
+const { loginInstructor, registerInstructor, updateInstructor, verifyOTP, loginInstructorByNumber, verifyNumberOTP, homeTutorTerm, instructorTerm,
+    therapistTerm, yogaStudioTerm } = require("../../../Middleware/Validate/validateInstructor");
 const { INSTRUCTOR_JWT_SECRET_KEY, JWT_VALIDITY, OTP_DIGITS_LENGTH, OTP_VALIDITY_IN_MILLISECONDS } = process.env;
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -535,11 +538,21 @@ exports.getInstructor = async (req, res) => {
                 as: "experience"
             }]
         });
+        let profileComplete = 0;
+        if (instructor.name && instructor.email && instructor.phoneNumber && instructor.imageFileName && instructor.languages && instructor.bio && instructor.location && instructor.dateOfBirth) {
+            profileComplete = profileComplete + 30;
+        }
+        const kyc = await IKYC.findOne({ where: { instructorId: req.instructor.id, isVerify: true } });
+        if (kyc) profileComplete = profileComplete + 10;
+        const qualification = await InstructorQualification.findOne({ where: { instructorId: req.instructor.id, approvalStatusByAdmin: "Approved" } });
+        if (qualification) profileComplete = profileComplete + 40;
+        const bank = await IBankDetail.findOne({ where: { instructorId: req.instructor.id, isVerify: true } });
+        if (bank) profileComplete = profileComplete + 20;
         // Send final success response
         res.status(200).send({
             success: true,
             message: "Instructor Profile Fetched successfully!",
-            data: instructor
+            data: { instructor: instructor, profileComplete: profileComplete }
         });
     } catch (err) {
         res.status(500).send({
