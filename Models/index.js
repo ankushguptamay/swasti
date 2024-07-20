@@ -575,19 +575,19 @@ db.yogaStudioBusiness.addScope(
 // }
 // );
 
-// db.emailCredential.findOne({
-//     where: {
-//         email: process.env.EMAIL
-//     }
-// }).then((res) => {
-//     console.log(res);
-//     if (!res) {
-//         db.emailCredential.create({
-//             email:process.env.EMAIL,
-//             plateForm: "BREVO",
-//             EMAIL_API_KEY: process.env.EMAIL_API_KEY
-//         });
-//     }
-// }).catch((err) => { console.log(err) });
+db.emailCredential.findOne({
+    where: {
+        email: process.env.BREVO_EMAIL
+    }
+}).then((res) => {
+    console.log(res);
+    if (!res) {
+        db.emailCredential.create({
+            email:process.env.BREVO_EMAIL,
+            plateForm: "BREVO",
+            EMAIL_API_KEY: process.env.EMAIL_API_KEY
+        });
+    }
+}).catch((err) => { console.log(err) });
 
 module.exports = db;
