@@ -885,7 +885,7 @@ exports.hardDeleteStudent = async (req, res) => {
                 message: "Student is not present!"
             });
         }
-        //hard delete StudentProfile , picture should be deleted from cloud 
+        //hard delete StudentProfile , picture should be deleted from
         await StudentProfile.destroy({ where: { studentId: req.params.id }, force: true });
         //hard delete student reviews
         await InstructorReview.destroy({ where: { reviewerId: req.params.id }, force: true });

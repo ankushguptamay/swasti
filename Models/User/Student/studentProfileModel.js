@@ -5,9 +5,6 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        cloudinaryFileId: {
-            type: DataTypes.STRING
-        },
         originalName: {
             type: DataTypes.STRING
         },
