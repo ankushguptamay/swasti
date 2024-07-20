@@ -590,77 +590,77 @@ db.yogaStudioBusiness.addScope(
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface
-  .removeColumn("studentProfiles", "cloudinaryFileId")
-  .then((res) => {
-    console.log("1Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("instructorQualifications", "cloudinaryFileId")
-  .then((res) => {
-    console.log("2Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("instructors", "cloudinaryFileId")
-  .then((res) => {
-    console.log("3Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("therapyImages", "cloudinaryFileId")
-  .then((res) => {
-    console.log("4Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("adminBanners", "cloudinaryFileId")
-  .then((res) => {
-    console.log("5Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("hTutorImages", "cloudinaryFileId")
-  .then((res) => {
-    console.log("6Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-queryInterface
-  .removeColumn("courseAndContentFiles", "cloudinaryFileId")
-  .then((res) => {
-    console.log("7Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-  queryInterface
-  .removeColumn("yogaStudioImages", "cloudinaryFileId")
-  .then((res) => {
-    console.log("8Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-  queryInterface
-  .removeColumn("instructorHistorys", "cloudinaryFileId")
-  .then((res) => {
-    console.log("9Deleted!");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// queryInterface
+//   .removeColumn("studentProfiles", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("1Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("instructorQualifications", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("2Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("instructors", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("3Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("therapyImages", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("4Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("adminBanners", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("5Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("hTutorImages", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("6Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// queryInterface
+//   .removeColumn("courseAndContentFiles", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("7Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+//   queryInterface
+//   .removeColumn("yogaStudioImages", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("8Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+//   queryInterface
+//   .removeColumn("instructorHistorys", "cloudinaryFileId")
+//   .then((res) => {
+//     console.log("9Deleted!");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 module.exports = db;
