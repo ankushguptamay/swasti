@@ -79,7 +79,7 @@ exports.softDeleteHTutorServiceArea = async (req, res) => {
         }
         // Find All Service Area
         const totalArea = await HTServiceArea.count({
-            where: { id: req.params.id }
+            where: { homeTutorId:area.homeTutorId }
         });
         if (parseInt(totalArea) <= 1) {
             return res.status(400).send({
@@ -128,7 +128,7 @@ exports.softDeleteHTutorImage = async (req, res) => {
         }
         // Find All Images
         const totalImages = await HTutorImages.count({
-            where: { id: req.params.id }
+            where: { homeTutorId:images.homeTutorId }
         });
         if (parseInt(totalImages) <= 1) {
             return res.status(400).send({
