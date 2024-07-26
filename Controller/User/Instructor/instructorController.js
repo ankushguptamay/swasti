@@ -580,17 +580,26 @@ exports.getInstructor = async (req, res) => {
       ],
     });
     let profileComplete = 0;
-    if (
-      instructor.name &&
-      instructor.email &&
-      instructor.phoneNumber &&
-      instructor.imageFileName &&
-      instructor.languages &&
-      instructor.bio &&
-      instructor.location &&
-      instructor.dateOfBirth
-    ) {
-      profileComplete = profileComplete + 30;
+    if (instructor.name) {
+      profileComplete = profileComplete + 4;
+    }
+    if (instructor.imageFileName) {
+      profileComplete = profileComplete + 3;
+    }
+    if (instructor.languages) {
+      profileComplete = profileComplete + 3;
+    }
+    if (instructor.bio) {
+      profileComplete = profileComplete + 4;
+    }
+    if (instructor.location) {
+      profileComplete = profileComplete + 3;
+    }
+    if (instructor.dateOfBirth) {
+      profileComplete = profileComplete + 3;
+    }
+    if (instructor.email && instructor.phoneNumber) {
+      profileComplete = profileComplete + 10;
     }
     const kyc = await IKYC.findOne({
       where: { instructorId: req.instructor.id, isVerify: true },
