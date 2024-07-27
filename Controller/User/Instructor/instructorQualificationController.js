@@ -38,6 +38,16 @@ exports.addQualification = async (req, res) => {
       qualificationIn,
     } = req.body;
     //Upload file
+    const isQualification = await InstructorQualification.findOne({
+      where: { course: course, instructorId: req.instructor.id },
+    });
+    if (isQualification) {
+      deleteSingleFile(req.file.path);
+      return res.status(400).send({
+        success: false,
+        message: "This qualification already exists!",
+      });
+    }
     const fileStream = fs.createReadStream(req.file.path);
     await uploadFileToBunny(bunnyFolderName, fileStream, req.file.filename);
     // delete file from resource/servere
