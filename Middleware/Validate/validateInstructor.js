@@ -165,7 +165,7 @@ exports.addBankDetails = (data) => {
     bankName: joi.string().required(),
     name: joi.string().required(),
     IFSCCode: joi.string().required(),
-    isVerify: joi.boolean().required(),
+    isVerify: joi.boolean().valid().required(),
   });
   return schema.validate(data);
 };

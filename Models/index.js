@@ -316,6 +316,16 @@ db.coupon.hasMany(db.course_Coupon, {
 });
 db.course_Coupon.belongsTo(db.coupon, { foreignKey: "couponId", as: "coupon" });
 
+// Master Association
+db.university_institute.hasMany(db.courseDurationType, {
+  foreignKey: "universityId",
+  as: "courses",
+});
+db.courseDurationType.belongsTo(db.university_institute, {
+  foreignKey: "universityId",
+  as: "university",
+});
+
 // Course's Association with file
 db.course.hasMany(db.courseAndContentFile, {
   foreignKey: "courseId",
@@ -589,5 +599,14 @@ db.yogaStudioBusiness.addScope(
 //         });
 //     }
 // }).catch((err) => { console.log(err) });
+
+// queryInterface
+//   .dropTable("course_duration_types")
+//   .then(() => {
+//     console.log("Droped");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 module.exports = db;
