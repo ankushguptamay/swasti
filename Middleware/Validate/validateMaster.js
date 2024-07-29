@@ -51,7 +51,8 @@ exports.courseDurationTypeValidation = (data) => {
 
 exports.university_instituteValidation = (data) => {
   const schema = joi.object().keys({
-    university_institute_name: joi.string().required(),
+    university_name: joi.string().required(),
+    institute_collage: joi.string().required(),
   }); // .options({ allowUnknown: true });
   return schema.validate(data);
 };
