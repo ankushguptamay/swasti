@@ -11,9 +11,12 @@ module.exports = (sequelize, DataTypes) => {
         course: {
             type: DataTypes.STRING
         },
-        university_institute_name: {
-            type: DataTypes.STRING
-        },
+        university_name: {
+            type: DataTypes.STRING,
+          },
+          institute_collage: {
+            type: DataTypes.STRING,
+          },
         year: {
             type: DataTypes.STRING
         },

@@ -57,7 +57,8 @@ exports.addQualification = (data) => {
   const schema = joi.object().keys({
     courseType: joi.string().required(),
     course: joi.string().required(),
-    university_institute_name: joi.string().required(),
+    university_name: joi.string().required(),
+    institute_collage: joi.string().required(),
     year: joi.string().required(),
     marksType: joi.string().optional(),
     marks: joi.string().optional(),

@@ -66,6 +66,52 @@ exports.getAllUniversity_Institute = async (req, res) => {
   }
 };
 
+exports.getOnlyUniversity = async (req, res) => {
+  try {
+    const university_institute = await University_Institute.findAll({
+      attributes: ["id", "university_name"],
+    });
+    // Final Response
+    res.status(200).send({
+      success: true,
+      message: "University fetched successfully!",
+      data: university_institute,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getInstituteByUniversity = async (req, res) => {
+  try {
+    const university_name = req.query.university_name;
+    if (!university_name) {
+      return res.status(400).send({
+        success: false,
+        message: "Please select a university!",
+      });
+    }
+    const university_institute = await University_Institute.findAll({
+      where: { university_name: university_name },
+      attributes: ["id", "university_name", "institute_collage"],
+    });
+    // Final Response
+    res.status(200).send({
+      success: true,
+      message: `Institutes of ${university_name} fetched successfully!`,
+      data: university_institute,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 exports.deleteUniversity_Institute = async (req, res) => {
   try {
     // Find In database

@@ -600,4 +600,33 @@ db.yogaStudioBusiness.addScope(
 //     }
 // }).catch((err) => { console.log(err) });
 
+queryInterface
+  .addColumn("instructorQualifications", "university_name", {
+    type: DataTypes.STRING,
+  })
+  .then((res) => {
+    console.log("Added1");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+queryInterface
+  .addColumn("instructorQualifications", "institute_collage", {
+    type: DataTypes.STRING,
+  })
+  .then((res) => {
+    console.log("Added2");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+queryInterface
+  .removeColumn("instructorQualifications", "university_institute_name")
+  .then((res) => {
+    console.log("Removed");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 module.exports = db;

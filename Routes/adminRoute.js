@@ -119,6 +119,8 @@ const {
 const {
   createUniversity_Institute,
   getAllUniversity_Institute,
+  getInstituteByUniversity,
+  getOnlyUniversity,
   deleteUniversity_Institute,
   bulkCreateUniversity_Institute,
 } = require("../Controller/Master/university_instituteController");
@@ -696,6 +698,13 @@ admin.get(
   verifyAdminJWT,
   isAdminPresent,
   getAllUniversity_Institute
+);
+admin.get("/university", verifyAdminJWT, isAdminPresent, getOnlyUniversity);
+admin.get(
+  "/institutes",
+  verifyAdminJWT,
+  isAdminPresent,
+  getInstituteByUniversity
 );
 admin.delete(
   "/university_institute/:id",

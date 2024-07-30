@@ -87,6 +87,8 @@ const {
 } = require("../Controller/Master/therapySecilizationController");
 const {
   getAllUniversity_Institute,
+  getInstituteByUniversity,
+  getOnlyUniversity,
 } = require("../Controller/Master/university_instituteController");
 const {
   getAllTherapyType,
@@ -520,6 +522,18 @@ instructor.get(
   verifyInstructorJWT,
   isInstructorProfileComplete,
   getAllUniversity_Institute
+);
+instructor.get(
+  "/university",
+  verifyInstructorJWT,
+  isInstructorProfileComplete,
+  getOnlyUniversity
+);
+instructor.get(
+  "/institutes",
+  verifyInstructorJWT,
+  isInstructorProfileComplete,
+  getInstituteByUniversity
 );
 instructor.get(
   "/courseDurationTypes/:type",
