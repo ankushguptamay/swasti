@@ -31,9 +31,10 @@ exports.createUniversity_Institute = async (req, res) => {
         message: "This university/institute name is present!",
       });
     }
-    // create university_institute_name
+    // create University_Institute
     await University_Institute.create({
-      university_institute_name: university_institute_name,
+      university_name: university_name,
+      institute_collage: institute_collage,
     });
     // Final Response
     res.status(200).send({
