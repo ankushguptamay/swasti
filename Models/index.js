@@ -600,13 +600,4 @@ db.yogaStudioBusiness.addScope(
 //     }
 // }).catch((err) => { console.log(err) });
 
-// queryInterface
-//   .dropTable("course_duration_types")
-//   .then(() => {
-//     console.log("Droped");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
 module.exports = db;
