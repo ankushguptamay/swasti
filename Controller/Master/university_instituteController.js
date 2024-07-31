@@ -1,5 +1,6 @@
 const db = require("../../Models");
 const { Op } = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 const {
   university_instituteValidation,
 } = require("../../Middleware/Validate/validateMaster");
@@ -69,7 +70,11 @@ exports.getAllUniversity_Institute = async (req, res) => {
 exports.getOnlyUniversity = async (req, res) => {
   try {
     const university_institute = await University_Institute.findAll({
-      attributes: ["id", "university_name"],
+      attributes: [
+        [Sequelize.fn("MAX", Sequelize.col("id")), "id"],
+        "university_name",
+      ],
+      group: ["university_name"],
     });
     // Final Response
     res.status(200).send({

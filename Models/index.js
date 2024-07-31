@@ -621,9 +621,9 @@ db.yogaStudioBusiness.addScope(
 //     console.log(err);
 //   });
 // queryInterface
-//   .removeColumn("instructorQualifications", "university_institute_name")
+//   .renameColumn("university_institutes", "institute_name","institute_collage")
 //   .then((res) => {
-//     console.log("Removed");
+//     console.log("Renamed");
 //   })
 //   .catch((err) => {
 //     console.log(err);
