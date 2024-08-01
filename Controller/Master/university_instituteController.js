@@ -181,6 +181,7 @@ exports.bulkCreateUniversity_Institute = async (req, res) => {
       }
     );
     let universityCount = 0;
+    let courseCount = 0;
     for (let i = 0; i < trans.length; i++) {
       // Create University
       let isPresent = await University_Institute.findOne({
@@ -218,17 +219,29 @@ exports.bulkCreateUniversity_Institute = async (req, res) => {
           courseType: trans[i].courseType,
         });
       }
-      await Course_Duration_Type.create({
-        courseName: trans[i].courseName,
-        courseDuration: trans[i].courseDuration,
-        courseType: trans[i].courseType,
-        universityId: isPresent.id,
+      const isAssociation = await Course_Duration_Type.findOne({
+        where: {
+          courseName: trans[i].courseName,
+          courseDuration: trans[i].courseDuration,
+          courseType: trans[i].courseType,
+          universityId: isPresent.id,
+        },
       });
+      if (!isAssociation) {
+        courseCount = courseCount + 1;
+        await Course_Duration_Type.create({
+          courseName: trans[i].courseName,
+          courseDuration: trans[i].courseDuration,
+          courseType: trans[i].courseType,
+          universityId: isPresent.id,
+        });
+      }
     }
     // Final Response
     res.status(200).send({
       success: true,
       message: "University/Institute name created successfully!",
+      courseCount: courseCount,
       universityCount: universityCount,
     });
   } catch (err) {
