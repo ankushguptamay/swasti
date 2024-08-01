@@ -113,3 +113,23 @@ exports.getAllCourseByType = async (req, res) => {
     });
   }
 };
+
+exports.getAllCourseByUniversityId = async (req, res) => {
+  try {
+    const universityId = req.params.id;
+    const course = await Course_Duration_Type.findAll({
+      where: { universityId: universityId },
+    });
+    // Final Response
+    res.status(200).send({
+      success: true,
+      message: "Course fetched successfully!",
+      data: course,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message,
+    });
+  }
+};

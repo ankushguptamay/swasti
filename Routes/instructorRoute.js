@@ -159,6 +159,7 @@ const {
 } = require("../Controller/YogaStudio/updateBusinessController");
 const {
   getAllCourseByType,
+  getAllCourseByUniversityId,
 } = require("../Controller/Master/courseDurationTypeController");
 const {
   createHomeTutor,
@@ -541,6 +542,12 @@ instructor.get(
   verifyInstructorJWT,
   isInstructorProfileComplete,
   getAllCourseByType
+);
+instructor.get(
+  "/courseDTByUniversity/:id",
+  verifyInstructorJWT,
+  isInstructorProfileComplete,
+  getAllCourseByUniversityId
 );
 instructor.get(
   "/therapySpecilizations",
