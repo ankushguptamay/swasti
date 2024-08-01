@@ -581,37 +581,37 @@ exports.getInstructor = async (req, res) => {
     });
     let profileComplete = 0;
     if (instructor.name) {
-      profileComplete = profileComplete + 4;
+      profileComplete = profileComplete + 7;
     }
     if (instructor.imageFileName) {
-      profileComplete = profileComplete + 3;
+      profileComplete = profileComplete + 2;
     }
     if (instructor.languages) {
-      profileComplete = profileComplete + 3;
+      profileComplete = profileComplete + 2;
     }
     if (instructor.bio) {
-      profileComplete = profileComplete + 4;
+      profileComplete = profileComplete + 2;
     }
     if (instructor.location) {
-      profileComplete = profileComplete + 3;
+      profileComplete = profileComplete + 2;
     }
     if (instructor.dateOfBirth) {
-      profileComplete = profileComplete + 3;
+      profileComplete = profileComplete + 2;
     }
     if (instructor.email && instructor.phoneNumber) {
-      profileComplete = profileComplete + 10;
+      profileComplete = profileComplete + 13;
     }
     const kyc = await IKYC.findOne({
       where: { instructorId: req.instructor.id, isVerify: true },
     });
-    if (kyc) profileComplete = profileComplete + 10;
+    if (kyc) profileComplete = profileComplete + 20;
     const qualification = await InstructorQualification.findOne({
       where: {
         instructorId: req.instructor.id,
-        approvalStatusByAdmin: "Approved",
+        // approvalStatusByAdmin: "Approved",
       },
     });
-    if (qualification) profileComplete = profileComplete + 40;
+    if (qualification) profileComplete = profileComplete + 30;
     const bank = await IBankDetail.findOne({
       where: { instructorId: req.instructor.id, isVerify: true },
     });

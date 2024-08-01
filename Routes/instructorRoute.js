@@ -185,6 +185,7 @@ const {
 } = require("../Controller/HomeTutor/deleteHomeTutorController");
 const {
   updateHomeTutor,
+  updateHTServiceArea,
 } = require("../Controller/HomeTutor/updateHomeTutorController");
 const {
   createTherapy,
@@ -952,6 +953,13 @@ instructor.put(
   verifyInstructorJWT,
   isInstructorForHomeTutor,
   updateHomeTutor
+);
+
+instructor.put(
+  "/updateHTServiceArea/:id",
+  verifyInstructorJWT,
+  isInstructorForHomeTutor,
+  updateHTServiceArea
 );
 
 instructor.delete(

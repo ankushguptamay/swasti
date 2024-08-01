@@ -1,6 +1,6 @@
 const db = require("../../Models");
 const { Op } = require("sequelize");
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const {
   university_instituteValidation,
 } = require("../../Middleware/Validate/validateMaster");
@@ -8,7 +8,6 @@ const University_Institute = db.university_institute;
 const Course_Duration_Type = db.courseDurationType;
 const CourseDuration = db.courseDuration;
 const CourseType = db.courseType;
-const { capitalizeFirstLetter } = require("../../Util/capitalizeFirstLetter");
 
 exports.createUniversity_Institute = async (req, res) => {
   try {
@@ -17,12 +16,11 @@ exports.createUniversity_Institute = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-    const { institute_collage } = req.body;
+    const { institute_collage, university_name } = req.body;
     // Check duplicacy
-    const university_name = capitalizeFirstLetter(req.body.university_name);
     const isPresent = await University_Institute.findOne({
       where: {
-        university_name: university_name,
+        university_name: university_name.replace(/\s+/g, " ").trim(),
         institute_collage: institute_collage,
       },
     });
@@ -153,6 +151,8 @@ exports.deleteUniversity_Institute = async (req, res) => {
 exports.bulkCreateUniversity_Institute = async (req, res) => {
   try {
     const records = req.body.records;
+    console.log(records.length);
+    let i = 0;
     const trans = records.map(
       ({
         university,
@@ -161,15 +161,26 @@ exports.bulkCreateUniversity_Institute = async (req, res) => {
         courseDuration,
         courseType,
       }) => {
+        i = i + 1;
+        console.log(i + 1);
         return {
-          university: university.replace(/\s+/g, " ").trim(),
-          institute_collage: institute_collage.replace(/\s+/g, " ").trim(),
-          courseName: courseName.trim(),
-          courseDuration: courseDuration.replace(/\s+/g, " ").trim(),
-          courseType: courseType.replace(/\s+/g, " ").trim(),
+          university: university
+            ? university.replace(/\s+/g, " ").trim()
+            : null,
+          institute_collage: institute_collage
+            ? institute_collage.replace(/\s+/g, " ").trim()
+            : null,
+          courseName: courseName ? courseName.trim() : null,
+          courseDuration: courseDuration
+            ? courseDuration.replace(/\s+/g, " ").trim()
+            : null,
+          courseType: courseType
+            ? courseType.replace(/\s+/g, " ").trim()
+            : null,
         };
       }
     );
+    let universityCount = 0;
     for (let i = 0; i < trans.length; i++) {
       // Create University
       let isPresent = await University_Institute.findOne({
@@ -183,6 +194,7 @@ exports.bulkCreateUniversity_Institute = async (req, res) => {
           university_name: trans[i].university,
           institute_collage: trans[i].institute_collage,
         });
+        universityCount = universityCount + 1;
       }
       // Create course duration
       let isPresentDuration = await CourseDuration.findOne({
@@ -217,6 +229,7 @@ exports.bulkCreateUniversity_Institute = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "University/Institute name created successfully!",
+      universityCount: universityCount,
     });
   } catch (err) {
     res.status(500).send({
