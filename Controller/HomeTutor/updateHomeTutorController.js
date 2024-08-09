@@ -162,7 +162,7 @@ exports.updateHTServiceArea = async (req, res) => {
     // Final Response
     res.status(200).send({
       success: true,
-      message: "Home tutor area deleted successfully!",
+      message: "Home tutor area updated successfully!",
     });
   } catch (err) {
     res.status(500).send({

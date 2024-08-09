@@ -230,9 +230,9 @@ exports.getHomeTutorForUser = async (req, res) => {
             });
         }
         // Filter
-        if (language) {
-            condition.push({ language: { [Op.contains]: language } });
-        }
+        // if (language) {
+        //     condition.push({ language: { [Op.contains]: language } });
+        // }
         if (isPersonal) {
             condition.push({ isPrivateSO: isPersonal });
         }
