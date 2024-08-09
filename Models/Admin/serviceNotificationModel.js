@@ -8,20 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         notification: {
             type: DataTypes.STRING(1234)
         },
-        instructorServices: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Course', 'HomeTutor', 'Theray', 'YogaStudio']]
-            }
-        },
-        serviceId: {
+        link: {
             type: DataTypes.STRING
-        },
-        response: {
-            type: DataTypes.STRING,
-            validate: {
-                isIn: [['Approved', 'Rejected']]
-            }
         },
         isViewed: {
             type: DataTypes.BOOLEAN,

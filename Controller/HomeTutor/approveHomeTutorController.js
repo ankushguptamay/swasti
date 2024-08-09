@@ -42,10 +42,7 @@ exports.changeHomeTutorStatus = async (req, res) => {
         // create service Notification
         await ServiceNotification.create({
             instructorId: tutor.instructorId,
-            notification: `${tutor.homeTutorName} home tutor ${approvalStatusByAdmin} by Swasti!`,
-            instructorServices: "HomeTutor",
-            serviceId: req.params.id,
-            response: approvalStatusByAdmin
+            notification: `${tutor.homeTutorName} home tutor ${approvalStatusByAdmin} by Swasti!`
         });
         // Final Response
         res.status(200).send({
@@ -216,10 +213,7 @@ exports.changeHTutorUpdationStatus = async (req, res) => {
         // create service Notification
         await ServiceNotification.create({
             instructorId: homeTutor.instructorId,
-            notification: `${homeTutor.homeTutorName} your home tutor updation request ${approvalStatusByAdmin} by Swasti!`,
-            instructorServices: "HomeTutor",
-            serviceId: homeTutor.id,
-            response: approvalStatusByAdmin
+            notification: `${homeTutor.homeTutorName} your home tutor updation request ${approvalStatusByAdmin} by Swasti!`
         });
         // Final Response
         res.status(200).send({

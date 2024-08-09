@@ -10,6 +10,7 @@ const ReferralHistory = db.referralHistory;
 const InstructorWallet = db.instructorWallet;
 const EmailCredential = db.emailCredential;
 const InstructorHistory = db.instructorHistory;
+const ServiceNotification = db.serviceNotification;
 const {
   loginInstructor,
   registerInstructor,
@@ -272,6 +273,14 @@ exports.register = async (req, res) => {
         receiverId: instructor.id,
       });
     }
+    await ServiceNotification.create({
+      instructorId: homeTutor.instructorId,
+      notification: `Welcome ${name} !
+      Thank you for registering with Swasti Bharat. 
+      You are now part of our vibrant community. 
+      Take a moment to set up your profile and start exploring our features. 
+      We are excited to support you on your journey!`,
+    });
     // Send final success response
     res.status(200).send({
       success: true,
