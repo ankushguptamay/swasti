@@ -600,14 +600,14 @@ db.yogaStudioBusiness.addScope(
 //     }
 // }).catch((err) => { console.log(err) });
 
-queryInterface
-  .dropTable("serviceNotifications")
-  .then((res) => {
-    console.log("droped1");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// queryInterface
+//   .dropTable("serviceNotifications")
+//   .then((res) => {
+//     console.log("droped1");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 // queryInterface
 //   .addColumn("instructorQualifications", "institute_collage", {
 //     type: DataTypes.STRING,
