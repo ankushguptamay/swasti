@@ -185,12 +185,12 @@ exports.addHTutorTimeSlote = async (req, res) => {
       if (bookingDate <= yesterday) {
         return res.status(400).send({
           success: false,
-          message: `${bookingDate} date is not acceptable!`,
+          message: `${date[i]} date is not acceptable!`,
         });
       }
     }
     // Store in database
-    for (let j = 0; j <= date.length; j++) {
+    for (let j = 0; j < date.length; j++) {
       const today = `${date[j]}T18:30:00.000Z`;
       // Get All Today Code
       let code;

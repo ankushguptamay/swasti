@@ -216,6 +216,7 @@ const {
   softDeleteHTutorServiceArea,
   softDeleteHTutorTimeSlote,
   softDeleteHomeTutor,
+  hardDeleteHomeTutor
 } = require("../Controller/HomeTutor/deleteHomeTutorController");
 const {
   restoreHTutorImage,
@@ -1188,6 +1189,13 @@ admin.delete(
   verifyAdminJWT,
   isAdminPresent,
   softDeleteHomeTutor
+);
+
+admin.delete(
+  "/hardDeleteHomeTutor/:id",
+  verifyAdminJWT,
+  isAdminPresent,
+  hardDeleteHomeTutor
 );
 
 admin.put(
