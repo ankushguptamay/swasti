@@ -203,6 +203,7 @@ exports.hardDeleteHomeTutor = async (req, res) => {
     // Find Home Tutor In Database
     const tutor = await HomeTutor.findOne({
       where: { id: req.params.id },
+      paranoid: false,
     });
     if (!tutor) {
       return res.status(400).send({
@@ -216,7 +217,10 @@ exports.hardDeleteHomeTutor = async (req, res) => {
       force: true,
     });
     // Time Slote
-    await HTTimeSlot.destroy({where:{ homeTutorId: req.params.id },force:true});
+    await HTTimeSlot.destroy({
+      where: { homeTutorId: req.params.id },
+      force: true,
+    });
     // Delete History
     await HomeTutorHistory.destroy({ where: { homeTutorId: req.params.id } });
     // Delete Images
