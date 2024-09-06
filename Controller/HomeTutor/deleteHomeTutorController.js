@@ -88,6 +88,20 @@ exports.softDeleteHTutorServiceArea = async (req, res) => {
         message: "There should be at least one service area present!",
       });
     }
+    // Check is any timeSlote active and status booked
+    const isSlote = await HTTimeSlot.findOne({
+      where: {
+        appointmentStatus: "Active",
+        serviceAreaId: req.params.id,
+        isBooked: true,
+      },
+    });
+    if (isSlote) {
+      return res.status(400).send({
+        success: false,
+        message: "There is an active booking pending on this service area!",
+      });
+    }
     await area.update({ deletedThrough: deletedThrough });
     // Soft Delete
     await area.destroy();

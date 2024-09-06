@@ -32,11 +32,20 @@ exports.hTutorLocationValidation = (data) => {
 
 exports.hTutorTimeSloteValidation = (data) => {
   const schema = joi.object().keys({
-    date: joi.array().required(),
-    slotes: joi.array().required(),
+    startTime: joi.string().required(),
+    startDate: joi.string().required(),
+    endDate: joi.string().required(),
+    timeDurationInMin: joi.number().required(),
+    serviceType: joi.string().valid("Group", "Private").required(),
+    serviceAreaId: joi.string().optional(),
+    newServiceArea: joi.object().optional(),
+    noOfPeople: joi.number().required(),
   }); // .options({ allowUnknown: true });
   return schema.validate(data);
 };
+
+// data:{"startTime":["11:00PM","12:00PM"],"startDate":"2024-09-07","endDate":"2024-09-12","timeDurationInMin":60,
+//   "serviceType":"Group","newServiceArea":{"locationName":"Delhi","latitude":"389077489","longitude":"13213231","radius":3,"unit":"m"},"noOfPeople":5}
 
 exports.bookHTValidation = (data) => {
   const schema = joi.object().keys({

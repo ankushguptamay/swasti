@@ -2,7 +2,9 @@ const db = require("../../Models");
 const {
   bookHTValidation,
 } = require("../../Middleware/Validate/validateHomeTutor");
+const HTServiceArea = db.hTServiceArea;
 const HTBooking = db.hTBooking;
+const UserSlote = db.userSlote;
 const HTTimeSlot = db.hTTimeSlote;
 const HomeTutor = db.homeTutor;
 const { RAZORPAY_KEY_ID, RAZORPAY_SECRET_ID } = process.env;
@@ -168,6 +170,10 @@ exports.verifyHTPayment = async (req, res) => {
         await timeSlote.update({
           ...timeSlote,
           isBooked: true,
+        });
+        await UserSlote.create({
+          sloteId: purchase.timeSloteId,
+          paidThroung: "Online",
           userId: purchase.userId,
         });
         // Update Purchase
@@ -212,10 +218,8 @@ exports.verifyHTPayment = async (req, res) => {
 
 exports.getMyHTBookedSloteForUser = async (req, res) => {
   try {
-    const booking = await HTBooking.findAll({
+    const booking = await UserSlote.findAll({
       where: {
-        status: "Paid",
-        verify: true,
         userId: req.student.id,
       },
     });
@@ -223,7 +227,10 @@ exports.getMyHTBookedSloteForUser = async (req, res) => {
     for (let i = 0; i < booking.length; i++) {
       sloteId.push(booking[i].timeSloteId);
     }
-    const slote = await HTTimeSlot.findAll({ where: { id: sloteId } });
+    const slote = await HTTimeSlot.findAll({
+      where: { id: sloteId },
+      include: [{ model: HTServiceArea, as: "serviceArea" }],
+    });
     // Final Response
     res.status(200).send({
       success: true,

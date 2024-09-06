@@ -446,38 +446,42 @@ exports.getHomeTutorByIdForUser = async (req, res) => {
 exports.getHTTimeSloteForUser = async (req, res) => {
   try {
     const { date } = req.query;
-    // 3 days validity
-    const date1 = JSON.stringify(new Date());
-    const date2 = JSON.stringify(
-      new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000)
-    );
-    const date3 = JSON.stringify(
-      new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
-    );
-    let dateCondition;
+    const yesterday = new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000);
+    const today = JSON.stringify(new Date());
     if (date) {
-      const array = [
-        `${date1.slice(1, 11)}`,
-        `${date2.slice(1, 11)}`,
-        `${date3.slice(1, 11)}`,
-      ];
-      if (array.indexOf(date) === -1) {
+      const bookingDate = new Date(date).getTime();
+      if (bookingDate <= yesterday) {
         return res.status(400).send({
           success: false,
-          message: "Date should be with in required limit!",
+          message: `${date[i]} date is not acceptable!`,
         });
       } else {
-        dateCondition = date;
+        today = date;
       }
     } else {
-      dateCondition = date1.slice(1, 11);
+      today = today.slice(1, 11);
     }
     const slote = await HTTimeSlot.findAll({
       where: {
         homeTutorId: req.params.id,
         deletedThrough: null,
-        date: dateCondition,
+        date: today,
       },
+      include: [
+        {
+          model: HTServiceArea,
+          as: "serviceArea",
+          attributes: [
+            "id",
+            "locationName",
+            "latitude",
+            "radius",
+            "unit",
+            "longitude",
+            "pincode",
+          ],
+        },
+      ],
     });
     const homeTutor = await HomeTutor.findOne({ where: { id: req.params.id } });
     // Final Response
@@ -505,6 +509,20 @@ exports.getHTTimeSlote = async (req, res) => {
         homeTutorId: req.params.id,
         deletedThrough: null,
         date: date,
+      },
+      attributes: { exclude: ["password"] },
+      include: {
+        model: HTServiceArea,
+        as: "serviceArea",
+        attributes: [
+          "id",
+          "locationName",
+          "latitude",
+          "radius",
+          "unit",
+          "longitude",
+          "pincode",
+        ],
       },
     });
     // Final Response

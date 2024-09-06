@@ -185,6 +185,10 @@ db.hTTimeSlote = require("./HomeTutor/hTTimeSloteModel.js")(
   sequelize,
   Sequelize
 );
+db.userSlote = require("./HomeTutor/sloteUserJunctionModel.js")(
+  sequelize,
+  Sequelize
+);
 db.hTImage = require("./HomeTutor/hTImageModel.js")(sequelize, Sequelize);
 db.homeTutorHistory = require("./HomeTutor/homeTutorHistoryModel.js")(
   sequelize,
@@ -374,6 +378,18 @@ db.course.hasMany(db.courseReview, { foreignKey: "courseId", as: "review" });
 // Student Association with courseReview
 db.student.hasMany(db.courseReview, { foreignKey: "reviewerId", as: "review" });
 
+// User Association with userSlote
+db.student.hasMany(db.userSlote, { foreignKey: "userId", as: "userSlote" });
+db.userSlote.belongsTo(db.student, {
+  foreignKey: "userId",
+  as: "user",
+});
+// Student Association with courseReview
+db.hTTimeSlote.hasMany(db.userSlote, { foreignKey: "sloteId", as: "userSlote" });
+db.userSlote.belongsTo(db.hTTimeSlote, {
+  foreignKey: "sloteId",
+  as: "slote",
+});
 // YogaStudio
 db.instructor.hasMany(db.yogaStudioBusiness, {
   foreignKey: "instructorId",
@@ -443,6 +459,11 @@ db.homeTutor.hasMany(db.hTTimeSlote, {
 db.hTTimeSlote.belongsTo(db.homeTutor, {
   foreignKey: "homeTutorId",
   as: "homeTutors",
+});
+
+db.hTTimeSlote.belongsTo(db.hTServiceArea, {
+  foreignKey: "serviceAreaId",
+  as: "serviceArea",
 });
 
 db.homeTutor.hasMany(db.hTImage, { foreignKey: "homeTutorId", as: "images" });
@@ -609,8 +630,8 @@ db.yogaStudioBusiness.addScope(
 //     console.log(err);
 //   });
 // queryInterface
-//   .addColumn("instructorQualifications", "institute_collage", {
-//     type: DataTypes.STRING,
+//   .addColumn("hTTimeSlots", "timeDurationI", {
+//     type: DataTypes.INTEGER,
 //   })
 //   .then((res) => {
 //     console.log("Added2");
@@ -619,7 +640,7 @@ db.yogaStudioBusiness.addScope(
 //     console.log(err);
 //   });
 // queryInterface
-//   .renameColumn("university_institutes", "institute_name","institute_collage")
+//   .removeColumn("hTTimeSlots", "userId")
 //   .then((res) => {
 //     console.log("Renamed");
 //   })

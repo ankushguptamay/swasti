@@ -162,8 +162,71 @@ exports.addHTutorTimeSlote = async (req, res) => {
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-    const { slotes, date } = req.body;
+    const {
+      startTime,
+      startDate,
+      endDate,
+      timeDurationInMin,
+      serviceType,
+      newServiceArea,
+      noOfPeople,
+    } = req.body;
     const homeTutorId = req.params.id;
+    let serviceAreaId = req.body.serviceAreaId;
+
+    if (serviceAreaId) {
+      const isSAPresent = await HTServiceArea.findOne({
+        where: { id: serviceAreaId, homeTutorId: homeTutorId },
+      });
+      if (!isSAPresent) {
+        return res.status(400).send({
+          success: false,
+          message: "This service area is not present!",
+        });
+      }
+    } else if (newServiceArea) {
+      if (
+        newServiceArea.locationName &&
+        newServiceArea.latitude &&
+        newServiceArea.longitude &&
+        newServiceArea.radius &&
+        newServiceArea.unit
+      ) {
+        const area = await HTServiceArea.create({
+          locationName: newServiceArea.locationName,
+          latitude: parseFloat(newServiceArea.latitude),
+          longitude: parseFloat(newServiceArea.longitude),
+          radius: newServiceArea.radius,
+          unit: newServiceArea.unit,
+          homeTutorId: homeTutorId,
+        });
+        serviceAreaId = area.dataValues.id;
+      } else {
+        return res.status(400).send({
+          success: false,
+          message: "Please send all required fields in service area!",
+        });
+      }
+    } else {
+      return res.status(400).send({
+        success: false,
+        message: "Please select a service area!",
+      });
+    }
+
+    // Create array of dates
+    function getDifferenceInDays(date1, date2) {
+      const timeDiff = Math.abs(new Date(date2) - new Date(date1));
+      const diffInDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      return diffInDays;
+    }
+    const noOfDate = getDifferenceInDays(startDate, endDate) + 1;
+    const date = [];
+    for (i = 0; i < noOfDate; i++) {
+      const today = new Date();
+      today.setDate(today.getDate() + i);
+      date.push(today.toISOString().slice(0, 10));
+    }
 
     // Check is this home tutor present and created by same instructor
     const isHomeTutor = await HomeTutor.findOne({
@@ -194,7 +257,7 @@ exports.addHTutorTimeSlote = async (req, res) => {
       const today = `${date[j]}T18:30:00.000Z`;
       // Get All Today Code
       let code;
-      const indtructorNumb = req.instructorCode.substring(4);
+      const indtructorNumb = "INST1000"//req.instructorCode.substring(4);
       const isSloteCode = await HTTimeSlot.findAll({
         where: {
           createdAt: { [Op.gt]: today },
@@ -209,56 +272,41 @@ exports.addHTutorTimeSlote = async (req, res) => {
       if (isSloteCode.length > 0) {
         code = isSloteCode[isSloteCode.length - 1].sloteCode;
       }
-      // Store in database
-      for (let i = 0; i < slotes.length; i++) {
-        const otp = generateOTP.generateFixedLengthRandomNumber(
-          process.env.OTP_DIGITS_LENGTH
-        );
-        // Generating Code
-        const isSlote = await HTTimeSlot.findOne({
-          where: {
-            time: slotes[i].time,
-            date: date[j],
-            homeTutorId: homeTutorId,
-          },
-        });
-        if (!isSlote) {
-          if (!code) {
-            code = indtructorNumb + day + month + year + 1;
-          } else {
-            const digit = indtructorNumb.length + 6;
-            let lastDigits = code.substring(digit);
-            let incrementedDigits = parseInt(lastDigits, 10) + 1;
-            code = indtructorNumb + day + month + year + incrementedDigits;
-          }
-          // Store in database
-          if (slotes[i].serviceType === "Private") {
-            await HTTimeSlot.create({
-              date: date[j],
-              password: otp,
-              sloteCode: code,
-              serviceType: slotes[i].serviceType,
-              noOfPeople: 1,
-              time: slotes[i].time,
-              isBooked: false,
-              appointmentStatus: "Active",
-              homeTutorId: homeTutorId,
-            });
-          } else if (slotes[i].serviceType === "Group") {
-            await HTTimeSlot.create({
-              date: date[j],
-              password: otp,
-              serviceType: slotes[i].serviceType,
-              sloteCode: code,
-              noOfPeople: slotes[i].noOfPeople,
-              time: slotes[i].time,
-              isBooked: false,
-              appointmentStatus: "Active",
-              homeTutorId: homeTutorId,
-            });
-          }
+
+      const otp = generateOTP.generateFixedLengthRandomNumber(
+        process.env.OTP_DIGITS_LENGTH
+      );
+      // Generating Code
+      const isSlote = await HTTimeSlot.findOne({
+        where: {
+          time: startTime,
+          date: date[j],
+          homeTutorId: homeTutorId,
+        },
+      });
+      if (!isSlote) {
+        if (!code) {
+          code = indtructorNumb + day + month + year + 1;
+        } else {
+          const digit = indtructorNumb.length + 6;
+          let lastDigits = code.substring(digit);
+          let incrementedDigits = parseInt(lastDigits, 10) + 1;
+          code = indtructorNumb + day + month + year + incrementedDigits;
         }
-        // console.log(code);
+        // Store in database
+        await HTTimeSlot.create({
+          date: date[j],
+          password: otp,
+          timeDurationInMin: timeDurationInMin,
+          sloteCode: code,
+          serviceType: serviceType,
+          noOfPeople: serviceType === "Private" ? 1 : noOfPeople,
+          time: startTime,
+          isBooked: false,
+          serviceAreaId: serviceAreaId,
+          appointmentStatus: "Active",
+          homeTutorId: homeTutorId,
+        });
       }
     }
     // Final Response
