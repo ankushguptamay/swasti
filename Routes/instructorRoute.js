@@ -172,6 +172,7 @@ const {
   getHomeTutorById,
   getHTTimeSlote,
   getServiceNotification,
+  getHTServiceAreaByHTId,
 } = require("../Controller/HomeTutor/getHomeTutorController");
 const {
   publishHomeTutor,
@@ -927,6 +928,12 @@ instructor.get(
   verifyInstructorJWT,
   isInstructorForHomeTutor,
   getServiceNotification
+);
+instructor.get(
+  "/hTServiceArea/:id",
+  verifyInstructorJWT,
+  isInstructorForHomeTutor,
+  getHTServiceAreaByHTId
 );
 instructor.put(
   "/viewServiceNotifications",

@@ -139,6 +139,28 @@ exports.getHomeTutorForAdmin = async (req, res) => {
   }
 };
 
+exports.getHTServiceAreaByHTId = async (req, res) => {
+  try {
+    const hTServiceArea = await HTServiceArea.findAll({
+      where: {
+        homeTutorId: req.params.id,
+        deletedThrough: null,
+      },
+    });
+    // Final Response
+    res.status(200).send({
+      success: true,
+      message: "HT service area fetched successfully!",
+      data: hTServiceArea,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 // Admin and Instructor all not deleted
 exports.getHomeTutorById = async (req, res) => {
   try {
