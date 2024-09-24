@@ -852,7 +852,8 @@ exports.verifyOTPByLandingPage = async (req, res) => {
         const authToken = jwt.sign(
             {
                 id: student.id,
-                email: email
+                email: email,
+                phoneNumber: student.phoneNumber
             },
             STUDENT_JWT_SECRET_KEY,
             { expiresIn: JWT_VALIDITY } // five day
@@ -945,7 +946,8 @@ exports.registerByLandingPage = async (req, res) => {
             authToken = jwt.sign(
                 {
                     id: isStudent.id,
-                    email: req.body.email
+                    email: req.body.email,
+                    phoneNumber: isStudent.phoneNumber
                 },
                 STUDENT_JWT_SECRET_KEY,
                 { expiresIn: JWT_VALIDITY } // five day
@@ -994,7 +996,8 @@ exports.registerByLandingPage = async (req, res) => {
             authToken = jwt.sign(
                 {
                     id: student.id,
-                    email: req.body.email
+                    email: req.body.email,
+                    phoneNumber: isStudent.phoneNumber
                 },
                 STUDENT_JWT_SECRET_KEY,
                 { expiresIn: JWT_VALIDITY } // five day
@@ -1288,7 +1291,7 @@ exports.getReferralData = async (req, res) => {
     try {
         const referral = await ReferralHistory.findAll({
             where: {
-                ownerId: req.user.id
+                ownerId: req.student.id
             },
             order: [
                 ['createdAt', 'DESC']

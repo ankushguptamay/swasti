@@ -284,11 +284,6 @@ exports.getMyHTBookedSloteForInstructor = async (req, res) => {
     }
     // Where condition
     const condition = [{ id: homeTutorId }, { date: dateCondition }];
-    const slote = await HTTimeSlot.findAll({
-      where: {
-        [Op.and]: condition,
-      },
-    });
     if (isBooked) {
       condition.push({ isBooked: isBooked });
     } else {
@@ -299,6 +294,12 @@ exports.getMyHTBookedSloteForInstructor = async (req, res) => {
         [Op.or]: [{ sloteCode: { [Op.substring]: search } }],
       });
     }
+    
+    const slote = await HTTimeSlot.findAll({
+      where: {
+        [Op.and]: condition,
+      },
+    });
     // Final Response
     res.status(200).send({
       success: true,
